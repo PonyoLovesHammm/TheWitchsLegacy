@@ -1,13 +1,7 @@
 {
-  "itemGroup.thewitchslegacy": "Example Mod Tab",
-  "block.thewitchslegacy.example_block": "Example Block",
-  "item.thewitchslegacy.example_item": "Example Item",
+  "creativetab.thewitchslegacy.thewitchslegacy_items": "The Witch's Legacy",
 
-  "thewitchslegacy.configuration.title": "Example Mod Configs",
-  "thewitchslegacy.configuration.section.thewitchslegacy.common.toml": "Example Mod Configs",
-  "thewitchslegacy.configuration.section.thewitchslegacy.common.toml.title": "Example Mod Configs",
-  "thewitchslegacy.configuration.items": "Item List",
-  "thewitchslegacy.configuration.logDirtBlock": "Log Dirt Block",
-  "thewitchslegacy.configuration.magicNumberIntroduction": "Magic Number Text",
-  "thewitchslegacy.configuration.magicNumber": "Magic Number"
+  "item.thewitchslegacy.white_chalk": "White Chalk",
+
+  "block.thewitchslegacy.rowan_log": "Rowan log"
 }
