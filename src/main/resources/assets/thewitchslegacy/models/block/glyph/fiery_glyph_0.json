@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/carpet",
   "textures": {
-    "wool": "thewitchslegacy:block/glyph/golden_glyph_0"
+    "wool": "thewitchslegacy:block/glyph/fiery_glyph_0"
   },
   "render_type": "cutout"
 }

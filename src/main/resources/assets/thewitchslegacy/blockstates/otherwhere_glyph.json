@@ -1,0 +1,17 @@
+{
+  "variants": {
+    "variant=0": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_0"},
+    "variant=1": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_1"},
+    "variant=2": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_2"},
+    "variant=3": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_3"},
+    "variant=4": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_4"},
+    "variant=5": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_5"},
+    "variant=6": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_6"},
+    "variant=7": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_7"},
+    "variant=8": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_8"},
+    "variant=9": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_9"},
+    "variant=10": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_10"},
+    "variant=11": {"model": "thewitchslegacy:block/glyph/otherwhere_glyph_11"}
+      
+  }
+}

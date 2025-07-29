@@ -10,12 +10,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public class ModSounds {
-    public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
-            DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, TheWitchsLegacy.MODID);
+    public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, TheWitchsLegacy.MODID);
 
     //This will be a different setup for custom block sounds (a little more complicated)
     public static final Supplier<SoundEvent> CHALK_DRAW = registerSoundEvent("chalk_draw");
-
 
 
     private static Supplier<SoundEvent> registerSoundEvent(String name) {
@@ -23,7 +21,5 @@ public class ModSounds {
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
     }
 
-    public static void register(IEventBus eventBus) {
-        SOUND_EVENTS.register(eventBus);
-    }
+    public static void register(IEventBus eventBus) { SOUND_EVENTS.register(eventBus); }
 }

@@ -1,7 +1,24 @@
 {
   "creativetab.thewitchslegacy.thewitchslegacy_items": "The Witch's Legacy",
 
-  "item.thewitchslegacy.white_chalk": "White Chalk",
+  "item.thewitchslegacy.infused_stone": "Infused Stone",
 
-  "block.thewitchslegacy.rowan_log": "Rowan log"
+  "item.thewitchslegacy.white_chalk": "White Chalk",
+  "item.thewitchslegacy.golden_chalk": "Golden Chalk",
+  "item.thewitchslegacy.fiery_chalk": "Fiery Chalk",
+  "item.thewitchslegacy.otherwhere_chalk": "Otherwhere Chalk",
+  "item.thewitchslegacy.mutandis": "Mutandis",
+  "item.thewitchslegacy.mutandis_extremis": "Mutandis Extremis",
+
+  "item.thewitchslegacy.rowan_berry_pie": "Rowan Berry Pie",
+  "item.thewitchslegacy.garlic": "Garlic",
+  "item.thewitchslegacy.rowan_berries": "Rowan Berries",
+
+  "block.thewitchslegacy.rowan_log": "Rowan log",
+
+  "block.thewitchslegacy.spanish_moss": "Spanish Moss",
+  "block.thewitchslegacy.white_glyph": "White Glyph",
+  "block.thewitchslegacy.golden_glyph": "Golden Glyph",
+  "block.thewitchslegacy.fiery_glyph": "Fiery Glyph",
+  "block.thewitchslegacy.otherwhere_glyph": "Otherwhere Glyph"
 }

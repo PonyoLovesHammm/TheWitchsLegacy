@@ -1,4 +1,9 @@
 package com.ponyo.thewitchslegacy.block.custom;
 
-public class SpanishMoss {
+import net.minecraft.world.level.block.VineBlock;
+
+public class SpanishMoss extends VineBlock {
+    public SpanishMoss(Properties properties) {
+        super(properties.randomTicks());
+    }
 }
