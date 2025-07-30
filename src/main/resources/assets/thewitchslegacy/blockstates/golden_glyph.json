@@ -1,7 +1,6 @@
 {
   "variants": {
-    "variante=0": {
-      "model": "thewitchslegacy:block/glyph/golden_glyph_0"
-    }
+    "variant=0": {
+      "model": "thewitchslegacy:block/glyph/golden_glyph_0"}
   }
 }

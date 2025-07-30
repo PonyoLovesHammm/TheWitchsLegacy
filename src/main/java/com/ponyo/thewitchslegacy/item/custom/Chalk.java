@@ -60,7 +60,7 @@ public class Chalk extends Item {
                 level.setBlock(placePos, ModBlocks.WHITE_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, variant), 3);
                 //if using golden chalk, only return the variant 0 (that's all that exists)
             } else if (usedItem == ModItems.GOLDEN_CHALK.get()) {
-                level.setBlock(placePos, ModBlocks.GOLDEN_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, variant), 3);
+                level.setBlock(placePos, ModBlocks.GOLDEN_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, 0), 3);
                 //if using red chalk, place a red glyph block with a random variant
             } else if (usedItem == ModItems.FIERY_CHALK.get()) {
                 level.setBlock(placePos, ModBlocks.FIERY_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, variant), 3);

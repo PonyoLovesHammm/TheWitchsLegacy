@@ -70,6 +70,18 @@ public class Glyph extends Block {
         return false;
     }
 
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, BlockPos fromPos, boolean isMoving) {
+        super.neighborChanged(state, level, pos, block, fromPos, isMoving);
+
+        BlockPos below = pos.below();
+        BlockState belowState = level.getBlockState(below);
+
+        if (belowState.isAir()) {
+            level.destroyBlock(pos, false);
+        }
+    }
+
     //called when the player right-clicks the block with an empty hand
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
