@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key":{
+    "A": {
+      "item": "minecraft:clay_ball"
+    }
+  },
+  "pattern": [
+    " A ",
+    "AAA"
+  ],
+  "result": {
+    "count": 4,
+    "id": "thewitchslegacy:soft_clay_jar"
+  }
+}

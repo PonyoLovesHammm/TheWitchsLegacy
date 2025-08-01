@@ -21,7 +21,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-//Defining a custom item class for "Mutandis"
+//Defining a custom items class for "Mutandis"
 public class Mutandis extends Item {
 
     //creates a random class to be referenced when determining integers
@@ -257,7 +257,7 @@ public class Mutandis extends Item {
                     //plays the bone meal sound effect
                     level.playSound(null, pos, SoundEvents.BONE_MEAL_USE, SoundSource.BLOCKS, 1.0f, 1.0f);
 
-                    //consumes the item if not in creative
+                    //consumes the items if not in creative
                     if (context.getPlayer() != null) {
                         context.getItemInHand().shrink(1);
                     }
@@ -278,7 +278,7 @@ public class Mutandis extends Item {
                     level.setBlock(pos, mutatedBlock.defaultBlockState(), 3);
                     //plays the bone meal sound effect
                     level.playSound(null, pos, SoundEvents.BONE_MEAL_USE, SoundSource.BLOCKS, 1.0f, 1.0f);
-                    //consumes the item if not in creative
+                    //consumes the items if not in creative
                     if (context.getPlayer() != null) {
                         context.getItemInHand().shrink(1);
                     }

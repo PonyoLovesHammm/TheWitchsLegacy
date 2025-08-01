@@ -21,6 +21,12 @@ public class ModCreativeModeTabs {
                     .displayItems((parameters, output) -> {
                         //General Items
                         output.accept(ModItems.INFUSED_STONE);
+                        output.accept(ModItems.SOFT_CLAY_JAR);
+                        output.accept(ModItems.CLAY_JAR);
+                        output.accept(ModItems.WOOD_ASH);
+                        output.accept(ModItems.BONE_NEEDLE);
+                        output.accept(ModItems.WITCHS_CLAIM);
+                        output.accept(ModItems.WITCHS_CLAIM_FILLED);
                         //Special Items
                         output.accept(ModItems.WHITE_CHALK);
                         output.accept(ModItems.GOLDEN_CHALK);

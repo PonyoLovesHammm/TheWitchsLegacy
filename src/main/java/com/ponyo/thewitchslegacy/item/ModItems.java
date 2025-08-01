@@ -14,6 +14,18 @@ public class ModItems {
     //Default Items!
     public static final DeferredItem<Item> INFUSED_STONE = ITEMS.register("infused_stone",
             () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> SOFT_CLAY_JAR = ITEMS.register("soft_clay_jar",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> CLAY_JAR = ITEMS.register("clay_jar",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> WOOD_ASH = ITEMS.register("wood_ash",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> BONE_NEEDLE = ITEMS.register("bone_needle",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> WITCHS_CLAIM = ITEMS.register("witchs_claim",
+            () -> new Item(new Item.Properties()));
+    public static final DeferredItem<Item> WITCHS_CLAIM_FILLED = ITEMS.register("witchs_claim_filled",
+            () -> new Item(new Item.Properties()));
 
     //Special Items
     public static final DeferredItem<Item> WHITE_CHALK = ITEMS.register("white_chalk",
