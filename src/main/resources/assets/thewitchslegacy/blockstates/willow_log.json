@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "thewitchslegacy:block/willow_log"
+    },
+    "axis=z": {
+      "model": "thewitchslegacy:block/willow_log",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "thewitchslegacy:block/willow_log",
+      "x": 90,
+      "y": 90
+    }
+  }
+}

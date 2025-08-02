@@ -44,11 +44,10 @@ public class ModItems {
     //Food Items!
     public static final DeferredItem<Item> ROWAN_BERRY_PIE = ITEMS.register("rowan_berry_pie",
             () -> new Item(new Item.Properties().food(ModFoodProperties.ROWAN_BERRY_PIE)));
-    public static final DeferredItem<Item> GARLIC = ITEMS.register("garlic",
-            () -> new Item(new Item.Properties().food(ModFoodProperties.GARLIC)));
     public static final DeferredItem<Item> ROWAN_BERRIES = ITEMS.register("rowan_berries",
             () -> new Item(new Item.Properties().food(ModFoodProperties.ROWAN_BERRIES)));
-
+    public static final DeferredItem<Item> GARLIC = ITEMS.register("garlic",
+            () -> new Item(new Item.Properties().food(ModFoodProperties.GARLIC)));
 
     public static void register(IEventBus eventBus) { ITEMS.register(eventBus); }
 }

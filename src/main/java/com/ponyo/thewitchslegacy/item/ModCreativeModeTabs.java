@@ -40,6 +40,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.ROWAN_BERRIES);
                         //General Blocks
                         output.accept(ModBlocks.ROWAN_LOG);
+                        output.accept(ModBlocks.HAWTHORN_LOG);
+                        output.accept(ModBlocks.WILLOW_LOG);
                         //Special Blocks
                         output.accept(ModBlocks.SPANISH_MOSS);
                     }).build());

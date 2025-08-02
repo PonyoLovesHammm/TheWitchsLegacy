@@ -8,6 +8,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.bus.api.IEventBus;
@@ -22,7 +23,21 @@ public class ModBlocks {
     //Default Blocks!
     public static final DeferredBlock<Block> ROWAN_LOG = registerBlock(
             "rowan_log",
-            () -> new Block(
+            () -> new RotatedPillarBlock(
+                    BlockBehaviour.Properties.of()
+                            .strength(2.0F)
+                            .sound(SoundType.WOOD)));
+
+    public static final DeferredBlock<Block> HAWTHORN_LOG = registerBlock(
+            "hawthorn_log",
+            () -> new RotatedPillarBlock(
+                    BlockBehaviour.Properties.of()
+                            .strength(2.0F)
+                            .sound(SoundType.WOOD)));
+
+    public static final DeferredBlock<Block> WILLOW_LOG = registerBlock(
+            "willow_log",
+            () -> new RotatedPillarBlock(
                     BlockBehaviour.Properties.of()
                             .strength(2.0F)
                             .sound(SoundType.WOOD)));

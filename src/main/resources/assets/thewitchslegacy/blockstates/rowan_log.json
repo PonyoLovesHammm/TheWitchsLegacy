@@ -1,7 +1,16 @@
 {
   "variants": {
-    "": {
+    "axis=y": {
       "model": "thewitchslegacy:block/rowan_log"
+    },
+    "axis=z": {
+      "model": "thewitchslegacy:block/rowan_log",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "thewitchslegacy:block/rowan_log",
+      "x": 90,
+      "y": 90
     }
   }
 }

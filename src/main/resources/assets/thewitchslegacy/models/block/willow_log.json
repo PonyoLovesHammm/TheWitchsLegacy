@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "thewitchslegacy:block/willow_log_top",
+    "side": "thewitchslegacy:block/willow_log"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=y": {
+      "model": "thewitchslegacy:block/hawthorn_log"
+    },
+    "axis=z": {
+      "model": "thewitchslegacy:block/hawthorn_log",
+      "x": 90
+    },
+    "axis=x": {
+      "model": "thewitchslegacy:block/hawthorn_log",
+      "x": 90,
+      "y": 90
+    }
+  }
+}
