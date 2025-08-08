@@ -35,9 +35,9 @@ public class Mutandis extends Item {
 
     //Creates a list of possible Plant Mutations
     private static final List<WeightedPlantMutation> PLANT_MUTATIONS = List.of(
-            //There are 30 normal minecraft blocks... to not skew the possibility of getting Witch's Legacy blocks, should increase weight
+            //There are 30 normal minecraft block... to not skew the possibility of getting Witch's Legacy block, should increase weight
             /*
-            The XXXX's are there to remember to switch it to whatever location the blocks get stored in
+            The XXXX's are there to remember to switch it to whatever location the block get stored in
             new WeightedPlantMutation(XXXXXXXXXX.ROWAN_SAPLING.get(), 1),
             new WeightedPlantMutation(XXXXXXXXXX.ALDER_SAPLING.get(), 1),
             new WeightedPlantMutation(XXXXXXXXXX.HAWTHORN_SAPLING.get(), 1),
@@ -85,12 +85,12 @@ public class Mutandis extends Item {
             new WeightedBlockMutation(Blocks.MOSS_BLOCK, 1)
             );
 
-    //Registers the allowable blocks to be clicked to get a mutation to occur
+    //Registers the allowable block to be clicked to get a mutation to occur
     private static final Set<Block> MUTATABLE_PLANTS = PLANT_MUTATIONS.stream()
             .map(WeightedPlantMutation::block)
             .collect(Collectors.toSet());
 
-    //Registers the allowable blocks to be clicked to get a mutation to occur
+    //Registers the allowable block to be clicked to get a mutation to occur
     private static final Set<Block> MUTATABLE_BLOCKS = BLOCK_MUTATIONS.stream()
             .map(WeightedBlockMutation::block)
             .collect(Collectors.toSet());
@@ -249,7 +249,7 @@ public class Mutandis extends Item {
                         level.setBlock(pos, Blocks.VINE.defaultBlockState().setValue(VineBlock.NORTH, true), 3);
                     } else if (mutatedBlock == ModBlocks.SPANISH_MOSS.get()) {
                         level.setBlock(pos, ModBlocks.SPANISH_MOSS.get().defaultBlockState().setValue(VineBlock.NORTH, true), 3);
-                        //all other blocks are placed normally
+                        //all other block are placed normally
                     } else {
                         level.setBlock(pos, mutatedBlock.defaultBlockState(), 3);
                     }

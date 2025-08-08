@@ -76,13 +76,6 @@ public class ModBlocks {
                             .strength(2.0F)
                             .sound(SoundType.WOOD)));
 
-    public static final DeferredBlock<WallBlock> ROWAN_WALL = registerBlock(
-            "rowan_wall",
-            () -> new WallBlock(
-                    BlockBehaviour.Properties.of()
-                            .strength(2.0F)
-                            .sound(SoundType.WOOD)));
-
     public static final DeferredBlock<DoorBlock> ROWAN_DOOR = registerBlock(
             "rowan_door",
             () -> new DoorBlock(BlockSetType.OAK,
@@ -155,13 +148,6 @@ public class ModBlocks {
                             .strength(2.0F)
                             .sound(SoundType.WOOD)));
 
-    public static final DeferredBlock<WallBlock> HAWTHORN_WALL = registerBlock(
-            "hawthorn_wall",
-            () -> new WallBlock(
-                    BlockBehaviour.Properties.of()
-                            .strength(2.0F)
-                            .sound(SoundType.WOOD)));
-
     public static final DeferredBlock<DoorBlock> HAWTHORN_DOOR = registerBlock(
             "hawthorn_door",
             () -> new DoorBlock(BlockSetType.OAK,
@@ -230,13 +216,6 @@ public class ModBlocks {
     public static final DeferredBlock<FenceGateBlock> WILLOW_FENCE_GATE = registerBlock(
             "willow_fence_gate",
             () -> new FenceGateBlock(WoodType.OAK,
-                    BlockBehaviour.Properties.of()
-                            .strength(2.0F)
-                            .sound(SoundType.WOOD)));
-
-    public static final DeferredBlock<WallBlock> WILLOW_WALL = registerBlock(
-            "willow_wall",
-            () -> new WallBlock(
                     BlockBehaviour.Properties.of()
                             .strength(2.0F)
                             .sound(SoundType.WOOD)));

@@ -2,12 +2,12 @@
 package com.ponyo.thewitchslegacy.datagen;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
-import com.ponyo.thewitchslegacy.item.ModItems;
+import com.ponyo.thewitchslegacy.items.ModItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.*;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.SmeltingRecipe;
+import net.minecraft.world.items.Items;
+import net.minecraft.world.items.crafting.SmeltingRecipe;
 import net.minecraft.world.level.ItemLike;
 
 import java.util.List;

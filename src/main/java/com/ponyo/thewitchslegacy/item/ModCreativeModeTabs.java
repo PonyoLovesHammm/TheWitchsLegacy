@@ -47,7 +47,6 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.ROWAN_BUTTON);
                         output.accept(ModBlocks.ROWAN_FENCE);
                         output.accept(ModBlocks.ROWAN_FENCE_GATE);
-                        output.accept(ModBlocks.ROWAN_WALL);
                         output.accept(ModBlocks.ROWAN_DOOR);
                         output.accept(ModBlocks.ROWAN_TRAPDOOR);
                         output.accept(ModBlocks.HAWTHORN_LOG);
@@ -58,7 +57,6 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.HAWTHORN_BUTTON);
                         output.accept(ModBlocks.HAWTHORN_FENCE);
                         output.accept(ModBlocks.HAWTHORN_FENCE_GATE);
-                        output.accept(ModBlocks.HAWTHORN_WALL);
                         output.accept(ModBlocks.HAWTHORN_DOOR);
                         output.accept(ModBlocks.HAWTHORN_TRAPDOOR);
                         output.accept(ModBlocks.WILLOW_LOG);
@@ -69,7 +67,6 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.WILLOW_BUTTON);
                         output.accept(ModBlocks.WILLOW_FENCE);
                         output.accept(ModBlocks.WILLOW_FENCE_GATE);
-                        output.accept(ModBlocks.WILLOW_WALL);
                         output.accept(ModBlocks.WILLOW_DOOR);
                         output.accept(ModBlocks.WILLOW_TRAPDOOR);
                         //Special Blocks

@@ -29,7 +29,7 @@ public class Glyph extends Block {
         this.registerDefaultState(this.stateDefinition.any().setValue(VARIANT, 0));
     }
 
-    //spawns particles at the blocks position
+    //spawns particles at the block position
     private void spawnSmokeParticles(Level level, BlockPos pos) {
         //determines how many particles will be spawned
         for (int i = 0; i < 5; i++) {

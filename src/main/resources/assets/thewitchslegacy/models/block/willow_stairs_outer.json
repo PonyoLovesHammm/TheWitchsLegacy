@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/outer_stairs",
-  "textures": {
-    "bottom": "thewitchslegacy:block/willow_planks",
-    "top": "thewitchslegacy:block/willow_planks",
-    "side": "thewitchslegacy:block/willow_planks"
-  }
-}

@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "thewitchslegacy:block/rowan_planks"
+      "model": "thewitchslegacy:block/wood_types/rowan_planks"
     }
   }
 }

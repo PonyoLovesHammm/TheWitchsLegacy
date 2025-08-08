@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "thewitchslegacy:block/wood_types/hawthorn_planks"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/button",
+  "textures": {
+    "texture": "thewitchslegacy:block/wood_types/hawthorn_planks"
+  }
+}

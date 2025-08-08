@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key":{
+    "A": {
+      "item": "thewitchslegacy:hawthorn_planks"
+    }
+  },
+  "pattern": [
+    "AA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "thewitchslegacy:hawthorn_pressure_plate"
+  }
+}

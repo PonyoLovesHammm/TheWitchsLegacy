@@ -3,11 +3,33 @@
   "values": [
     "thewitchslegacy:rowan_log",
     "thewitchslegacy:rowan_planks",
+    "thewitchslegacy:rowan_stairs",
+    "thewitchslegacy:rowan_slab",
+    "thewitchslegacy:rowan_button",
+    "thewitchslegacy:rowan_pressure_plate",
+    "thewitchslegacy:rowan_fence",
+    "thewitchslegacy:rowan_fence_gate",
+    "thewitchslegacy:rowan_trapdoor",
+    "thewitchslegacy:rowan_door",
     "thewitchslegacy:hawthorn_log",
     "thewitchslegacy:hawthorn_planks",
+    "thewitchslegacy:hawthorn_stairs",
+    "thewitchslegacy:hawthorn_slab",
+    "thewitchslegacy:hawthorn_button",
+    "thewitchslegacy:hawthorn_pressure_plate",
+    "thewitchslegacy:hawthorn_fence",
+    "thewitchslegacy:hawthorn_fence_gate",
+    "thewitchslegacy:hawthorn_trapdoor",
+    "thewitchslegacy:hawthorn_door",
     "thewitchslegacy:willow_log",
-    "thewitchslegacy:willow_planks"
-
-
+    "thewitchslegacy:willow_planks",
+    "thewitchslegacy:willow_stairs",
+    "thewitchslegacy:willow_slab",
+    "thewitchslegacy:willow_button",
+    "thewitchslegacy:willow_pressure_plate",
+    "thewitchslegacy:willow_fence",
+    "thewitchslegacy:willow_fence_gate",
+    "thewitchslegacy:willow_trapdoor",
+    "thewitchslegacy:willow_door"
   ]
 }

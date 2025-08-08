@@ -6,16 +6,88 @@
     "thewitchslegacy:rowan_planks": {
       "burn_time": 300
     },
+    "thewitchslegacy:rowan_stairs": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:rowan_slab": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:rowan_button": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:rowan_pressure_plate": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:rowan_fence": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:rowan_fence_gate": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:rowan_trapdoor": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:rowan_door": {
+      "burn_time": 300
+    },
     "thewitchslegacy:hawthorn_log": {
       "burn_time": 300
     },
     "thewitchslegacy:hawthorn_planks": {
       "burn_time": 300
     },
+    "thewitchslegacy:hawthorn_stairs": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:hawthorn_slab": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:hawthorn_button": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:hawthorn_pressure_plate": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:hawthorn_fence": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:hawthorn_fence_gate": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:hawthorn_trapdoor": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:hawthorn_door": {
+      "burn_time": 300
+    },
     "thewitchslegacy:willow_log": {
       "burn_time": 300
     },
     "thewitchslegacy:willow_planks": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_stairs": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_slab": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_button": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_pressure_plate": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_fence": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_fence_gate": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_trapdoor": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_door": {
       "burn_time": 300
     }
   }

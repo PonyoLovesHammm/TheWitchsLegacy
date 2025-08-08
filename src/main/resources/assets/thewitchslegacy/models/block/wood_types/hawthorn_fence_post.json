@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/fence_post",
+  "textures": {
+    "texture": "thewitchslegacy:block/wood_types/hawthorn_planks"
+  }
+}

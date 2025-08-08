@@ -2,7 +2,7 @@
 package com.ponyo.thewitchslegacy.datagen;
 
 import com.ponyo.thewitchslegacy.TheWitchsLegacy;
-import com.ponyo.thewitchslegacy.item.ModItems;
+import com.ponyo.thewitchslegacy.items.ModItems;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
