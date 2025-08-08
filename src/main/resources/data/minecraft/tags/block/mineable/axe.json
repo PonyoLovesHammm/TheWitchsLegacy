@@ -1,6 +1,13 @@
 {
   "replace": false,
   "values": [
-    "thewitchslegacy:rowan_log"
+    "thewitchslegacy:rowan_log",
+    "thewitchslegacy:rowan_planks",
+    "thewitchslegacy:hawthorn_log",
+    "thewitchslegacy:hawthorn_planks",
+    "thewitchslegacy:willow_log",
+    "thewitchslegacy:willow_planks"
+
+
   ]
 }

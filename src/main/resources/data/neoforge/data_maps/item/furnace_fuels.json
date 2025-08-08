@@ -3,7 +3,19 @@
     "thewitchslegacy:rowan_log": {
       "burn_time": 300
     },
-    "thewitchslegacy:alder_log": {
+    "thewitchslegacy:rowan_planks": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:hawthorn_log": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:hawthorn_planks": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_log": {
+      "burn_time": 300
+    },
+    "thewitchslegacy:willow_planks": {
       "burn_time": 300
     }
   }

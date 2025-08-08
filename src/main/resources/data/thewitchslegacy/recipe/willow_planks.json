@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "thewitchslegacy:willow_log"
+    }
+  ],
+  "result": {
+    "count": 4,
+    "id": "thewitchslegacy:willow_planks"
+  }
+}

@@ -38,6 +38,4 @@ public class DataGenerators {
         generator.addProvider(event.includeClient(), new ModBlockStateProvider(packOutput, existingFileHelper));
     }
 }
-
-
- */
+*/

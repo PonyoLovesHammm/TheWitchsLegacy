@@ -40,8 +40,38 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.ROWAN_BERRIES);
                         //General Blocks
                         output.accept(ModBlocks.ROWAN_LOG);
+                        output.accept(ModBlocks.ROWAN_PLANKS);
+                        output.accept(ModBlocks.ROWAN_STAIRS);
+                        output.accept(ModBlocks.ROWAN_SLAB);
+                        output.accept(ModBlocks.ROWAN_PRESSURE_PLATE);
+                        output.accept(ModBlocks.ROWAN_BUTTON);
+                        output.accept(ModBlocks.ROWAN_FENCE);
+                        output.accept(ModBlocks.ROWAN_FENCE_GATE);
+                        output.accept(ModBlocks.ROWAN_WALL);
+                        output.accept(ModBlocks.ROWAN_DOOR);
+                        output.accept(ModBlocks.ROWAN_TRAPDOOR);
                         output.accept(ModBlocks.HAWTHORN_LOG);
+                        output.accept(ModBlocks.HAWTHORN_PLANKS);
+                        output.accept(ModBlocks.HAWTHORN_STAIRS);
+                        output.accept(ModBlocks.HAWTHORN_SLAB);
+                        output.accept(ModBlocks.HAWTHORN_PRESSURE_PLATE);
+                        output.accept(ModBlocks.HAWTHORN_BUTTON);
+                        output.accept(ModBlocks.HAWTHORN_FENCE);
+                        output.accept(ModBlocks.HAWTHORN_FENCE_GATE);
+                        output.accept(ModBlocks.HAWTHORN_WALL);
+                        output.accept(ModBlocks.HAWTHORN_DOOR);
+                        output.accept(ModBlocks.HAWTHORN_TRAPDOOR);
                         output.accept(ModBlocks.WILLOW_LOG);
+                        output.accept(ModBlocks.WILLOW_PLANKS);
+                        output.accept(ModBlocks.WILLOW_STAIRS);
+                        output.accept(ModBlocks.WILLOW_SLAB);
+                        output.accept(ModBlocks.WILLOW_PRESSURE_PLATE);
+                        output.accept(ModBlocks.WILLOW_BUTTON);
+                        output.accept(ModBlocks.WILLOW_FENCE);
+                        output.accept(ModBlocks.WILLOW_FENCE_GATE);
+                        output.accept(ModBlocks.WILLOW_WALL);
+                        output.accept(ModBlocks.WILLOW_DOOR);
+                        output.accept(ModBlocks.WILLOW_TRAPDOOR);
                         //Special Blocks
                         output.accept(ModBlocks.SPANISH_MOSS);
                     }).build());
