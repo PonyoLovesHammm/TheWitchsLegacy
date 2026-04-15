@@ -2,7 +2,7 @@
   "parent": "minecraft:block/door_top_left",
   "render_type": "minecraft:cutout",
   "textures": {
-    "bottom": "thewitchslegacy:block/wood_types/rowan_door_bottom",
-    "top": "thewitchslegacy:block/wood_types/rowan_door_top"
+    "bottom": "thewitchslegacy:block/wood_types/rowan_planks",
+    "top": "thewitchslegacy:block/wood_types/rowan_planks"
   }
 }

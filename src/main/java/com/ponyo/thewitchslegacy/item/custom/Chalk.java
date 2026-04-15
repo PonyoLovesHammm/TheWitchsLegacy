@@ -51,7 +51,7 @@ public class Chalk extends Item {
         }
 
         //Ensure the following block-placement logic only runs on the server side
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             //picks a random glyph variant between 0-11
             int variant = level.getRandom().nextInt(12);
 

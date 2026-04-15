@@ -1,6 +1,16 @@
 {
   "variants": {
-    "variant=0": {
-      "model": "thewitchslegacy:block/glyph/golden_glyph_0"}
+    "variant=0": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=1": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=2": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=3": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=4": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=5": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=6": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=7": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=8": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=9": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=10": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"},
+    "variant=11": { "model": "thewitchslegacy:block/glyph/golden_glyph_0"}
   }
 }

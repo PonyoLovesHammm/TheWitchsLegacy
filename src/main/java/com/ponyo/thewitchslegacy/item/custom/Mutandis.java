@@ -18,8 +18,7 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.function.Supplier;
 
 //Defining a custom items class for "Mutandis"
 public class Mutandis extends Item {
@@ -28,7 +27,11 @@ public class Mutandis extends Item {
     private static final Random RANDOM = new Random();
 
     //Creates the possibility to make a list of weighted mutations
-    public record WeightedPlantMutation(Block block, int weight) {}
+    public record WeightedPlantMutation(Supplier<Block> blockSupplier, int weight) {
+        public Block block() {
+            return blockSupplier.get();
+        }
+    }
 
     //Creates the possibility to make a list of weighted mutations
     public record WeightedBlockMutation(Block block, int weight) {}
@@ -44,38 +47,38 @@ public class Mutandis extends Item {
             new WeightedPlantMutation(XXXXXXXXXX.GLINT_WEED.get(), 1),
             new WeightedPlantMutation(XXXXXXXXXX.EMBER_MOSS.get(), 1),
             */
-            new WeightedPlantMutation(ModBlocks.SPANISH_MOSS.get(), 5),
-            new WeightedPlantMutation(Blocks.SHORT_GRASS, 1),
-            new WeightedPlantMutation(Blocks.LILY_PAD, 1),
-            new WeightedPlantMutation(Blocks.VINE, 1),
-            new WeightedPlantMutation(Blocks.BROWN_MUSHROOM, 1),
-            new WeightedPlantMutation(Blocks.RED_MUSHROOM, 1),
-            new WeightedPlantMutation(Blocks.OAK_SAPLING, 1),
-            new WeightedPlantMutation(Blocks.BIRCH_SAPLING, 1),
-            new WeightedPlantMutation(Blocks.SPRUCE_SAPLING, 1),
-            new WeightedPlantMutation(Blocks.JUNGLE_SAPLING, 1),
-            new WeightedPlantMutation(Blocks.ACACIA_SAPLING, 1),
-            new WeightedPlantMutation(Blocks.DARK_OAK_SAPLING, 1),
-            new WeightedPlantMutation(Blocks.MANGROVE_PROPAGULE, 1),
-            new WeightedPlantMutation(Blocks.AZALEA, 1),
-            new WeightedPlantMutation(Blocks.FLOWERING_AZALEA, 1),
-            new WeightedPlantMutation(Blocks.CHERRY_SAPLING, 1),
-            new WeightedPlantMutation(Blocks.BIG_DRIPLEAF, 1),
-            new WeightedPlantMutation(Blocks.PEONY, 1),
-            new WeightedPlantMutation(Blocks.SUNFLOWER, 1),
-            new WeightedPlantMutation(Blocks.LILAC, 1),
-            new WeightedPlantMutation(Blocks.ROSE_BUSH, 1),
-            new WeightedPlantMutation(Blocks.DANDELION, 1),
-            new WeightedPlantMutation(Blocks.POPPY, 1),
-            new WeightedPlantMutation(Blocks.BLUE_ORCHID, 1),
-            new WeightedPlantMutation(Blocks.LILY_OF_THE_VALLEY, 1),
-            new WeightedPlantMutation(Blocks.ALLIUM, 1),
-            new WeightedPlantMutation(Blocks.AZURE_BLUET, 1),
-            new WeightedPlantMutation(Blocks.OXEYE_DAISY, 1),
-            new WeightedPlantMutation(Blocks.CORNFLOWER, 1),
-            new WeightedPlantMutation(Blocks.RED_TULIP, 1),
-            new WeightedPlantMutation(Blocks.PINK_TULIP, 1),
-            new WeightedPlantMutation(Blocks.ORANGE_TULIP, 1)
+            new WeightedPlantMutation(ModBlocks.SPANISH_MOSS::get, 5),
+            new WeightedPlantMutation(() -> Blocks.SHORT_GRASS, 1),
+            new WeightedPlantMutation(() -> Blocks.LILY_PAD, 1),
+            new WeightedPlantMutation(() -> Blocks.VINE, 1),
+            new WeightedPlantMutation(() -> Blocks.BROWN_MUSHROOM, 1),
+            new WeightedPlantMutation(() -> Blocks.RED_MUSHROOM, 1),
+            new WeightedPlantMutation(() -> Blocks.OAK_SAPLING, 1),
+            new WeightedPlantMutation(() -> Blocks.BIRCH_SAPLING, 1),
+            new WeightedPlantMutation(() -> Blocks.SPRUCE_SAPLING, 1),
+            new WeightedPlantMutation(() -> Blocks.JUNGLE_SAPLING, 1),
+            new WeightedPlantMutation(() -> Blocks.ACACIA_SAPLING, 1),
+            new WeightedPlantMutation(() -> Blocks.DARK_OAK_SAPLING, 1),
+            new WeightedPlantMutation(() -> Blocks.MANGROVE_PROPAGULE, 1),
+            new WeightedPlantMutation(() -> Blocks.AZALEA, 1),
+            new WeightedPlantMutation(() -> Blocks.FLOWERING_AZALEA, 1),
+            new WeightedPlantMutation(() -> Blocks.CHERRY_SAPLING, 1),
+            new WeightedPlantMutation(() -> Blocks.BIG_DRIPLEAF, 1),
+            new WeightedPlantMutation(() -> Blocks.PEONY, 1),
+            new WeightedPlantMutation(() -> Blocks.SUNFLOWER, 1),
+            new WeightedPlantMutation(() -> Blocks.LILAC, 1),
+            new WeightedPlantMutation(() -> Blocks.ROSE_BUSH, 1),
+            new WeightedPlantMutation(() -> Blocks.DANDELION, 1),
+            new WeightedPlantMutation(() -> Blocks.POPPY, 1),
+            new WeightedPlantMutation(() -> Blocks.BLUE_ORCHID, 1),
+            new WeightedPlantMutation(() -> Blocks.LILY_OF_THE_VALLEY, 1),
+            new WeightedPlantMutation(() -> Blocks.ALLIUM, 1),
+            new WeightedPlantMutation(() -> Blocks.AZURE_BLUET, 1),
+            new WeightedPlantMutation(() -> Blocks.OXEYE_DAISY, 1),
+            new WeightedPlantMutation(() -> Blocks.CORNFLOWER, 1),
+            new WeightedPlantMutation(() -> Blocks.RED_TULIP, 1),
+            new WeightedPlantMutation(() -> Blocks.PINK_TULIP, 1),
+            new WeightedPlantMutation(() -> Blocks.ORANGE_TULIP, 1)
             );
 
     private static final List<WeightedBlockMutation> BLOCK_MUTATIONS = List.of(
@@ -85,18 +88,12 @@ public class Mutandis extends Item {
             new WeightedBlockMutation(Blocks.MOSS_BLOCK, 1)
             );
 
-    //Registers the allowable block to be clicked to get a mutation to occur
-    private static final Set<Block> MUTATABLE_PLANTS = PLANT_MUTATIONS.stream()
-            .map(WeightedPlantMutation::block)
-            .collect(Collectors.toSet());
+    private static boolean isMutatablePlant(Block block) {
+        return PLANT_MUTATIONS.stream().anyMatch(mutation -> mutation.block() == block);
+    }
 
-    //Registers the allowable block to be clicked to get a mutation to occur
-    private static final Set<Block> MUTATABLE_BLOCKS = BLOCK_MUTATIONS.stream()
-            .map(WeightedBlockMutation::block)
-            .collect(Collectors.toSet());
-
-    private static boolean isBlock(Block block) {
-        return MUTATABLE_BLOCKS.contains(block);
+    private static boolean isMutatableBlock(Block block) {
+        return BLOCK_MUTATIONS.stream().anyMatch(mutation -> mutation.block() == block);
     }
 
     //creating a way to filter the list
@@ -219,14 +216,14 @@ public class Mutandis extends Item {
         Block mutatedBlock;
 
         //This if statement only proceeds if the clicked block is one we determined as a plant
-        if (MUTATABLE_PLANTS.contains(clickedBlock)) {
+        if (isMutatablePlant(clickedBlock)) {
             //selects a new block to turn into using the weighted logic
             mutatedBlock = getRandomPlantMutation(clickedBlock, level, pos);
 
             //if the mutation is different from the current block (it will be due to filters), it attempts to apply it
             if (mutatedBlock != clickedBlock) {
                 //due to a world state being changed, the game must determine it is not in client side
-                if (!level.isClientSide) {
+                if (!level.isClientSide()) {
                     //This removes the upper half of a double-block flower before replacing the lower half
                     if (level.getBlockState(pos).hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
                             && level.getBlockState(pos).getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER) {
@@ -269,12 +266,12 @@ public class Mutandis extends Item {
             }
         }
         // Check if current block is a mutatable block instead of mutatable plant
-        if (MUTATABLE_BLOCKS.contains(clickedBlock)) {
+        if (isMutatableBlock(clickedBlock)) {
             mutatedBlock = getRandomBlockMutation(clickedBlock, level, pos);
             //if the mutation is different from the current block (it will be due to filters), it attempts to apply it
             if (mutatedBlock != clickedBlock) {
                 //due to a world state being changed, the game must determine it is not in client side
-                if (!level.isClientSide) {
+                if (!level.isClientSide()) {
                     level.setBlock(pos, mutatedBlock.defaultBlockState(), 3);
                     //plays the bone meal sound effect
                     level.playSound(null, pos, SoundEvents.BONE_MEAL_USE, SoundSource.BLOCKS, 1.0f, 1.0f);
