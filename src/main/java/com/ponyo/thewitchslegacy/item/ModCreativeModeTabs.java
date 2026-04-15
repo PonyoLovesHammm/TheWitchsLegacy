@@ -71,6 +71,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.WILLOW_TRAPDOOR);
                         //Special Blocks
                         output.accept(ModBlocks.SPANISH_MOSS);
+                        output.accept(ModBlocks.WITCH_CAULDRON);
                     }).build());
 
     public static void register(IEventBus eventBus) {

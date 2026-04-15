@@ -266,6 +266,14 @@ public class ModBlocks {
                     BlockBehaviour.Properties.of()
                             .strength(.1F)));
 
+    public static final DeferredBlock<Block> WITCH_CAULDRON = registerBlock(
+            "witch_cauldron",
+            () -> new Block(
+                    BlockBehaviour.Properties.of()
+                            .strength(2.5F)
+                            .sound(SoundType.METAL)
+                            .noOcclusion()));
+
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, block);
