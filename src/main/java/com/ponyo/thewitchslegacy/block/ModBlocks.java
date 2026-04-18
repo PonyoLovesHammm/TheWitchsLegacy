@@ -2,7 +2,11 @@ package com.ponyo.thewitchslegacy.block;
 
 import com.ponyo.thewitchslegacy.TheWitchsLegacy;
 import com.ponyo.thewitchslegacy.block.custom.Glyph;
+import com.ponyo.thewitchslegacy.block.custom.KettleBlock;
+import com.ponyo.thewitchslegacy.block.custom.MagicMirrorBlock;
 import com.ponyo.thewitchslegacy.block.custom.SpanishMoss;
+import com.ponyo.thewitchslegacy.block.custom.WitchCauldronBlock;
+import com.ponyo.thewitchslegacy.block.custom.WitchOvenBlock;
 import com.ponyo.thewitchslegacy.item.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -271,10 +275,50 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> WITCH_CAULDRON = registerBlock(
             "witch_cauldron",
-            () -> new Block(
+            () -> new WitchCauldronBlock(
                     blockProperties("witch_cauldron", BlockBehaviour.Properties.of())
                             .strength(2.5F)
                             .sound(SoundType.METAL)
+                            .isRedstoneConductor((state, level, pos) -> false)
+                            .isSuffocating((state, level, pos) -> false)
+                            .isViewBlocking((state, level, pos) -> false)
+                            .dynamicShape()
+                            .noOcclusion()));
+
+    public static final DeferredBlock<Block> WITCH_OVEN = registerBlock(
+            "witch_oven",
+            () -> new WitchOvenBlock(
+                    blockProperties("witch_oven", BlockBehaviour.Properties.of())
+                            .strength(3.5F)
+                            .sound(SoundType.STONE)
+                            .isRedstoneConductor((state, level, pos) -> false)
+                            .isSuffocating((state, level, pos) -> false)
+                            .isViewBlocking((state, level, pos) -> false)
+                            .dynamicShape()
+                            .noOcclusion()));
+
+    public static final DeferredBlock<Block> KETTLE = registerBlock(
+            "kettle",
+            () -> new KettleBlock(
+                    blockProperties("kettle", BlockBehaviour.Properties.of())
+                            .strength(2.0F)
+                            .sound(SoundType.METAL)
+                            .isRedstoneConductor((state, level, pos) -> false)
+                            .isSuffocating((state, level, pos) -> false)
+                            .isViewBlocking((state, level, pos) -> false)
+                            .dynamicShape()
+                            .noOcclusion()));
+
+    public static final DeferredBlock<Block> MAGIC_MIRROR = registerBlock(
+            "magic_mirror",
+            () -> new MagicMirrorBlock(
+                    blockProperties("magic_mirror", BlockBehaviour.Properties.of())
+                            .strength(2.0F)
+                            .sound(SoundType.GLASS)
+                            .isRedstoneConductor((state, level, pos) -> false)
+                            .isSuffocating((state, level, pos) -> false)
+                            .isViewBlocking((state, level, pos) -> false)
+                            .dynamicShape()
                             .noOcclusion()));
 
 

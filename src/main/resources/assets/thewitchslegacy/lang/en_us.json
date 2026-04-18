@@ -15,6 +15,11 @@
   "item.thewitchslegacy.otherwhere_chalk": "Otherwhere Chalk",
   "item.thewitchslegacy.mutandis": "Mutandis",
   "item.thewitchslegacy.mutandis_extremis": "Mutandis Extremis",
+  "item.thewitchslegacy.spanish_moss": "Spanish Moss",
+  "item.thewitchslegacy.witch_cauldron": "Witch's Cauldron",
+  "item.thewitchslegacy.witch_oven": "Witch's Oven",
+  "item.thewitchslegacy.kettle": "Kettle",
+  "item.thewitchslegacy.magic_mirror": "Magic Mirror",
 
   "item.thewitchslegacy.rowan_berry_pie": "Rowan Berry Pie",
   "item.thewitchslegacy.garlic": "Garlic",
@@ -52,7 +57,10 @@
   "block.thewitchslegacy.willow_trapdoor": "Willow Trapdoor",
 
   "block.thewitchslegacy.spanish_moss": "Spanish Moss",
-  "block.thewitchslegacy.witch_cauldron": "Witch Cauldron",
+  "block.thewitchslegacy.witch_cauldron": "Witch's Cauldron",
+  "block.thewitchslegacy.witch_oven": "Witch's Oven",
+  "block.thewitchslegacy.kettle": "Kettle",
+  "block.thewitchslegacy.magic_mirror": "Magic Mirror",
   "block.thewitchslegacy.white_glyph": "White Glyph",
   "block.thewitchslegacy.golden_glyph": "Golden Glyph",
   "block.thewitchslegacy.fiery_glyph": "Fiery Glyph",

@@ -1,4 +1,5 @@
 {
+	"ambientocclusion": false,
 	"gui_light": "side",
 	"display": {
 		"gui": {

@@ -1,0 +1,38 @@
+{
+  "variants": {
+    "facing=south,half=upper": {
+      "model": "thewitchslegacy:block/magic_mirror"
+    },
+    "facing=west,half=upper": {
+      "model": "thewitchslegacy:block/magic_mirror",
+      "y": 90
+    },
+    "facing=north,half=upper": {
+      "model": "thewitchslegacy:block/magic_mirror",
+      "y": 180
+    },
+    "facing=east,half=upper": {
+      "model": "thewitchslegacy:block/magic_mirror",
+      "y": 270
+    },
+    "facing=south,half=lower": {
+      "model": "thewitchslegacy:block/magic_mirror",
+      "x": 180,
+      "y": 180
+    },
+    "facing=west,half=lower": {
+      "model": "thewitchslegacy:block/magic_mirror",
+      "x": 180,
+      "y": 270
+    },
+    "facing=north,half=lower": {
+      "model": "thewitchslegacy:block/magic_mirror",
+      "x": 180
+    },
+    "facing=east,half=lower": {
+      "model": "thewitchslegacy:block/magic_mirror",
+      "x": 180,
+      "y": 90
+    }
+  }
+}

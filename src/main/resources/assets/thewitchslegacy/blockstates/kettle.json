@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "thewitchslegacy:block/kettle",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "thewitchslegacy:block/kettle"
+    },
+    "facing=west": {
+      "model": "thewitchslegacy:block/kettle",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "thewitchslegacy:block/kettle",
+      "y": 270
+    }
+  }
+}
