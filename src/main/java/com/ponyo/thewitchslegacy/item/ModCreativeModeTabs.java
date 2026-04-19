@@ -72,6 +72,23 @@ public class ModCreativeModeTabs {
                         //Special Blocks
                         output.accept(ModBlocks.SPANISH_MOSS);
                         output.accept(ModBlocks.WITCH_CAULDRON);
+                        output.accept(ModBlocks.CANDELABRA);
+                        output.accept(ModBlocks.WHITE_CANDELABRA);
+                        output.accept(ModBlocks.LIGHT_GRAY_CANDELABRA);
+                        output.accept(ModBlocks.GRAY_CANDELABRA);
+                        output.accept(ModBlocks.BLACK_CANDELABRA);
+                        output.accept(ModBlocks.BROWN_CANDELABRA);
+                        output.accept(ModBlocks.RED_CANDELABRA);
+                        output.accept(ModBlocks.ORANGE_CANDELABRA);
+                        output.accept(ModBlocks.YELLOW_CANDELABRA);
+                        output.accept(ModBlocks.LIME_CANDELABRA);
+                        output.accept(ModBlocks.GREEN_CANDELABRA);
+                        output.accept(ModBlocks.CYAN_CANDELABRA);
+                        output.accept(ModBlocks.LIGHT_BLUE_CANDELABRA);
+                        output.accept(ModBlocks.BLUE_CANDELABRA);
+                        output.accept(ModBlocks.PURPLE_CANDELABRA);
+                        output.accept(ModBlocks.MAGENTA_CANDELABRA);
+                        output.accept(ModBlocks.PINK_CANDELABRA);
                         output.accept(ModBlocks.WITCH_OVEN);
                         output.accept(ModBlocks.KETTLE);
                         output.accept(ModBlocks.MAGIC_MIRROR);

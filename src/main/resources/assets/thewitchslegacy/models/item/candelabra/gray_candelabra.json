@@ -1,0 +1,9 @@
+{
+  "parent": "thewitchslegacy:item/candelabra/white_candelabra",
+  "textures": {
+    "texture": "thewitchslegacy:block/candelabra/gray_candelabra_lit",
+    "particle": "thewitchslegacy:block/candelabra/gray_candelabra_lit"
+  }
+}
+
+

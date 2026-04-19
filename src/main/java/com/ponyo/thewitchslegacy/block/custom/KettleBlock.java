@@ -16,16 +16,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.Map;
+
 public class KettleBlock extends HorizontalDirectionalBlock {
     public static final MapCodec<KettleBlock> CODEC = simpleCodec(KettleBlock::new);
 
     // Box args are (minX, minY, minZ, maxX, maxY, maxZ) in 1/16th-block units.
     // Edit this NORTH-facing base shape by hand, then the other facings are derived by rotation.
-    // Current parts:
-    // - kettle body
-    // - lid/top
-    // - top bar
-    // - left and right side handles
     private static final VoxelShape NORTH_SHAPE = Shapes.or(
             // Main kettle body.
             Block.box(3.0, 2.0, 3.0, 13.0, 7.0, 13.0),
@@ -36,9 +33,7 @@ public class KettleBlock extends HorizontalDirectionalBlock {
             // Right side handle.
             Block.box(13.0, 3.0, 6.0, 15.0, 6.0, 10.0)
     );
-    private static final VoxelShape EAST_SHAPE = rotateShape(NORTH_SHAPE, 1);
-    private static final VoxelShape SOUTH_SHAPE = rotateShape(NORTH_SHAPE, 2);
-    private static final VoxelShape WEST_SHAPE = rotateShape(NORTH_SHAPE, 3);
+    private static final Map<Direction, VoxelShape> SHAPES = VoxelShapeUtils.horizontalFromNorth(NORTH_SHAPE);
 
     public KettleBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -81,27 +76,6 @@ public class KettleBlock extends HorizontalDirectionalBlock {
     }
 
     private static VoxelShape getFacingShape(Direction direction) {
-        return switch (direction) {
-            case SOUTH -> SOUTH_SHAPE;
-            case WEST -> WEST_SHAPE;
-            case EAST -> EAST_SHAPE;
-            default -> NORTH_SHAPE;
-        };
-    }
-
-    private static VoxelShape rotateShape(VoxelShape shape, int quarterTurns) {
-        VoxelShape rotated = shape;
-        for (int i = 0; i < quarterTurns; i++) {
-            VoxelShape current = rotated;
-            final VoxelShape[] next = {Shapes.empty()};
-            current.forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) ->
-                    next[0] = Shapes.or(
-                            next[0],
-                            Shapes.box(1.0 - maxZ, minY, minX, 1.0 - minZ, maxY, maxX)
-                    )
-            );
-            rotated = next[0];
-        }
-        return rotated;
+        return VoxelShapeUtils.getHorizontalShape(SHAPES, direction, Direction.NORTH);
     }
 }

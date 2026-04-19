@@ -2,6 +2,7 @@ package com.ponyo.thewitchslegacy.block;
 
 import com.ponyo.thewitchslegacy.TheWitchsLegacy;
 import com.ponyo.thewitchslegacy.block.custom.Glyph;
+import com.ponyo.thewitchslegacy.block.custom.CandelabraBlock;
 import com.ponyo.thewitchslegacy.block.custom.KettleBlock;
 import com.ponyo.thewitchslegacy.block.custom.MagicMirrorBlock;
 import com.ponyo.thewitchslegacy.block.custom.SpanishMoss;
@@ -249,25 +250,25 @@ public class ModBlocks {
             () -> new SpanishMoss(
                     blockProperties("spanish_moss", BlockBehaviour.Properties.ofFullCopy(Blocks.VINE))));
 
-    public static final DeferredBlock<Block> GOLDEN_GLYPH = registerBlock(
+    public static final DeferredBlock<Block> GOLDEN_GLYPH = registerBlockWithoutItem(
             "golden_glyph",
             () -> new Glyph(
                     blockProperties("golden_glyph", BlockBehaviour.Properties.of())
                             .strength(.1F)));
 
-    public static final DeferredBlock<Block> FIERY_GLYPH = registerBlock(
+    public static final DeferredBlock<Block> FIERY_GLYPH = registerBlockWithoutItem(
             "fiery_glyph",
             () -> new Glyph(
                     blockProperties("fiery_glyph", BlockBehaviour.Properties.of())
                             .strength(.1F)));
 
-    public static final DeferredBlock<Block> WHITE_GLYPH = registerBlock(
+    public static final DeferredBlock<Block> WHITE_GLYPH = registerBlockWithoutItem(
             "white_glyph",
             () -> new Glyph(
                     blockProperties("white_glyph", BlockBehaviour.Properties.of())
                             .strength(.1F)));
 
-    public static final DeferredBlock<Block> OTHERWHERE_GLYPH = registerBlock(
+    public static final DeferredBlock<Block> OTHERWHERE_GLYPH = registerBlockWithoutItem(
             "otherwhere_glyph",
             () -> new Glyph(
                     blockProperties("otherwhere_glyph", BlockBehaviour.Properties.of())
@@ -276,56 +277,61 @@ public class ModBlocks {
     public static final DeferredBlock<Block> WITCH_CAULDRON = registerBlock(
             "witch_cauldron",
             () -> new WitchCauldronBlock(
-                    blockProperties("witch_cauldron", BlockBehaviour.Properties.of())
-                            .strength(2.5F)
-                            .sound(SoundType.METAL)
-                            .isRedstoneConductor((state, level, pos) -> false)
-                            .isSuffocating((state, level, pos) -> false)
-                            .isViewBlocking((state, level, pos) -> false)
-                            .dynamicShape()
-                            .noOcclusion()));
+                    decorativeProps("witch_cauldron", SoundType.METAL, 2.5F)));
+
+    public static final DeferredBlock<Block> CANDELABRA = registerBlock(
+            "candelabra",
+            () -> new CandelabraBlock(
+                    decorativeProps("candelabra", SoundType.METAL, 2.0F)
+                            .lightLevel(state -> 15)));
+    public static final DeferredBlock<Block> WHITE_CANDELABRA = registerCandelabra("white_candelabra");
+    public static final DeferredBlock<Block> ORANGE_CANDELABRA = registerCandelabra("orange_candelabra");
+    public static final DeferredBlock<Block> MAGENTA_CANDELABRA = registerCandelabra("magenta_candelabra");
+    public static final DeferredBlock<Block> LIGHT_BLUE_CANDELABRA = registerCandelabra("light_blue_candelabra");
+    public static final DeferredBlock<Block> YELLOW_CANDELABRA = registerCandelabra("yellow_candelabra");
+    public static final DeferredBlock<Block> LIME_CANDELABRA = registerCandelabra("lime_candelabra");
+    public static final DeferredBlock<Block> PINK_CANDELABRA = registerCandelabra("pink_candelabra");
+    public static final DeferredBlock<Block> GRAY_CANDELABRA = registerCandelabra("gray_candelabra");
+    public static final DeferredBlock<Block> LIGHT_GRAY_CANDELABRA = registerCandelabra("light_gray_candelabra");
+    public static final DeferredBlock<Block> CYAN_CANDELABRA = registerCandelabra("cyan_candelabra");
+    public static final DeferredBlock<Block> PURPLE_CANDELABRA = registerCandelabra("purple_candelabra");
+    public static final DeferredBlock<Block> BLUE_CANDELABRA = registerCandelabra("blue_candelabra");
+    public static final DeferredBlock<Block> BROWN_CANDELABRA = registerCandelabra("brown_candelabra");
+    public static final DeferredBlock<Block> GREEN_CANDELABRA = registerCandelabra("green_candelabra");
+    public static final DeferredBlock<Block> RED_CANDELABRA = registerCandelabra("red_candelabra");
+    public static final DeferredBlock<Block> BLACK_CANDELABRA = registerCandelabra("black_candelabra");
 
     public static final DeferredBlock<Block> WITCH_OVEN = registerBlock(
             "witch_oven",
             () -> new WitchOvenBlock(
-                    blockProperties("witch_oven", BlockBehaviour.Properties.of())
-                            .strength(3.5F)
-                            .sound(SoundType.STONE)
-                            .isRedstoneConductor((state, level, pos) -> false)
-                            .isSuffocating((state, level, pos) -> false)
-                            .isViewBlocking((state, level, pos) -> false)
-                            .dynamicShape()
-                            .noOcclusion()));
+                    decorativeProps("witch_oven", SoundType.STONE, 3.5F)));
 
     public static final DeferredBlock<Block> KETTLE = registerBlock(
             "kettle",
             () -> new KettleBlock(
-                    blockProperties("kettle", BlockBehaviour.Properties.of())
-                            .strength(2.0F)
-                            .sound(SoundType.METAL)
-                            .isRedstoneConductor((state, level, pos) -> false)
-                            .isSuffocating((state, level, pos) -> false)
-                            .isViewBlocking((state, level, pos) -> false)
-                            .dynamicShape()
-                            .noOcclusion()));
+                    decorativeProps("kettle", SoundType.METAL, 2.0F)));
 
     public static final DeferredBlock<Block> MAGIC_MIRROR = registerBlock(
             "magic_mirror",
             () -> new MagicMirrorBlock(
-                    blockProperties("magic_mirror", BlockBehaviour.Properties.of())
-                            .strength(2.0F)
-                            .sound(SoundType.GLASS)
-                            .isRedstoneConductor((state, level, pos) -> false)
-                            .isSuffocating((state, level, pos) -> false)
-                            .isViewBlocking((state, level, pos) -> false)
-                            .dynamicShape()
-                            .noOcclusion()));
+                    decorativeProps("magic_mirror", SoundType.GLASS, 2.0F)));
 
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
         DeferredBlock<T> toReturn = BLOCKS.register(name, block);
         registerBlockItem(name, toReturn);
         return toReturn;
+    }
+
+    private static <T extends Block> DeferredBlock<T> registerBlockWithoutItem(String name, Supplier<T> block) {
+        return BLOCKS.register(name, block);
+    }
+
+    private static DeferredBlock<Block> registerCandelabra(String name) {
+        return registerBlock(name, () -> new CandelabraBlock(
+                decorativeProps(name, SoundType.METAL, 2.0F)
+                        .lightLevel(state -> 15)
+        ));
     }
 
     private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {
@@ -336,6 +342,17 @@ public class ModBlocks {
     private static BlockBehaviour.Properties blockProperties(String name, BlockBehaviour.Properties properties) {
         ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(TheWitchsLegacy.MODID, name));
         return properties.setId(key);
+    }
+
+    private static BlockBehaviour.Properties decorativeProps(String name, SoundType sound, float strength) {
+        return blockProperties(name, BlockBehaviour.Properties.of())
+                .strength(strength)
+                .sound(sound)
+                .isRedstoneConductor((state, level, pos) -> false)
+                .isSuffocating((state, level, pos) -> false)
+                .isViewBlocking((state, level, pos) -> false)
+                .dynamicShape()
+                .noOcclusion();
     }
 
     public static void register(IEventBus eventBus) { BLOCKS.register(eventBus); }
