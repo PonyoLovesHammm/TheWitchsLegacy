@@ -1,16 +1,14 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key":{
-    "A": {
-      "item": "thewitchslegacy:willow_planks"
-    }
-  },
-  "pattern": [
-    "AAA"
-  ],
-  "result": {
-    "count": 6,
-    "id": "thewitchslegacy:willow_slab"
-  }
+    "type":  "minecraft:crafting_shaped",
+    "category":  "misc",
+    "key":  {
+                "A":  "thewitchslegacy:willow_planks"
+            },
+    "pattern":  [
+                    "AAA"
+                ],
+    "result":  {
+                   "count":  6,
+                   "id":  "thewitchslegacy:willow_slab"
+               }
 }

@@ -1,16 +1,14 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key":{
-    "A": {
-      "item": "thewitchslegacy:rowan_planks"
-    }
-  },
-  "pattern": [
-    "AAA"
-  ],
-  "result": {
-    "count": 6,
-    "id": "thewitchslegacy:rowan_slab"
-  }
+    "type":  "minecraft:crafting_shaped",
+    "category":  "misc",
+    "key":  {
+                "A":  "thewitchslegacy:rowan_planks"
+            },
+    "pattern":  [
+                    "AAA"
+                ],
+    "result":  {
+                   "count":  6,
+                   "id":  "thewitchslegacy:rowan_slab"
+               }
 }

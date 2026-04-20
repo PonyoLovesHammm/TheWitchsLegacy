@@ -1,13 +1,11 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "redstone",
-  "ingredients": [
-    {
-      "item": "thewitchslegacy:hawthorn_planks"
-    }
-  ],
-  "result": {
-    "count": 1,
-    "id": "thewitchslegacy:hawthorn_button"
-  }
+    "type":  "minecraft:crafting_shapeless",
+    "category":  "redstone",
+    "ingredients":  [
+                        "thewitchslegacy:hawthorn_planks"
+                    ],
+    "result":  {
+                   "count":  1,
+                   "id":  "thewitchslegacy:hawthorn_button"
+               }
 }

@@ -1,20 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key":{
-    "A": {
-      "item": "thewitchslegacy:willow_planks"
-    },
-    "B": {
-      "item": "minecraft:stick"
-    }
-  },
-  "pattern": [
-    "ABA",
-    "ABA"
-  ],
-  "result": {
-    "count": 3,
-    "id": "thewitchslegacy:willow_fence"
-  }
+    "type":  "minecraft:crafting_shaped",
+    "category":  "misc",
+    "key":  {
+                "A":  "thewitchslegacy:willow_planks",
+                "B":  "minecraft:stick"
+            },
+    "pattern":  [
+                    "ABA",
+                    "ABA"
+                ],
+    "result":  {
+                   "count":  3,
+                   "id":  "thewitchslegacy:willow_fence"
+               }
 }

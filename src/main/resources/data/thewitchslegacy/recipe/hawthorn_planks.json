@@ -1,13 +1,11 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "item": "thewitchslegacy:hawthorn_log"
-    }
-  ],
-  "result": {
-    "count": 4,
-    "id": "thewitchslegacy:hawthorn_planks"
-  }
+    "type":  "minecraft:crafting_shapeless",
+    "category":  "misc",
+    "ingredients":  [
+                        "thewitchslegacy:hawthorn_log"
+                    ],
+    "result":  {
+                   "count":  4,
+                   "id":  "thewitchslegacy:hawthorn_planks"
+               }
 }

@@ -1,16 +1,12 @@
 {
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [
-    {
-      "item": "minecraft:bone"
-    },
-    {
-      "item": "minecraft:flint"
-    }
-  ],
-  "result": {
-    "count": 8,
-    "id": "thewitchslegacy:bone_needle"
-  }
+    "type":  "minecraft:crafting_shapeless",
+    "category":  "misc",
+    "ingredients":  [
+                        "minecraft:bone",
+                        "minecraft:flint"
+                    ],
+    "result":  {
+                   "count":  8,
+                   "id":  "thewitchslegacy:bone_needle"
+               }
 }

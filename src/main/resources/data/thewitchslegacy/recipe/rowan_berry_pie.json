@@ -1,27 +1,19 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key":{
-    "A": {
-      "item": "thewitchslegacy:rowan_berries"
-    },
-    "B": {
-      "item": "minecraft:wheat"
-    },
-    "C": {
-      "item": "minecraft:sugar"
-    },
-    "D": {
-      "tag": "c:eggs"
-    }
-  },
-  "pattern": [
-    " A ",
-    "ACA",
-    "BDB"
-  ],
-  "result": {
-    "count": 1,
-    "id": "thewitchslegacy:rowan_berry_pie"
-  }
+    "type":  "minecraft:crafting_shaped",
+    "category":  "misc",
+    "key":  {
+                "A":  "thewitchslegacy:rowan_berries",
+                "B":  "minecraft:wheat",
+                "C":  "minecraft:sugar",
+                "D":  "#c:eggs"
+            },
+    "pattern":  [
+                    " A ",
+                    "ACA",
+                    "BDB"
+                ],
+    "result":  {
+                   "count":  1,
+                   "id":  "thewitchslegacy:rowan_berry_pie"
+               }
 }

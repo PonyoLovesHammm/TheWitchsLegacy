@@ -1,20 +1,16 @@
 {
-  "type": "minecraft:crafting_shaped",
-  "category": "misc",
-  "key":{
-    "A": {
-      "item": "thewitchslegacy:hawthorn_planks"
-    },
-    "B": {
-      "item": "minecraft:stick"
-    }
-  },
-  "pattern": [
-    "BAB",
-    "BAB"
-  ],
-  "result": {
-    "count": 1,
-    "id": "thewitchslegacy:hawthorn_fence_gate"
-  }
+    "type":  "minecraft:crafting_shaped",
+    "category":  "misc",
+    "key":  {
+                "A":  "thewitchslegacy:hawthorn_planks",
+                "B":  "minecraft:stick"
+            },
+    "pattern":  [
+                    "BAB",
+                    "BAB"
+                ],
+    "result":  {
+                   "count":  1,
+                   "id":  "thewitchslegacy:hawthorn_fence_gate"
+               }
 }

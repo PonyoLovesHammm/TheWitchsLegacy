@@ -58,17 +58,17 @@ public class MagicMirrorBlock extends HorizontalDirectionalBlock {
         BlockPos clickedPos = context.getClickedPos();
         Level level = context.getLevel();
 
-        // Try placing the clicked block as the lower half first, then fall back to using it as the upper half.
-        if (canPlacePair(level, clickedPos, clickedPos.above(), attachment)) {
-            return this.defaultBlockState()
-                    .setValue(FACING, attachment)
-                    .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER);
-        }
-
+        // Prefer using the clicked space as the upper half when there is room below it.
         if (canPlacePair(level, clickedPos.below(), clickedPos, attachment)) {
             return this.defaultBlockState()
                     .setValue(FACING, attachment)
                     .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER);
+        }
+
+        if (canPlacePair(level, clickedPos, clickedPos.above(), attachment)) {
+            return this.defaultBlockState()
+                    .setValue(FACING, attachment)
+                    .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER);
         }
 
         return null;
@@ -106,7 +106,10 @@ public class MagicMirrorBlock extends HorizontalDirectionalBlock {
             return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         }
 
-        if (direction.getAxis().isVertical() && !isMatchingOtherHalf(state, neighborState)) {
+        Direction otherHalfDirection = state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER
+                ? Direction.UP
+                : Direction.DOWN;
+        if (direction == otherHalfDirection && !isMatchingOtherHalf(state, neighborState)) {
             return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         }
 
@@ -119,7 +122,11 @@ public class MagicMirrorBlock extends HorizontalDirectionalBlock {
             BlockPos otherPos = getOtherHalfPos(pos, state);
             BlockState otherState = level.getBlockState(otherPos);
             if (otherState.is(this)) {
-                level.destroyBlock(otherPos, false);
+                if (!player.isCreative() && state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {
+                    level.destroyBlock(otherPos, true);
+                } else {
+                    level.destroyBlock(otherPos, false);
+                }
             }
         }
         return super.playerWillDestroy(level, pos, state, player);

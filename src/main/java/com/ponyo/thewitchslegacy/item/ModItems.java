@@ -4,9 +4,14 @@ import com.ponyo.thewitchslegacy.TheWitchsLegacy;
 import com.ponyo.thewitchslegacy.item.custom.Chalk;
 import com.ponyo.thewitchslegacy.item.custom.Mutandis;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.Consumables;
+import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -37,9 +42,21 @@ public class ModItems {
     public static final DeferredItem<Item> ROWAN_BERRY_PIE = registerItem("rowan_berry_pie",
             properties -> new Item(properties.food(ModFoodProperties.ROWAN_BERRY_PIE)));
     public static final DeferredItem<Item> ROWAN_BERRIES = registerItem("rowan_berries",
-            properties -> new Item(properties.food(ModFoodProperties.ROWAN_BERRIES)));
+            properties -> new Item(properties.food(ModFoodProperties.ROWAN_BERRIES)
+                    .component(
+                            DataComponents.CONSUMABLE,
+                            Consumables.defaultFood()
+                                    .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.POISON, 50, 1), 0.8F))
+                                    .build()
+                    )));
     public static final DeferredItem<Item> GARLIC = registerItem("garlic",
-            properties -> new Item(properties.food(ModFoodProperties.GARLIC)));
+            properties -> new Item(properties.food(ModFoodProperties.GARLIC)
+                    .component(
+                            DataComponents.CONSUMABLE,
+                            Consumables.defaultFood()
+                                    .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.NAUSEA, 200, 1), 1.0F))
+                                    .build()
+                    )));
 
     private static <T extends Item> DeferredItem<T> registerItem(String name, Function<Item.Properties, T> factory) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(TheWitchsLegacy.MODID, name));
