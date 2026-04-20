@@ -27,6 +27,17 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.BONE_NEEDLE);
                         output.accept(ModItems.WITCHS_CLAIM);
                         output.accept(ModItems.WITCHS_CLAIM_FILLED);
+                        //Plant Items
+                        output.accept(ModItems.BELLADONA);
+                        output.accept(ModItems.BELLADONA_SEEDS);
+                        output.accept(ModItems.SNOWBELL_SEEDS);
+                        output.accept(ModItems.ICY_NEEDLE);
+                        output.accept(ModItems.MANDRAKE_SEEDS);
+                        output.accept(ModItems.MANDRAKE_ROOT);
+                        output.accept(ModItems.WATER_ARTICHOKE);
+                        output.accept(ModItems.WATER_ARTICHOKE_SEEDS);
+                        output.accept(ModItems.GARLIC);
+                        output.accept(ModBlocks.SPANISH_MOSS);
                         //Special Items
                         output.accept(ModItems.WHITE_CHALK);
                         output.accept(ModItems.GOLDEN_CHALK);
@@ -36,7 +47,6 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.MUTANDIS_EXTREMIS);
                         //Food Items
                         output.accept(ModItems.ROWAN_BERRY_PIE);
-                        output.accept(ModItems.GARLIC);
                         output.accept(ModItems.ROWAN_BERRIES);
                         //General Blocks
                         output.accept(ModBlocks.ROWAN_LOG);
@@ -49,6 +59,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.ROWAN_FENCE_GATE);
                         output.accept(ModBlocks.ROWAN_DOOR);
                         output.accept(ModBlocks.ROWAN_TRAPDOOR);
+                        output.accept(ModBlocks.ROWAN_SAPLING);
                         output.accept(ModBlocks.HAWTHORN_LOG);
                         output.accept(ModBlocks.HAWTHORN_PLANKS);
                         output.accept(ModBlocks.HAWTHORN_STAIRS);
@@ -59,6 +70,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.HAWTHORN_FENCE_GATE);
                         output.accept(ModBlocks.HAWTHORN_DOOR);
                         output.accept(ModBlocks.HAWTHORN_TRAPDOOR);
+                        output.accept(ModBlocks.HAWTHORN_SAPLING);
                         output.accept(ModBlocks.WILLOW_LOG);
                         output.accept(ModBlocks.WILLOW_PLANKS);
                         output.accept(ModBlocks.WILLOW_STAIRS);
@@ -69,10 +81,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.WILLOW_FENCE_GATE);
                         output.accept(ModBlocks.WILLOW_DOOR);
                         output.accept(ModBlocks.WILLOW_TRAPDOOR);
+                        output.accept(ModBlocks.WILLOW_SAPLING);
                         //Special Blocks
-                        output.accept(ModBlocks.SPANISH_MOSS);
-                        output.accept(ModBlocks.WITCH_CAULDRON);
-                        output.accept(ModBlocks.ALTAR);
                         output.accept(ModBlocks.CANDELABRA);
                         output.accept(ModBlocks.WHITE_CANDELABRA);
                         output.accept(ModBlocks.LIGHT_GRAY_CANDELABRA);
@@ -90,10 +100,12 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.PURPLE_CANDELABRA);
                         output.accept(ModBlocks.MAGENTA_CANDELABRA);
                         output.accept(ModBlocks.PINK_CANDELABRA);
+                        output.accept(ModBlocks.WITCH_CAULDRON);
                         output.accept(ModBlocks.WITCH_OVEN);
                         output.accept(ModBlocks.DISTILLERY);
                         output.accept(ModBlocks.KETTLE);
                         output.accept(ModBlocks.MAGIC_MIRROR);
+                        output.accept(ModBlocks.ALTAR);
                     }).build());
 
     public static void register(IEventBus eventBus) {

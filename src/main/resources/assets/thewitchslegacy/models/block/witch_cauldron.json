@@ -39,8 +39,8 @@
 		}
 	},
 	"textures": {
-		"texture": "thewitchslegacy:block/witch_cauldron",
-		"particle": "thewitchslegacy:block/witch_cauldron"
+        "texture": "thewitchslegacy:block/general/witch_cauldron",
+        "particle": "thewitchslegacy:block/general/witch_cauldron"
 	},
 	"elements": [
 		{

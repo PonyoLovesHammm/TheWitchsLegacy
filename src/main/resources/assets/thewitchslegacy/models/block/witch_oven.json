@@ -1,8 +1,8 @@
 {
 	"ambientocclusion": false,
 	"textures": {
-		"texture": "thewitchslegacy:block/witch_oven",
-		"particle": "thewitchslegacy:block/witch_oven"
+		"texture": "thewitchslegacy:block/general/witch_oven",
+		"particle": "thewitchslegacy:block/general/witch_oven"
 	},
 	"elements": [
 		{

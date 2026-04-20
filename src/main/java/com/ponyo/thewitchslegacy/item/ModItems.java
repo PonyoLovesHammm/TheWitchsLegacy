@@ -1,7 +1,9 @@
 package com.ponyo.thewitchslegacy.item;
 
 import com.ponyo.thewitchslegacy.TheWitchsLegacy;
+import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.item.custom.Chalk;
+import com.ponyo.thewitchslegacy.item.custom.CropSeeds;
 import com.ponyo.thewitchslegacy.item.custom.Mutandis;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
@@ -9,6 +11,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
@@ -30,6 +33,20 @@ public class ModItems {
     public static final DeferredItem<Item> WITCHS_CLAIM = registerItem("witchs_claim", Item::new);
     public static final DeferredItem<Item> WITCHS_CLAIM_FILLED = registerItem("witchs_claim_filled", Item::new);
 
+    //Plant Items!
+    public static final DeferredItem<Item> BELLADONA = registerItem("belladona", Item::new);
+    public static final DeferredItem<Item> BELLADONA_SEEDS = registerItem("belladona_seeds",
+            properties -> new CropSeeds(ModBlocks.BELLADONA_CROP::get, properties));
+    public static final DeferredItem<Item> SNOWBELL_SEEDS = registerItem("snowbell_seeds",
+            properties -> new CropSeeds(ModBlocks.SNOWBELL_CROP::get, properties));
+    public static final DeferredItem<Item> ICY_NEEDLE = registerItem("icy_needle", Item::new);
+    public static final DeferredItem<Item> MANDRAKE_SEEDS = registerItem("mandrake_seeds",
+            properties -> new CropSeeds(ModBlocks.MANDRAKE_CROP::get, properties));
+    public static final DeferredItem<Item> MANDRAKE_ROOT = registerItem("mandrake_root", Item::new);
+    public static final DeferredItem<Item> WATER_ARTICHOKE = registerItem("water_artichoke", Item::new);
+    public static final DeferredItem<Item> WATER_ARTICHOKE_SEEDS = registerItem("water_artichoke_seeds",
+            properties -> new CropSeeds(ModBlocks.WATER_ARTICHOKE_CROP::get, properties, true));
+
     //Special Items
     public static final DeferredItem<Item> WHITE_CHALK = registerItem("white_chalk", Chalk::new);
     public static final DeferredItem<Item> GOLDEN_CHALK = registerItem("golden_chalk", Chalk::new);
@@ -50,13 +67,14 @@ public class ModItems {
                                     .build()
                     )));
     public static final DeferredItem<Item> GARLIC = registerItem("garlic",
-            properties -> new Item(properties.food(ModFoodProperties.GARLIC)
+            properties -> new BlockItem(ModBlocks.GARLIC_CROP.get(), properties.food(ModFoodProperties.GARLIC)
                     .component(
                             DataComponents.CONSUMABLE,
                             Consumables.defaultFood()
                                     .onConsume(new ApplyStatusEffectsConsumeEffect(new MobEffectInstance(MobEffects.NAUSEA, 200, 1), 1.0F))
                                     .build()
-                    )));
+                    )
+                    .useItemDescriptionPrefix()));
 
     private static <T extends Item> DeferredItem<T> registerItem(String name, Function<Item.Properties, T> factory) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(TheWitchsLegacy.MODID, name));

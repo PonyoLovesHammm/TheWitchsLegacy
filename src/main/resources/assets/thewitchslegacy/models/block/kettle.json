@@ -1,7 +1,7 @@
 {
 				"textures": {
-		"texture": "thewitchslegacy:block/kettle",
-		"particle": "thewitchslegacy:block/kettle"
+		"texture": "thewitchslegacy:block/general/kettle",
+		"particle": "thewitchslegacy:block/general/kettle"
 	},
 	"elements": [
 		{

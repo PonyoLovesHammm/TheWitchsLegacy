@@ -2,24 +2,40 @@ package com.ponyo.thewitchslegacy.block;
 
 import com.ponyo.thewitchslegacy.TheWitchsLegacy;
 import com.ponyo.thewitchslegacy.block.custom.Glyph;
-import com.ponyo.thewitchslegacy.block.custom.AltarBlock;
-import com.ponyo.thewitchslegacy.block.custom.CandelabraBlock;
-import com.ponyo.thewitchslegacy.block.custom.DistilleryBlock;
-import com.ponyo.thewitchslegacy.block.custom.KettleBlock;
-import com.ponyo.thewitchslegacy.block.custom.MagicMirrorBlock;
+import com.ponyo.thewitchslegacy.block.custom.Altar;
+import com.ponyo.thewitchslegacy.block.custom.Candelabra;
+import com.ponyo.thewitchslegacy.block.custom.Distillery;
+import com.ponyo.thewitchslegacy.block.custom.Kettle;
+import com.ponyo.thewitchslegacy.block.custom.MagicMirror;
+import com.ponyo.thewitchslegacy.block.custom.WitchCrop;
 import com.ponyo.thewitchslegacy.block.custom.SpanishMoss;
-import com.ponyo.thewitchslegacy.block.custom.WitchCauldronBlock;
-import com.ponyo.thewitchslegacy.block.custom.WitchOvenBlock;
+import com.ponyo.thewitchslegacy.block.custom.WitchCauldron;
+import com.ponyo.thewitchslegacy.block.custom.WitchOven;
 import com.ponyo.thewitchslegacy.item.ModItems;
+import com.ponyo.thewitchslegacy.sound.ModSounds;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.pig.Pig;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -102,6 +118,11 @@ public class ModBlocks {
                             .sound(SoundType.WOOD)
                             .noOcclusion()));
 
+    public static final DeferredBlock<SaplingBlock> ROWAN_SAPLING = registerBlock(
+            "rowan_sapling",
+            () -> new SaplingBlock(TreeGrower.OAK,
+                    blockProperties("rowan_sapling", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING))));
+
     public static final DeferredBlock<Block> HAWTHORN_LOG = registerBlock(
             "hawthorn_log",
             () -> new RotatedPillarBlock(
@@ -173,6 +194,11 @@ public class ModBlocks {
                             .strength(2.0F)
                             .sound(SoundType.WOOD)
                             .noOcclusion()));
+
+    public static final DeferredBlock<SaplingBlock> HAWTHORN_SAPLING = registerBlock(
+            "hawthorn_sapling",
+            () -> new SaplingBlock(TreeGrower.OAK,
+                    blockProperties("hawthorn_sapling", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING))));
 
     public static final DeferredBlock<Block> WILLOW_LOG = registerBlock(
             "willow_log",
@@ -246,12 +272,56 @@ public class ModBlocks {
                             .sound(SoundType.WOOD)
                             .noOcclusion()));
 
-    //Special Blocks!
+    public static final DeferredBlock<SaplingBlock> WILLOW_SAPLING = registerBlock(
+            "willow_sapling",
+            () -> new SaplingBlock(TreeGrower.OAK,
+                    blockProperties("willow_sapling", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING))));
+
+    //Plant Blocks!
     public static final DeferredBlock<Block> SPANISH_MOSS = registerBlock(
             "spanish_moss",
             () -> new SpanishMoss(
                     blockProperties("spanish_moss", BlockBehaviour.Properties.ofFullCopy(Blocks.VINE))));
 
+    public static final DeferredBlock<Block> BELLADONA_CROP = registerBlockWithoutItem(
+            "belladona_crop",
+            () -> new WitchCrop(
+                    blockProperties("belladona_crop", BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)),
+                    ModItems.BELLADONA_SEEDS::get,
+                    WitchCrop.createShapes(2.0D, 6.0D, 10.0D, 14.0D)));
+
+    public static final DeferredBlock<Block> SNOWBELL_CROP = registerBlockWithoutItem(
+            "snowbell_crop",
+            () -> new WitchCrop(
+                    blockProperties("snowbell_crop", BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)),
+                    ModItems.SNOWBELL_SEEDS::get,
+                    WitchCrop.createShapes(2.0D, 5.0D, 8.0D, 11.0D, 14.0D)));
+
+    public static final DeferredBlock<Block> MANDRAKE_CROP = registerBlockWithoutItem(
+            "mandrake_crop",
+            () -> new WitchCrop(
+                    blockProperties("mandrake_crop", BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)),
+                    ModItems.MANDRAKE_SEEDS::get,
+                    WitchCrop.createShapes(2.0D, 5.0D, 8.0D, 11.0D, 14.0D),
+                    WitchCrop.SupportType.FARMLAND,
+                    ModBlocks::handleMandrakeMatureBreak));
+
+    public static final DeferredBlock<Block> WATER_ARTICHOKE_CROP = registerBlockWithoutItem(
+            "water_artichoke_crop",
+            () -> new WitchCrop(
+                    blockProperties("water_artichoke_crop", BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)),
+                    ModItems.WATER_ARTICHOKE_SEEDS::get,
+                    WitchCrop.createShapes(2.0D, 6.0D, 10.0D, 14.0D),
+                    WitchCrop.SupportType.WATER_SOURCE));
+
+    public static final DeferredBlock<Block> GARLIC_CROP = registerBlockWithoutItem(
+            "garlic_crop",
+            () -> new WitchCrop(
+                    blockProperties("garlic_crop", BlockBehaviour.Properties.ofFullCopy(Blocks.CARROTS)),
+                    ModItems.GARLIC::get,
+                    WitchCrop.createShapes(2.0D, 5.0D, 8.0D, 11.0D, 14.0D)));
+
+    //Special Blocks!
     public static final DeferredBlock<Block> GOLDEN_GLYPH = registerBlockWithoutItem(
             "golden_glyph",
             () -> new Glyph(
@@ -276,19 +346,9 @@ public class ModBlocks {
                     blockProperties("otherwhere_glyph", BlockBehaviour.Properties.of())
                             .strength(.1F)));
 
-    public static final DeferredBlock<Block> WITCH_CAULDRON = registerBlock(
-            "witch_cauldron",
-            () -> new WitchCauldronBlock(
-                    decorativeProps("witch_cauldron", SoundType.METAL, 2.5F)));
-
-    public static final DeferredBlock<Block> ALTAR = registerBlock(
-            "altar",
-            () -> new AltarBlock(
-                    decorativeProps("altar", SoundType.STONE, 3.0F)));
-
     public static final DeferredBlock<Block> CANDELABRA = registerBlock(
             "candelabra",
-            () -> new CandelabraBlock(
+            () -> new Candelabra(
                     decorativeProps("candelabra", SoundType.METAL, 2.0F)
                             .lightLevel(state -> 15)));
     public static final DeferredBlock<Block> WHITE_CANDELABRA = registerCandelabra("white_candelabra");
@@ -310,23 +370,33 @@ public class ModBlocks {
 
     public static final DeferredBlock<Block> WITCH_OVEN = registerBlock(
             "witch_oven",
-            () -> new WitchOvenBlock(
+            () -> new WitchOven(
                     decorativeProps("witch_oven", SoundType.STONE, 3.5F)));
+
+    public static final DeferredBlock<Block> WITCH_CAULDRON = registerBlock(
+            "witch_cauldron",
+            () -> new WitchCauldron(
+                    decorativeProps("witch_cauldron", SoundType.METAL, 2.5F)));
 
     public static final DeferredBlock<Block> DISTILLERY = registerBlock(
             "distillery",
-            () -> new DistilleryBlock(
+            () -> new Distillery(
                     decorativeProps("distillery", SoundType.METAL, 3.0F)));
 
     public static final DeferredBlock<Block> KETTLE = registerBlock(
             "kettle",
-            () -> new KettleBlock(
+            () -> new Kettle(
                     decorativeProps("kettle", SoundType.METAL, 2.0F)));
 
     public static final DeferredBlock<Block> MAGIC_MIRROR = registerBlock(
             "magic_mirror",
-            () -> new MagicMirrorBlock(
+            () -> new MagicMirror(
                     decorativeProps("magic_mirror", SoundType.GLASS, 2.0F)));
+
+    public static final DeferredBlock<Block> ALTAR = registerBlock(
+            "altar",
+            () -> new Altar(
+                    decorativeProps("altar", SoundType.STONE, 3.0F)));
 
 
     private static <T extends Block> DeferredBlock<T> registerBlock(String name, Supplier<T> block) {
@@ -340,7 +410,7 @@ public class ModBlocks {
     }
 
     private static DeferredBlock<Block> registerCandelabra(String name) {
-        return registerBlock(name, () -> new CandelabraBlock(
+        return registerBlock(name, () -> new Candelabra(
                 decorativeProps(name, SoundType.METAL, 2.0F)
                         .lightLevel(state -> 15)
         ));
@@ -349,6 +419,30 @@ public class ModBlocks {
     private static <T extends Block> void registerBlockItem(String name, DeferredBlock<T> block) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(TheWitchsLegacy.MODID, name));
         ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().setId(key)));
+    }
+
+    private static boolean handleMandrakeMatureBreak(Level level, Player player, BlockPos pos, BlockState state,
+                                                     BlockEntity blockEntity, ItemStack tool, WitchCrop cropBlock) {
+        long timeOfDay = level.getDayTime() % 24000L;
+        boolean isDaytime = timeOfDay >= 0L && timeOfDay < 12000L;
+
+        if (level.isClientSide() || !isDaytime) {
+            return false;
+        }
+
+        player.awardStat(Stats.BLOCK_MINED.get(cropBlock));
+        player.causeFoodExhaustion(0.005F);
+
+        Pig pig = EntityType.PIG.create(level, EntitySpawnReason.TRIGGERED);
+        if (pig != null) {
+            Vec3 spawnPos = Vec3.atBottomCenterOf(pos);
+            pig.snapTo(spawnPos.x(), spawnPos.y(), spawnPos.z(), level.random.nextFloat() * 360.0F, 0.0F);
+            level.addFreshEntity(pig);
+        }
+
+        player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 140, 0));
+        level.playSound(null, pos, ModSounds.MANDRAKE_SCREAM_ON_PLANT_BREAK.get(), net.minecraft.sounds.SoundSource.BLOCKS, 1.5F, 1.0F);
+        return true;
     }
 
     private static BlockBehaviour.Properties blockProperties(String name, BlockBehaviour.Properties properties) {

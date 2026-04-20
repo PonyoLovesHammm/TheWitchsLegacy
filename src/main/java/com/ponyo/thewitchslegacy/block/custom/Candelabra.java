@@ -16,8 +16,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class CandelabraBlock extends Block {
-    public static final MapCodec<CandelabraBlock> CODEC = simpleCodec(CandelabraBlock::new);
+public class Candelabra extends Block {
+    public static final MapCodec<Candelabra> CODEC = simpleCodec(Candelabra::new);
     private static final double[][] FLAME_OFFSETS = {
             {0.5, 1.075, 0.5},
             {0.5, 0.95, 0.1875},
@@ -47,12 +47,12 @@ public class CandelabraBlock extends Block {
             Block.box(7.0, 1.0, 7.0, 9.0, 15.0, 9.0)
     );
 
-    public CandelabraBlock(BlockBehaviour.Properties properties) {
+    public Candelabra(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
     @Override
-    public MapCodec<CandelabraBlock> codec() {
+    public MapCodec<Candelabra> codec() {
         return CODEC;
     }
 

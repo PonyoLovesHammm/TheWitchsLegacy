@@ -1,8 +1,8 @@
 {
 	"ambientocclusion": false,
 	"textures": {
-		"texture": "thewitchslegacy:block/distillery",
-		"particle": "thewitchslegacy:block/distillery"
+		"texture": "thewitchslegacy:block/general/distillery",
+		"particle": "thewitchslegacy:block/general/distillery"
 	},
 	"elements": [
 		{

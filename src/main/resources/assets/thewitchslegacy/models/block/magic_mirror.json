@@ -1,7 +1,7 @@
 {
 				"textures": {
-		"texture": "thewitchslegacy:block/magic_mirror",
-		"particle": "thewitchslegacy:block/magic_mirror"
+		"texture": "thewitchslegacy:block/general/magic_mirror",
+		"particle": "thewitchslegacy:block/general/magic_mirror"
 	},
 	"elements": [
 		{

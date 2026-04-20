@@ -1,8 +1,8 @@
 {
   "parent": "block/block",
   "textures": {
-    "texture": "thewitchslegacy:block/spanish_moss",
-    "particle": "thewitchslegacy:block/spanish_moss"
+    "texture": "thewitchslegacy:block/general/spanish_moss",
+    "particle": "thewitchslegacy:block/general/spanish_moss"
   },
   "elements": [
     {
@@ -15,7 +15,7 @@
         },
         "south": {
           "uv": [0,0,16,16],
-          "texture": "texture"
+          "texture": "#texture"
         }
       }
     }

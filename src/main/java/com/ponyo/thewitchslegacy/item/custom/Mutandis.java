@@ -1,6 +1,7 @@
 package com.ponyo.thewitchslegacy.item.custom;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
+import com.ponyo.thewitchslegacy.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -41,13 +42,13 @@ public class Mutandis extends Item {
             //There are 30 normal minecraft block... to not skew the possibility of getting Witch's Legacy block, should increase weight
             /*
             The XXXX's are there to remember to switch it to whatever location the block get stored in
-            new WeightedPlantMutation(XXXXXXXXXX.ROWAN_SAPLING.get(), 1),
-            new WeightedPlantMutation(XXXXXXXXXX.ALDER_SAPLING.get(), 1),
-            new WeightedPlantMutation(XXXXXXXXXX.HAWTHORN_SAPLING.get(), 1),
             new WeightedPlantMutation(XXXXXXXXXX.GLINT_WEED.get(), 1),
             new WeightedPlantMutation(XXXXXXXXXX.EMBER_MOSS.get(), 1),
             */
             new WeightedPlantMutation(ModBlocks.SPANISH_MOSS::get, 5),
+            new WeightedPlantMutation(ModBlocks.ROWAN_SAPLING::get, 5),
+            new WeightedPlantMutation(ModBlocks.HAWTHORN_SAPLING::get, 5),
+            new WeightedPlantMutation(ModBlocks.WILLOW_SAPLING::get, 5),
             new WeightedPlantMutation(() -> Blocks.SHORT_GRASS, 1),
             new WeightedPlantMutation(() -> Blocks.LILY_PAD, 1),
             new WeightedPlantMutation(() -> Blocks.VINE, 1),

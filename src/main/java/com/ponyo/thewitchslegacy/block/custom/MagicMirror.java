@@ -12,39 +12,43 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Map;
 
-public class MagicMirrorBlock extends HorizontalDirectionalBlock {
-    public static final MapCodec<MagicMirrorBlock> CODEC = simpleCodec(MagicMirrorBlock::new);
+public class MagicMirror extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock {
+    public static final MapCodec<MagicMirror> CODEC = simpleCodec(MagicMirror::new);
 
     // Box args are (minX, minY, minZ, maxX, maxY, maxZ) in 1/16th-block units.
     // This mirror model is authored flush against a south wall, so the base shape starts south-facing.
     private static final VoxelShape SOUTH_SHAPE = Block.box(0.0, 0.0, 14.0, 16.0, 16.0, 16.0);
     private static final Map<Direction, VoxelShape> SHAPES = VoxelShapeUtils.horizontalFromSouth(SOUTH_SHAPE);
 
-    public MagicMirrorBlock(BlockBehaviour.Properties properties) {
+    public MagicMirror(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.SOUTH)
-                .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER));
+                .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER)
+                .setValue(BlockStateProperties.WATERLOGGED, false));
     }
 
     @Override
-    public MapCodec<MagicMirrorBlock> codec() {
+    public MapCodec<MagicMirror> codec() {
         return CODEC;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, BlockStateProperties.DOUBLE_BLOCK_HALF);
+        builder.add(FACING, BlockStateProperties.DOUBLE_BLOCK_HALF, BlockStateProperties.WATERLOGGED);
     }
 
     @Override
@@ -62,13 +66,15 @@ public class MagicMirrorBlock extends HorizontalDirectionalBlock {
         if (canPlacePair(level, clickedPos.below(), clickedPos, attachment)) {
             return this.defaultBlockState()
                     .setValue(FACING, attachment)
-                    .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER);
+                    .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.UPPER)
+                    .setValue(BlockStateProperties.WATERLOGGED, level.getFluidState(clickedPos).getType() == Fluids.WATER);
         }
 
         if (canPlacePair(level, clickedPos, clickedPos.above(), attachment)) {
             return this.defaultBlockState()
                     .setValue(FACING, attachment)
-                    .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER);
+                    .setValue(BlockStateProperties.DOUBLE_BLOCK_HALF, DoubleBlockHalf.LOWER)
+                    .setValue(BlockStateProperties.WATERLOGGED, level.getFluidState(clickedPos).getType() == Fluids.WATER);
         }
 
         return null;
@@ -80,7 +86,7 @@ public class MagicMirrorBlock extends HorizontalDirectionalBlock {
         BlockState otherState = state.setValue(
                 BlockStateProperties.DOUBLE_BLOCK_HALF,
                 state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER ? DoubleBlockHalf.UPPER : DoubleBlockHalf.LOWER
-        );
+        ).setValue(BlockStateProperties.WATERLOGGED, level.getFluidState(otherPos).getType() == Fluids.WATER);
         level.setBlock(otherPos, otherState, 3);
     }
 
@@ -102,6 +108,10 @@ public class MagicMirrorBlock extends HorizontalDirectionalBlock {
             BlockState neighborState,
             net.minecraft.util.RandomSource random
     ) {
+        if (state.getValue(BlockStateProperties.WATERLOGGED)) {
+            scheduledTickAccess.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+        }
+
         if (!state.canSurvive(level, pos)) {
             return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
         }
@@ -114,6 +124,11 @@ public class MagicMirrorBlock extends HorizontalDirectionalBlock {
         }
 
         return super.updateShape(state, level, scheduledTickAccess, pos, direction, neighborPos, neighborState, random);
+    }
+
+    @Override
+    protected FluidState getFluidState(BlockState state) {
+        return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override

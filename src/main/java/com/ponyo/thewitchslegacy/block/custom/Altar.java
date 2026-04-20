@@ -10,23 +10,27 @@ import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class AltarBlock extends Block {
-    public static final MapCodec<AltarBlock> CODEC = simpleCodec(AltarBlock::new);
+public class Altar extends Block implements SimpleWaterloggedBlock {
+    public static final MapCodec<Altar> CODEC = simpleCodec(Altar::new);
 
     public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
     public static final BooleanProperty EAST = BlockStateProperties.EAST;
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
     public static final BooleanProperty WEST = BlockStateProperties.WEST;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
     // Box args are (minX, minY, minZ, maxX, maxY, maxZ) in 1/16th-block units.
     private static final VoxelShape BASE_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 3.0, 16.0);
@@ -37,28 +41,31 @@ public class AltarBlock extends Block {
     private static final VoxelShape SOUTH_ARM = Block.box(3.0, 3.0, 13.0, 13.0, 7.0, 16.0);
     private static final VoxelShape WEST_ARM = Block.box(0.0, 3.0, 3.0, 3.0, 7.0, 13.0);
 
-    public AltarBlock(BlockBehaviour.Properties properties) {
+    public Altar(BlockBehaviour.Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(NORTH, false)
                 .setValue(EAST, false)
                 .setValue(SOUTH, false)
-                .setValue(WEST, false));
+                .setValue(WEST, false)
+                .setValue(WATERLOGGED, false));
     }
 
     @Override
-    public MapCodec<AltarBlock> codec() {
+    public MapCodec<Altar> codec() {
         return CODEC;
     }
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(NORTH, EAST, SOUTH, WEST);
+        builder.add(NORTH, EAST, SOUTH, WEST, WATERLOGGED);
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        return updateConnections(context.getLevel(), context.getClickedPos(), this.defaultBlockState());
+        FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
+        return updateConnections(context.getLevel(), context.getClickedPos(), this.defaultBlockState()
+                .setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER));
     }
 
     @Override
@@ -72,9 +79,18 @@ public class AltarBlock extends Block {
             BlockState facingState,
             RandomSource random
     ) {
+        if (state.getValue(WATERLOGGED)) {
+            scheduledTickAccess.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+        }
+
         return facing.getAxis().isHorizontal()
                 ? updateConnections(level, currentPos, state)
                 : super.updateShape(state, level, scheduledTickAccess, currentPos, facing, facingPos, facingState, random);
+    }
+
+    @Override
+    protected FluidState getFluidState(BlockState state) {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
@@ -125,7 +141,7 @@ public class AltarBlock extends Block {
     }
 
     private static boolean connectsTo(BlockState state) {
-        return state.getBlock() instanceof AltarBlock;
+        return state.getBlock() instanceof Altar;
     }
 
     private static VoxelShape buildShape(BlockState state) {

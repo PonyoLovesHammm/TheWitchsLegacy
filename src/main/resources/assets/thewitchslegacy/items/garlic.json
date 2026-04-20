@@ -1,1 +1,6 @@
-{ "model": { "type": "minecraft:model", "model": "thewitchslegacy:item/garlic" } }
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "thewitchslegacy:item/garlic"
+  }
+}
