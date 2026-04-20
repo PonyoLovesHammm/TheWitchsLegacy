@@ -90,6 +90,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.MAGENTA_CANDELABRA);
                         output.accept(ModBlocks.PINK_CANDELABRA);
                         output.accept(ModBlocks.WITCH_OVEN);
+                        output.accept(ModBlocks.DISTILLERY);
                         output.accept(ModBlocks.KETTLE);
                         output.accept(ModBlocks.MAGIC_MIRROR);
                     }).build());

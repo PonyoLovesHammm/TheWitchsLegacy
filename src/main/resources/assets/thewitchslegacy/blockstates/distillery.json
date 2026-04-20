@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "thewitchslegacy:block/distillery",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "thewitchslegacy:block/distillery"
+    },
+    "facing=west": {
+      "model": "thewitchslegacy:block/distillery",
+      "y": 90
+    },
+    "facing=east": {
+      "model": "thewitchslegacy:block/distillery",
+      "y": 270
+    }
+  }
+}
