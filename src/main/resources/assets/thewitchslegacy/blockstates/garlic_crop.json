@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "age=0": {
+      "model": "thewitchslegacy:block/garlic_stage_0"
+    },
+    "age=1": {
+      "model": "thewitchslegacy:block/garlic_stage_1"
+    },
+    "age=2": {
+      "model": "thewitchslegacy:block/garlic_stage_2"
+    },
+    "age=3": {
+      "model": "thewitchslegacy:block/garlic_stage_3"
+    },
+    "age=4": {
+      "model": "thewitchslegacy:block/garlic_stage_4"
+    }
+  }
+}

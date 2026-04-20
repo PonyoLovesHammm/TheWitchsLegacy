@@ -1,0 +1,90 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:inverted",
+          "term": {
+            "condition": "minecraft:block_state_property",
+            "block": "thewitchslegacy:garlic_crop",
+            "properties": {
+              "age": "4"
+            }
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "thewitchslegacy:garlic"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "thewitchslegacy:garlic_crop",
+          "properties": {
+            "age": "4"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "thewitchslegacy:garlic",
+              "conditions": [
+                {
+                  "condition": "minecraft:random_chance",
+                  "chance": 0.2
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 4.0
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "thewitchslegacy:garlic",
+              "conditions": [
+                {
+                  "condition": "minecraft:random_chance",
+                  "chance": 0.625
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 3.0
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "thewitchslegacy:garlic",
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 2.0
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "thewitchslegacy:garlic_crop"
+}

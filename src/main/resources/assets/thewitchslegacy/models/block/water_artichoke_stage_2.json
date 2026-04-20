@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/crop",
+  "render_type": "cutout",
+  "textures": {
+    "crop": "thewitchslegacy:block/plants/water_artichoke_stage_2"
+  }
+}

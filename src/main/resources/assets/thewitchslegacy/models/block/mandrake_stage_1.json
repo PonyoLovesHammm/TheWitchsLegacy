@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/crop",
+  "render_type": "cutout",
+  "textures": {
+    "crop": "thewitchslegacy:block/plants/mandrake_stage_1"
+  }
+}
