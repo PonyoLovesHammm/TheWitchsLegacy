@@ -2,6 +2,7 @@ package com.ponyo.thewitchslegacy.block;
 
 import com.ponyo.thewitchslegacy.TheWitchsLegacy;
 import com.ponyo.thewitchslegacy.block.custom.Glyph;
+import com.ponyo.thewitchslegacy.block.custom.AltarBlock;
 import com.ponyo.thewitchslegacy.block.custom.CandelabraBlock;
 import com.ponyo.thewitchslegacy.block.custom.DistilleryBlock;
 import com.ponyo.thewitchslegacy.block.custom.KettleBlock;
@@ -279,6 +280,11 @@ public class ModBlocks {
             "witch_cauldron",
             () -> new WitchCauldronBlock(
                     decorativeProps("witch_cauldron", SoundType.METAL, 2.5F)));
+
+    public static final DeferredBlock<Block> ALTAR = registerBlock(
+            "altar",
+            () -> new AltarBlock(
+                    decorativeProps("altar", SoundType.STONE, 3.0F)));
 
     public static final DeferredBlock<Block> CANDELABRA = registerBlock(
             "candelabra",

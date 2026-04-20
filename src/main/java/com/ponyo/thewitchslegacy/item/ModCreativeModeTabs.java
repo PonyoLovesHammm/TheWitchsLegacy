@@ -72,6 +72,7 @@ public class ModCreativeModeTabs {
                         //Special Blocks
                         output.accept(ModBlocks.SPANISH_MOSS);
                         output.accept(ModBlocks.WITCH_CAULDRON);
+                        output.accept(ModBlocks.ALTAR);
                         output.accept(ModBlocks.CANDELABRA);
                         output.accept(ModBlocks.WHITE_CANDELABRA);
                         output.accept(ModBlocks.LIGHT_GRAY_CANDELABRA);
