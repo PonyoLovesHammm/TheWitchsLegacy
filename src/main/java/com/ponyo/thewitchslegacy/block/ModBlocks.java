@@ -15,6 +15,8 @@ import com.ponyo.thewitchslegacy.block.custom.WitchCauldron;
 import com.ponyo.thewitchslegacy.block.custom.WitchOven;
 import com.ponyo.thewitchslegacy.entity.MandrakeEntity;
 import com.ponyo.thewitchslegacy.item.ModItems;
+import com.ponyo.thewitchslegacy.sound.ModSounds;
+import com.ponyo.thewitchslegacy.worldgen.tree.ModTreeGrowers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
@@ -116,8 +118,13 @@ public class ModBlocks {
 
     public static final DeferredBlock<SaplingBlock> ROWAN_SAPLING = registerBlock(
             "rowan_sapling",
-            () -> new SaplingBlock(TreeGrower.OAK,
+            () -> new SaplingBlock(ModTreeGrowers.ROWAN,
                     blockProperties("rowan_sapling", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING))));
+
+    public static final DeferredBlock<TintedParticleLeavesBlock> ROWAN_LEAVES = registerBlock(
+            "rowan_leaves",
+            () -> new TintedParticleLeavesBlock(0.01F,
+                    blockProperties("rowan_leaves", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES))));
 
     public static final DeferredBlock<Block> HAWTHORN_LOG = registerBlock(
             "hawthorn_log",

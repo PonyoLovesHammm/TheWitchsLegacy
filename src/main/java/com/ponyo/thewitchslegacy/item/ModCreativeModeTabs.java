@@ -62,6 +62,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.ROWAN_DOOR);
                         output.accept(ModBlocks.ROWAN_TRAPDOOR);
                         output.accept(ModBlocks.ROWAN_SAPLING);
+                        output.accept(ModBlocks.ROWAN_LEAVES);
                         output.accept(ModBlocks.HAWTHORN_LOG);
                         output.accept(ModBlocks.HAWTHORN_PLANKS);
                         output.accept(ModBlocks.HAWTHORN_STAIRS);

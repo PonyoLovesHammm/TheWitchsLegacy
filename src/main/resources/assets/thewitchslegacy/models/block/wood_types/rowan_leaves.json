@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/leaves",
+  "textures": {
+    "all": "thewitchslegacy:block/wood_types/rowan_leaves"
+  }
+}
