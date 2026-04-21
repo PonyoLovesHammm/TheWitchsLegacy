@@ -1,12 +1,18 @@
 package com.ponyo.thewitchslegacy.entity;
 
+import com.ponyo.thewitchslegacy.sound.ModSounds;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -24,16 +30,37 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 public class MandrakeEntity extends PathfinderMob {
     private static final int INITIAL_FRENZY_TICKS = 200;
+    private static final int NAUSEA_DURATION_TICKS = 200;
+    private static final int NAUSEA_AMPLIFIER = 1;
+    private static final int NAUSEA_REAPPLY_INTERVAL_TICKS = 200;
+    private static final double SCREAM_EFFECT_RADIUS = 12.0D;
 
     private int frenzyTicks;
 
     public MandrakeEntity(EntityType<? extends PathfinderMob> entityType, Level level) {
         super(entityType, level);
+    }
+
+    public static void spawnFromHarvest(Level level, BlockPos pos, @Nullable Player triggeringPlayer) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        MandrakeEntity mandrake = ModEntities.MANDRAKE.get().create(serverLevel, EntitySpawnReason.TRIGGERED);
+        if (mandrake == null) {
+            return;
+        }
+
+        Vec3 spawnPos = Vec3.atBottomCenterOf(pos);
+        mandrake.snapTo(spawnPos.x(), spawnPos.y(), spawnPos.z(), serverLevel.random.nextFloat() * 360.0F, 0.0F);
+        mandrake.startHarvestFrenzy(triggeringPlayer);
+        serverLevel.addFreshEntity(mandrake);
     }
 
     public static AttributeSupplier.Builder createAttributes() {
@@ -59,6 +86,10 @@ public class MandrakeEntity extends PathfinderMob {
     public void aiStep() {
         super.aiStep();
 
+        if (!this.level().isClientSide() && this.tickCount % NAUSEA_REAPPLY_INTERVAL_TICKS == 0) {
+            this.applyScreamNausea();
+        }
+
         if (this.frenzyTicks > 0) {
             this.frenzyTicks--;
 
@@ -67,7 +98,7 @@ public class MandrakeEntity extends PathfinderMob {
             }
 
             if (this.tickCount % 20 == 0) {
-                this.playMandrakeScream();
+                this.playMandrakeScream(false);
             }
 
             if (this.tickCount % 10 == 0) {
@@ -88,13 +119,13 @@ public class MandrakeEntity extends PathfinderMob {
     ) {
         SpawnGroupData data = super.finalizeSpawn(level, difficulty, spawnType, spawnGroupData);
         this.frenzyTicks = INITIAL_FRENZY_TICKS;
-        this.playMandrakeScream();
+        this.playMandrakeScream(false);
         return data;
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.FOX_SCREECH;
+        return getRandomMandrakeScream();
     }
 
     @Override
@@ -108,13 +139,21 @@ public class MandrakeEntity extends PathfinderMob {
     }
 
     @Override
+    protected void actuallyHurt(ServerLevel level, DamageSource source, float amount) {
+        super.actuallyHurt(level, source, amount);
+        if (amount > 0.0F && this.isAlive()) {
+            this.startHarvestFrenzy(source.getEntity() instanceof LivingEntity livingEntity ? livingEntity : null);
+        }
+    }
+
+    @Override
     protected void playStepSound(BlockPos pos, BlockState block) {
         this.playSound(SoundEvents.GRASS_STEP, 0.15F, 1.3F);
     }
 
     @Override
     public int getAmbientSoundInterval() {
-        return 100;
+        return 120;
     }
 
     @Override
@@ -127,7 +166,35 @@ public class MandrakeEntity extends PathfinderMob {
         return 1.5F + (this.random.nextFloat() - 0.5F) * 0.3F;
     }
 
-    private void playMandrakeScream() {
-        this.playSound(SoundEvents.FOX_SCREECH, 1.0F, this.getVoicePitch());
+    public void startHarvestFrenzy(@Nullable LivingEntity triggeringEntity) {
+        this.frenzyTicks = INITIAL_FRENZY_TICKS;
+        this.playMandrakeScream(true);
+        this.applyScreamNausea();
+
+        if (triggeringEntity != null) {
+            this.setTarget(triggeringEntity);
+        }
+    }
+
+    private void applyScreamNausea() {
+        AABB effectBounds = this.getBoundingBox().inflate(SCREAM_EFFECT_RADIUS);
+        for (Player player : this.level().getEntitiesOfClass(Player.class, effectBounds)) {
+            if (player.distanceToSqr(this) <= SCREAM_EFFECT_RADIUS * SCREAM_EFFECT_RADIUS) {
+                player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, NAUSEA_DURATION_TICKS, NAUSEA_AMPLIFIER));
+            }
+        }
+    }
+
+    private void playMandrakeScream(boolean harvestScream) {
+        SoundEvent screamSound = harvestScream ? ModSounds.MANDRAKE_SCREAM_ON_PLANT_BREAK.get() : getRandomMandrakeScream();
+        this.level().playSound(null, this.blockPosition(), screamSound, SoundSource.HOSTILE, 1.5F, this.getVoicePitch());
+    }
+
+    private SoundEvent getRandomMandrakeScream() {
+        return switch (this.random.nextInt(3)) {
+            case 0 -> ModSounds.MANDRAKE_SCREAM_1.get();
+            case 1 -> ModSounds.MANDRAKE_SCREAM_2.get();
+            default -> ModSounds.MANDRAKE_SCREAM_3.get();
+        };
     }
 }

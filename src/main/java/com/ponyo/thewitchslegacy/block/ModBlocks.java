@@ -13,18 +13,13 @@ import com.ponyo.thewitchslegacy.block.custom.WitchCrop;
 import com.ponyo.thewitchslegacy.block.custom.SpanishMoss;
 import com.ponyo.thewitchslegacy.block.custom.WitchCauldron;
 import com.ponyo.thewitchslegacy.block.custom.WitchOven;
+import com.ponyo.thewitchslegacy.entity.MandrakeEntity;
 import com.ponyo.thewitchslegacy.item.ModItems;
-import com.ponyo.thewitchslegacy.sound.ModSounds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.pig.Pig;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -37,7 +32,6 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
-import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -454,16 +448,7 @@ public class ModBlocks {
 
         player.awardStat(Stats.BLOCK_MINED.get(cropBlock));
         player.causeFoodExhaustion(0.005F);
-
-        Pig pig = EntityType.PIG.create(level, EntitySpawnReason.TRIGGERED);
-        if (pig != null) {
-            Vec3 spawnPos = Vec3.atBottomCenterOf(pos);
-            pig.snapTo(spawnPos.x(), spawnPos.y(), spawnPos.z(), level.random.nextFloat() * 360.0F, 0.0F);
-            level.addFreshEntity(pig);
-        }
-
-        player.addEffect(new MobEffectInstance(MobEffects.NAUSEA, 140, 0));
-        level.playSound(null, pos, ModSounds.MANDRAKE_SCREAM_ON_PLANT_BREAK.get(), net.minecraft.sounds.SoundSource.BLOCKS, 1.5F, 1.0F);
+        MandrakeEntity.spawnFromHarvest(level, pos, player);
         return true;
     }
 
