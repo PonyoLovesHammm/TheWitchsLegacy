@@ -2,31 +2,31 @@
   "chalk_draw": {
     "subtitle": "sounds.thewitchslegacy.chalk_draw",
     "sounds": [
-      "thewitchslegacy:chalk_draw"
+      "thewitchslegacy:random/chalk_draw"
     ]
   },
   "mandrake_scream_1": {
     "subtitle": "sounds.thewitchslegacy.mandrake_scream_1",
     "sounds": [
-      "thewitchslegacy:mandrake_scream_1"
+      "thewitchslegacy:entity/mandrake_scream_1"
     ]
   },
   "mandrake_scream_2": {
     "subtitle": "sounds.thewitchslegacy.mandrake_scream_2",
     "sounds": [
-      "thewitchslegacy:mandrake_scream_2"
+      "thewitchslegacy:entity/mandrake_scream_2"
     ]
   },
   "mandrake_scream_3": {
     "subtitle": "sounds.thewitchslegacy.mandrake_scream_3",
     "sounds": [
-      "thewitchslegacy:mandrake_scream_3"
+      "thewitchslegacy:entity/mandrake_scream_3"
     ]
   },
   "mandrake_scream_on_plant_break": {
     "subtitle": "sounds.thewitchslegacy.mandrake_scream_on_plant_break",
     "sounds": [
-      "thewitchslegacy:mandrake_scream_on_plant_break"
+      "thewitchslegacy:entity/mandrake_scream_on_plant_break"
     ]
   }
 }

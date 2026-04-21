@@ -12,18 +12,24 @@ import java.util.function.Supplier;
 public class ModSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS = DeferredRegister.create(BuiltInRegistries.SOUND_EVENT, TheWitchsLegacy.MODID);
 
-    //This will be a different setup for custom block sounds (a little more complicated)
-    public static final Supplier<SoundEvent> CHALK_DRAW = registerSoundEvent("chalk_draw");
-    public static final Supplier<SoundEvent> MANDRAKE_SCREAM_1 = registerSoundEvent("mandrake_scream_1");
-    public static final Supplier<SoundEvent> MANDRAKE_SCREAM_2 = registerSoundEvent("mandrake_scream_2");
-    public static final Supplier<SoundEvent> MANDRAKE_SCREAM_3 = registerSoundEvent("mandrake_scream_3");
-    public static final Supplier<SoundEvent> MANDRAKE_SCREAM_ON_PLANT_BREAK = registerSoundEvent("mandrake_scream_on_plant_break");
+    public static final String CHALK_DRAW_ID = "chalk_draw";
+    public static final String MANDRAKE_SCREAM_1_ID = "mandrake_scream_1";
+    public static final String MANDRAKE_SCREAM_2_ID = "mandrake_scream_2";
+    public static final String MANDRAKE_SCREAM_3_ID = "mandrake_scream_3";
+    public static final String MANDRAKE_SCREAM_ON_PLANT_BREAK_ID = "mandrake_scream_on_plant_break";
 
+    public static final Supplier<SoundEvent> CHALK_DRAW = registerSoundEvent(CHALK_DRAW_ID);
+    public static final Supplier<SoundEvent> MANDRAKE_SCREAM_1 = registerSoundEvent(MANDRAKE_SCREAM_1_ID);
+    public static final Supplier<SoundEvent> MANDRAKE_SCREAM_2 = registerSoundEvent(MANDRAKE_SCREAM_2_ID);
+    public static final Supplier<SoundEvent> MANDRAKE_SCREAM_3 = registerSoundEvent(MANDRAKE_SCREAM_3_ID);
+    public static final Supplier<SoundEvent> MANDRAKE_SCREAM_ON_PLANT_BREAK = registerSoundEvent(MANDRAKE_SCREAM_ON_PLANT_BREAK_ID);
 
     private static Supplier<SoundEvent> registerSoundEvent(String name) {
         Identifier id = Identifier.fromNamespaceAndPath(TheWitchsLegacy.MODID, name);
         return SOUND_EVENTS.register(name, () -> SoundEvent.createVariableRangeEvent(id));
     }
 
-    public static void register(IEventBus eventBus) { SOUND_EVENTS.register(eventBus); }
+    public static void register(IEventBus eventBus) {
+        SOUND_EVENTS.register(eventBus);
+    }
 }

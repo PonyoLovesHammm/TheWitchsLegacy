@@ -27,6 +27,9 @@
     "thewitchslegacy:rowan_trapdoor": {
       "burn_time": 300
     },
+    "thewitchslegacy:rowan_sapling": {
+      "burn_time": 100
+    },
     "thewitchslegacy:rowan_door": {
       "burn_time": 300
     },
@@ -57,6 +60,9 @@
     "thewitchslegacy:hawthorn_trapdoor": {
       "burn_time": 300
     },
+    "thewitchslegacy:hawthorn_sapling": {
+      "burn_time": 100
+    },
     "thewitchslegacy:hawthorn_door": {
       "burn_time": 300
     },
@@ -86,6 +92,9 @@
     },
     "thewitchslegacy:willow_trapdoor": {
       "burn_time": 300
+    },
+    "thewitchslegacy:willow_sapling": {
+      "burn_time": 100
     },
     "thewitchslegacy:willow_door": {
       "burn_time": 300

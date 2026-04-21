@@ -2,6 +2,8 @@ package com.ponyo.thewitchslegacy.block;
 
 import com.ponyo.thewitchslegacy.TheWitchsLegacy;
 import com.ponyo.thewitchslegacy.block.custom.Glyph;
+import com.ponyo.thewitchslegacy.block.custom.GlintWeed;
+import com.ponyo.thewitchslegacy.block.custom.EmberMoss;
 import com.ponyo.thewitchslegacy.block.custom.Altar;
 import com.ponyo.thewitchslegacy.block.custom.Candelabra;
 import com.ponyo.thewitchslegacy.block.custom.Distillery;
@@ -282,6 +284,26 @@ public class ModBlocks {
             "spanish_moss",
             () -> new SpanishMoss(
                     blockProperties("spanish_moss", BlockBehaviour.Properties.ofFullCopy(Blocks.VINE))));
+
+    public static final DeferredBlock<Block> GLINT_WEED = registerBlock(
+            "glint_weed",
+            () -> new GlintWeed(
+                    decorativeProps("glint_weed", SoundType.GRASS, 0.2F)
+                            .instabreak()
+                            .lightLevel(state -> 7)
+                            .replaceable()
+                            .randomTicks()
+                            .offsetType(BlockBehaviour.OffsetType.XZ)));
+
+    public static final DeferredBlock<Block> EMBER_MOSS = registerBlock(
+            "ember_moss",
+            () -> new EmberMoss(
+                    decorativeProps("ember_moss", SoundType.GRASS, 0.2F)
+                            .instabreak()
+                            .replaceable()
+                            .noCollision()
+                            .randomTicks()
+                            .offsetType(BlockBehaviour.OffsetType.XZ)));
 
     public static final DeferredBlock<Block> BELLADONA_CROP = registerBlockWithoutItem(
             "belladona_crop",

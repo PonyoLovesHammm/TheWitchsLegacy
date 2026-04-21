@@ -38,6 +38,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.WATER_ARTICHOKE_SEEDS);
                         output.accept(ModItems.GARLIC);
                         output.accept(ModBlocks.SPANISH_MOSS);
+                        output.accept(ModBlocks.GLINT_WEED);
+                        output.accept(ModBlocks.EMBER_MOSS);
                         //Special Items
                         output.accept(ModItems.WHITE_CHALK);
                         output.accept(ModItems.GOLDEN_CHALK);

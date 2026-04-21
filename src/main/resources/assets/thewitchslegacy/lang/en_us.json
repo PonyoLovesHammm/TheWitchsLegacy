@@ -58,6 +58,8 @@
   "item.thewitchslegacy.mutandis": "Mutandis",
   "item.thewitchslegacy.mutandis_extremis": "Mutandis Extremis",
   "item.thewitchslegacy.spanish_moss": "Spanish Moss",
+  "item.thewitchslegacy.glint_weed": "Glint Weed",
+  "item.thewitchslegacy.ember_moss": "Ember Moss",
   "item.thewitchslegacy.witch_cauldron": "Witch's Cauldron",
   "item.thewitchslegacy.altar": "Altar",
   "item.thewitchslegacy.candelabra": "Candelabra",
@@ -126,6 +128,8 @@
   "block.thewitchslegacy.garlic_crop": "Garlic",
 
   "block.thewitchslegacy.spanish_moss": "Spanish Moss",
+  "block.thewitchslegacy.glint_weed": "Glint Weed",
+  "block.thewitchslegacy.ember_moss": "Ember Moss",
   "block.thewitchslegacy.witch_cauldron": "Witch's Cauldron",
   "block.thewitchslegacy.altar": "Altar",
   "block.thewitchslegacy.candelabra": "Candelabra",
@@ -152,5 +156,11 @@
   "block.thewitchslegacy.white_glyph": "White Glyph",
   "block.thewitchslegacy.golden_glyph": "Golden Glyph",
   "block.thewitchslegacy.fiery_glyph": "Fiery Glyph",
-  "block.thewitchslegacy.otherwhere_glyph": "Otherwhere Glyph"
+  "block.thewitchslegacy.otherwhere_glyph": "Otherwhere Glyph",
+
+  "sounds.thewitchslegacy.chalk_draw": "Chalk draws",
+  "sounds.thewitchslegacy.mandrake_scream_1": "Mandrake screams",
+  "sounds.thewitchslegacy.mandrake_scream_2": "Mandrake screams",
+  "sounds.thewitchslegacy.mandrake_scream_3": "Mandrake screams",
+  "sounds.thewitchslegacy.mandrake_scream_on_plant_break": "Mandrake screams"
 }

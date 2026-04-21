@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "face=ceiling,facing=east": {
+      "model": "thewitchslegacy:block/plants/glint_weed",
+      "x": 180,
+      "y": 90
+    },
+    "face=ceiling,facing=north": {
+      "model": "thewitchslegacy:block/plants/glint_weed",
+      "x": 180
+    },
+    "face=ceiling,facing=south": {
+      "model": "thewitchslegacy:block/plants/glint_weed",
+      "x": 180,
+      "y": 180
+    },
+    "face=ceiling,facing=west": {
+      "model": "thewitchslegacy:block/plants/glint_weed",
+      "x": 180,
+      "y": 270
+    },
+    "face=floor,facing=east": {
+      "model": "thewitchslegacy:block/plants/glint_weed",
+      "y": 90
+    },
+    "face=floor,facing=north": {
+      "model": "thewitchslegacy:block/plants/glint_weed"
+    },
+    "face=floor,facing=south": {
+      "model": "thewitchslegacy:block/plants/glint_weed",
+      "y": 180
+    },
+    "face=floor,facing=west": {
+      "model": "thewitchslegacy:block/plants/glint_weed",
+      "y": 270
+    },
+    "face=wall,facing=east": {
+      "model": "thewitchslegacy:block/plants/glint_weed"
+    },
+    "face=wall,facing=north": {
+      "model": "thewitchslegacy:block/plants/glint_weed"
+    },
+    "face=wall,facing=south": {
+      "model": "thewitchslegacy:block/plants/glint_weed"
+    },
+    "face=wall,facing=west": {
+      "model": "thewitchslegacy:block/plants/glint_weed"
+    }
+  }
+}
