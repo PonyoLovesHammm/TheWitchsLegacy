@@ -162,5 +162,7 @@
   "sounds.thewitchslegacy.mandrake_scream_1": "Mandrake screams",
   "sounds.thewitchslegacy.mandrake_scream_2": "Mandrake screams",
   "sounds.thewitchslegacy.mandrake_scream_3": "Mandrake screams",
-  "sounds.thewitchslegacy.mandrake_scream_on_plant_break": "Mandrake screams"
+  "sounds.thewitchslegacy.mandrake_scream_on_plant_break": "Mandrake screams",
+
+  "entity.thewitchslegacy.mandrake": "Mandrake"
 }

@@ -1,5 +1,8 @@
 package com.ponyo.thewitchslegacy;
 
+import com.ponyo.thewitchslegacy.entity.ModEntities;
+import com.ponyo.thewitchslegacy.entity.client.MandrakeModel;
+import com.ponyo.thewitchslegacy.entity.client.MandrakeRenderer;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -7,6 +10,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -27,5 +31,15 @@ public class TheWitchsLegacyClient {
         // Some client setup code
         TheWitchsLegacy.LOGGER.info("HELLO FROM CLIENT SETUP");
         TheWitchsLegacy.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+    }
+
+    @SubscribeEvent
+    static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+        event.registerEntityRenderer(ModEntities.MANDRAKE.get(), MandrakeRenderer::new);
+    }
+
+    @SubscribeEvent
+    static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
+        event.registerLayerDefinition(MandrakeModel.LAYER_LOCATION, MandrakeModel::createBodyLayer);
     }
 }
