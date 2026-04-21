@@ -14,11 +14,21 @@ public final class ModTreeGrowers {
             Registries.CONFIGURED_FEATURE,
             Identifier.fromNamespaceAndPath(TheWitchsLegacy.MODID, "rowan")
     );
+    public static final ResourceKey<ConfiguredFeature<?, ?>> HAWTHORN_TREE = ResourceKey.create(
+            Registries.CONFIGURED_FEATURE,
+            Identifier.fromNamespaceAndPath(TheWitchsLegacy.MODID, "hawthorn")
+    );
 
     public static final TreeGrower ROWAN = new TreeGrower(
             "rowan",
             Optional.empty(),
             Optional.of(ROWAN_TREE),
+            Optional.empty()
+    );
+    public static final TreeGrower HAWTHORN = new TreeGrower(
+            "hawthorn",
+            Optional.empty(),
+            Optional.of(HAWTHORN_TREE),
             Optional.empty()
     );
 

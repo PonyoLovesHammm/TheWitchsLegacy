@@ -26,6 +26,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -200,8 +202,19 @@ public class ModBlocks {
 
     public static final DeferredBlock<SaplingBlock> HAWTHORN_SAPLING = registerBlock(
             "hawthorn_sapling",
-            () -> new SaplingBlock(TreeGrower.OAK,
+            () -> new SaplingBlock(ModTreeGrowers.HAWTHORN,
                     blockProperties("hawthorn_sapling", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING))));
+
+    public static final DeferredBlock<TintedParticleLeavesBlock> HAWTHORN_LEAVES = registerBlock(
+            "hawthorn_leaves",
+            () -> new TintedParticleLeavesBlock(0.01F,
+                    blockProperties("hawthorn_leaves", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES))) {
+                @Override
+                public boolean canHarvestBlock(BlockState state, BlockGetter level, BlockPos pos, Player player) {
+                    ItemStack tool = player.getMainHandItem();
+                    return tool.is(Items.SHEARS);
+                }
+            });
 
     public static final DeferredBlock<Block> WILLOW_LOG = registerBlock(
             "willow_log",
