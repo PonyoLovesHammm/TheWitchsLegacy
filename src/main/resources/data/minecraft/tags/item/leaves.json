@@ -2,6 +2,8 @@
   "replace": false,
   "values": [
     "thewitchslegacy:rowan_leaves",
-    "thewitchslegacy:hawthorn_leaves"
+    "thewitchslegacy:hawthorn_leaves",
+    "thewitchslegacy:willow_leaves",
+    "thewitchslegacy:willow_canopy_leaves"
   ]
 }

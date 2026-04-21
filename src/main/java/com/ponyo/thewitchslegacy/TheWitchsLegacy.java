@@ -5,6 +5,7 @@ import com.ponyo.thewitchslegacy.entity.ModEntities;
 import com.ponyo.thewitchslegacy.item.ModCreativeModeTabs;
 import com.ponyo.thewitchslegacy.item.ModItems;
 import com.ponyo.thewitchslegacy.sound.ModSounds;
+import com.ponyo.thewitchslegacy.worldgen.tree.ModTreeGrowers;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -57,6 +58,7 @@ public class TheWitchsLegacy {
         ModItems.register(modEventBus);
 
         ModSounds.register(modEventBus);
+        ModTreeGrowers.register(modEventBus);
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

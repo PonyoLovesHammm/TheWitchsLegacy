@@ -11,11 +11,11 @@ import com.ponyo.thewitchslegacy.block.custom.Kettle;
 import com.ponyo.thewitchslegacy.block.custom.MagicMirror;
 import com.ponyo.thewitchslegacy.block.custom.WitchCrop;
 import com.ponyo.thewitchslegacy.block.custom.SpanishMoss;
+import com.ponyo.thewitchslegacy.block.custom.WalkthroughLeaves;
 import com.ponyo.thewitchslegacy.block.custom.WitchCauldron;
 import com.ponyo.thewitchslegacy.block.custom.WitchOven;
 import com.ponyo.thewitchslegacy.entity.MandrakeEntity;
 import com.ponyo.thewitchslegacy.item.ModItems;
-import com.ponyo.thewitchslegacy.sound.ModSounds;
 import com.ponyo.thewitchslegacy.worldgen.tree.ModTreeGrowers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.Registries;
@@ -31,7 +31,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.grower.TreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
@@ -290,8 +289,18 @@ public class ModBlocks {
 
     public static final DeferredBlock<SaplingBlock> WILLOW_SAPLING = registerBlock(
             "willow_sapling",
-            () -> new SaplingBlock(TreeGrower.OAK,
+            () -> new SaplingBlock(ModTreeGrowers.WILLOW,
                     blockProperties("willow_sapling", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING))));
+
+    public static final DeferredBlock<TintedParticleLeavesBlock> WILLOW_CANOPY_LEAVES = registerBlock(
+            "willow_canopy_leaves",
+            () -> new TintedParticleLeavesBlock(0.01F,
+                    blockProperties("willow_canopy_leaves", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES))));
+
+    public static final DeferredBlock<WalkthroughLeaves> WILLOW_LEAVES = registerBlock(
+            "willow_leaves",
+            () -> new WalkthroughLeaves(0.01F,
+                    blockProperties("willow_leaves", BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES))));
 
     //Plant Blocks!
     public static final DeferredBlock<Block> SPANISH_MOSS = registerBlock(

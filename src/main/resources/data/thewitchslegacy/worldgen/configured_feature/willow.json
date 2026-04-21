@@ -1,0 +1,103 @@
+{
+  "type": "minecraft:tree",
+  "config": {
+    "dirt_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "minecraft:dirt"
+      }
+    },
+    "foliage_placer": {
+      "type": "minecraft:cherry_foliage_placer",
+      "radius": {
+        "type": "minecraft:constant",
+        "value": 4
+      },
+      "offset": {
+        "type": "minecraft:constant",
+        "value": 0
+      },
+      "height": {
+        "type": "minecraft:constant",
+        "value": 5
+      },
+      "wide_bottom_layer_hole_chance": 0.35,
+      "corner_hole_chance": 0.2,
+      "hanging_leaves_chance": 0.0,
+      "hanging_leaves_extension_chance": 0.0
+    },
+    "foliage_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "thewitchslegacy:willow_canopy_leaves",
+        "Properties": {
+          "distance": "7",
+          "persistent": "false",
+          "waterlogged": "false"
+        }
+      }
+    },
+    "force_dirt": false,
+    "decorators": [
+      {
+        "type": "thewitchslegacy:willow_hanging_leaves"
+      }
+    ],
+    "ignore_vines": true,
+    "minimum_size": {
+      "type": "minecraft:two_layers_feature_size",
+      "limit": 1,
+      "lower_size": 0,
+      "upper_size": 3
+    },
+    "trunk_placer": {
+      "type": "minecraft:cherry_trunk_placer",
+      "base_height": 6,
+      "height_rand_a": 2,
+      "height_rand_b": 0,
+      "branch_count": {
+        "type": "minecraft:weighted_list",
+        "distribution": [
+          {
+            "data": {
+              "type": "minecraft:constant",
+              "value": 2
+            },
+            "weight": 2
+          },
+          {
+            "data": {
+              "type": "minecraft:constant",
+              "value": 3
+            },
+            "weight": 2
+          }
+        ]
+      },
+      "branch_horizontal_length": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 2,
+        "max_inclusive": 4
+      },
+      "branch_start_offset_from_top": {
+        "type": "minecraft:uniform",
+        "min_inclusive": -5,
+        "max_inclusive": -3
+      },
+      "branch_end_offset_from_top": {
+        "type": "minecraft:uniform",
+        "min_inclusive": -2,
+        "max_inclusive": 1
+      }
+    },
+    "trunk_provider": {
+      "type": "minecraft:simple_state_provider",
+      "state": {
+        "Name": "thewitchslegacy:willow_log",
+        "Properties": {
+          "axis": "y"
+        }
+      }
+    }
+  }
+}
