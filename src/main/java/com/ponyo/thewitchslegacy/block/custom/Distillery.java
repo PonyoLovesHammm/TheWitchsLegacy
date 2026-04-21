@@ -29,8 +29,8 @@ public class Distillery extends HorizontalDirectionalBlock implements SimpleWate
     public static final MapCodec<Distillery> CODEC = simpleCodec(Distillery::new);
 
     // Box args are (minX, minY, minZ, maxX, maxY, maxZ) in 1/16th-block units.
-    // Edit this SOUTH-facing base shape by hand, then the other facings are derived by rotation.
-    private static final VoxelShape SOUTH_SHAPE = Shapes.or(
+    // Edit this NORTH-facing base shape by hand, then the other facings are derived by rotation.
+    private static final VoxelShape NORTH_SHAPE = Shapes.or(
             // Front tray/platform.
             Block.box(0.0, 0.0, 0.0, 16.0, 1.0, 5.0),
             // Front jar/burner row.
@@ -43,7 +43,7 @@ public class Distillery extends HorizontalDirectionalBlock implements SimpleWate
             // Rear top fitting.
             Block.box(6.5, 13.0, 9.5, 9.5, 15.0, 12.5)
     );
-    private static final Map<Direction, VoxelShape> SHAPES = VoxelShapeUtils.horizontalFromSouth(SOUTH_SHAPE);
+    private static final Map<Direction, VoxelShape> SHAPES = VoxelShapeUtils.horizontalFromNorth(NORTH_SHAPE);
 
     public Distillery(BlockBehaviour.Properties properties) {
         super(properties);
@@ -66,7 +66,7 @@ public class Distillery extends HorizontalDirectionalBlock implements SimpleWate
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
         return this.defaultBlockState()
-                .setValue(FACING, context.getHorizontalDirection())
+                .setValue(FACING, context.getHorizontalDirection().getOpposite())
                 .setValue(BlockStateProperties.WATERLOGGED, fluidState.getType() == Fluids.WATER);
     }
 
@@ -106,6 +106,6 @@ public class Distillery extends HorizontalDirectionalBlock implements SimpleWate
     }
 
     private static VoxelShape getFacingShape(Direction direction) {
-        return VoxelShapeUtils.getHorizontalShape(SHAPES, direction, Direction.SOUTH);
+        return VoxelShapeUtils.getHorizontalShape(SHAPES, direction, Direction.NORTH);
     }
 }

@@ -63,7 +63,7 @@ public class Kettle extends HorizontalDirectionalBlock implements SimpleWaterlog
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         FluidState fluidState = context.getLevel().getFluidState(context.getClickedPos());
         return this.defaultBlockState()
-                .setValue(FACING, context.getHorizontalDirection())
+                .setValue(FACING, context.getHorizontalDirection().getOpposite())
                 .setValue(BlockStateProperties.WATERLOGGED, fluidState.getType() == Fluids.WATER);
     }
 
