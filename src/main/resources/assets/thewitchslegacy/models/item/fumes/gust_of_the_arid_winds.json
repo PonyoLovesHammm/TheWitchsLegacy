@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "thewitchslegacy:item/fumes/gust_of_the_arid_winds"
+  }
+}

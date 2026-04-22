@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "thewitchslegacy:item/fumes/bark_of_the_ancient"
+  }
+}

@@ -20,7 +20,6 @@ import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -196,7 +195,7 @@ public class WitchOven extends BaseEntityBlock implements SimpleWaterloggedBlock
         return level instanceof net.minecraft.server.level.ServerLevel serverLevel
                 ? createTickerHelper(blockEntityType, ModBlockEntities.WITCH_OVEN.get(),
                 (tickerLevel, tickerPos, tickerState, blockEntity) ->
-                        AbstractFurnaceBlockEntity.serverTick(serverLevel, tickerPos, tickerState, blockEntity))
+                        WitchOvenBlockEntity.tickServer(serverLevel, tickerPos, tickerState, blockEntity))
                 : null;
     }
 

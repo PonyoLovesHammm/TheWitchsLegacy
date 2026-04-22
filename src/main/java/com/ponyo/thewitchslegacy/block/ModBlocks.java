@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.neoforged.bus.api.IEventBus;
@@ -416,7 +417,9 @@ public class ModBlocks {
     public static final DeferredBlock<Block> WITCH_OVEN = registerBlock(
             "witch_oven",
             () -> new WitchOven(
-                    decorativeProps("witch_oven", SoundType.STONE, 3.5F)));
+                    decorativeProps("witch_oven", SoundType.STONE, 3.5F)
+                            .requiresCorrectToolForDrops()
+                            .lightLevel(state -> state.getValue(BlockStateProperties.LIT) ? 13 : 0)));
 
     public static final DeferredBlock<Block> WITCH_CAULDRON = registerBlock(
             "witch_cauldron",

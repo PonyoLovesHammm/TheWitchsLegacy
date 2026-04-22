@@ -40,8 +40,8 @@ public class WitchOvenScreen extends AbstractContainerScreen<WitchOvenMenu> {
         int burnWidth = Mth.ceil(this.menu.getBurnProgress() * 24.0F);
         guiGraphics.blitSprite(RenderPipelines.GUI_TEXTURED, BURN_PROGRESS_SPRITE, 24, 16, 0, 0, left + 79, top + 34, burnWidth, 16);
 
-        renderCustomExtraSlot(guiGraphics, left + 79, top + 52);
-        renderPlainExtraSlot(guiGraphics, left + 115, top + 56);
+        renderCustomExtraSlot(guiGraphics, left + 82, top + 52);
+        renderPlainExtraSlot(guiGraphics, left + 141, top + 34);
     }
 
     private static void renderCustomExtraSlot(GuiGraphics guiGraphics, int x, int y) {

@@ -65,13 +65,13 @@ public class WitchOvenMenu extends AbstractContainerMenu {
             }
         });
         this.addSlot(new FurnaceResultSlot(inventory.player, container, RESULT_SLOT, 116, 35));
-        this.addSlot(new Slot(container, JAR_SLOT, 80, 53) {
+        this.addSlot(new Slot(container, JAR_SLOT, 83, 53) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(ModItems.CLAY_JAR.get());
             }
         });
-        this.addSlot(new Slot(container, EXTRA_SLOT, 116, 57) {
+        this.addSlot(new Slot(container, EXTRA_SLOT, 142, 35) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return false;
