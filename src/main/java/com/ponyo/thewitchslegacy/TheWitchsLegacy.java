@@ -6,6 +6,7 @@ import com.ponyo.thewitchslegacy.entity.ModEntities;
 import com.ponyo.thewitchslegacy.item.ModCreativeModeTabs;
 import com.ponyo.thewitchslegacy.item.ModItems;
 import com.ponyo.thewitchslegacy.menu.ModMenuTypes;
+import com.ponyo.thewitchslegacy.particle.ModParticles;
 import com.ponyo.thewitchslegacy.sound.ModSounds;
 import com.ponyo.thewitchslegacy.worldgen.tree.ModTreeGrowers;
 import org.slf4j.Logger;
@@ -60,6 +61,7 @@ public class TheWitchsLegacy {
         ModEntities.register(modEventBus);
         ModItems.register(modEventBus);
         ModMenuTypes.register(modEventBus);
+        ModParticles.register(modEventBus);
 
         ModSounds.register(modEventBus);
         ModTreeGrowers.register(modEventBus);

@@ -1,7 +1,9 @@
 {
-  "variants": {
-    "": {
-      "model": "thewitchslegacy:block/witch_cauldron"
+  "multipart": [
+    {
+      "apply": {
+        "model": "thewitchslegacy:block/witch_cauldron"
+      }
     }
-  }
+  ]
 }

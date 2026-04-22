@@ -1,11 +1,15 @@
 package com.ponyo.thewitchslegacy;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
+import com.ponyo.thewitchslegacy.block.entity.ModBlockEntities;
+import com.ponyo.thewitchslegacy.block.entity.client.WitchCauldronRenderer;
 import com.ponyo.thewitchslegacy.client.gui.WitchOvenScreen;
 import com.ponyo.thewitchslegacy.entity.ModEntities;
 import com.ponyo.thewitchslegacy.entity.client.MandrakeModel;
 import com.ponyo.thewitchslegacy.entity.client.MandrakeRenderer;
 import com.ponyo.thewitchslegacy.menu.ModMenuTypes;
+import com.ponyo.thewitchslegacy.particle.ModParticles;
+import com.ponyo.thewitchslegacy.particle.client.CauldronBubbleParticle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.level.FoliageColor;
@@ -18,6 +22,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
@@ -42,6 +47,7 @@ public class TheWitchsLegacyClient {
     @SubscribeEvent
     static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.MANDRAKE.get(), MandrakeRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.WITCH_CAULDRON.get(), WitchCauldronRenderer::new);
     }
 
     @SubscribeEvent
@@ -55,6 +61,11 @@ public class TheWitchsLegacyClient {
     }
 
     @SubscribeEvent
+    static void registerParticleProviders(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticles.CAULDRON_BUBBLE.get(), CauldronBubbleParticle.Provider::new);
+    }
+
+    @SubscribeEvent
     static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register(
                 (state, level, pos, tintIndex) -> level != null && pos != null
@@ -64,5 +75,6 @@ public class TheWitchsLegacyClient {
                 ModBlocks.WILLOW_CANOPY_LEAVES.get(),
                 ModBlocks.WILLOW_LEAVES.get()
         );
+
     }
 }
