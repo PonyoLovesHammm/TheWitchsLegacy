@@ -49,12 +49,18 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jspecify.annotations.Nullable;
 
+import java.util.List;
+
 public class WitchCauldron extends BaseEntityBlock implements SimpleWaterloggedBlock {
     public static final MapCodec<WitchCauldron> CODEC = simpleCodec(WitchCauldron::new);
     public static final IntegerProperty LEVEL = IntegerProperty.create("level", 0, 3);
     public static final BooleanProperty BUBBLING = BlockStateProperties.LIT;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
     private static final int MAX_LEVEL = 3;
+    private static final double HIT_EPSILON = 1.0E-4;
+    private static final double PARTICLE_MIN = 4.0;
+    private static final double PARTICLE_RANGE = 8.0;
+    private static final double PARTICLE_Y = 9.85 / 16.0;
 
     // Box args are (minX, minY, minZ, maxX, maxY, maxZ) in 1/16th-block units.
     // This shape uses:
@@ -72,6 +78,7 @@ public class WitchCauldron extends BaseEntityBlock implements SimpleWaterloggedB
             // South wall: outer front side.
             Block.box(2.0, 4.0, 14.0, 14.0, 13.0, 15.0)
     );
+    private static final List<AABB> SHAPE_BOXES = SHAPE.toAabbs();
 
     public WitchCauldron(BlockBehaviour.Properties properties) {
         super(properties);
@@ -173,9 +180,9 @@ public class WitchCauldron extends BaseEntityBlock implements SimpleWaterloggedB
 
         int particleCount = 1 + random.nextInt(2);
         for (int i = 0; i < particleCount; i++) {
-            double particleX = pos.getX() + (4.0 + random.nextDouble() * 8.0) / 16.0;
-            double particleY = pos.getY() + 9.85 / 16.0;
-            double particleZ = pos.getZ() + (4.0 + random.nextDouble() * 8.0) / 16.0;
+            double particleX = pos.getX() + (PARTICLE_MIN + random.nextDouble() * PARTICLE_RANGE) / 16.0;
+            double particleY = pos.getY() + PARTICLE_Y;
+            double particleZ = pos.getZ() + (PARTICLE_MIN + random.nextDouble() * PARTICLE_RANGE) / 16.0;
 
             level.addParticle(ModParticles.CAULDRON_BUBBLE.get(), particleX, particleY, particleZ, 0.0, 0.0, 0.0);
 
@@ -265,12 +272,11 @@ public class WitchCauldron extends BaseEntityBlock implements SimpleWaterloggedB
 
     private static boolean hitCauldronGeometry(BlockHitResult hit, BlockPos pos) {
         Vec3 localHit = hit.getLocation().subtract(pos.getX(), pos.getY(), pos.getZ());
-        double epsilon = 1.0E-4;
 
-        for (AABB box : SHAPE.toAabbs()) {
-            if (localHit.x >= box.minX - epsilon && localHit.x <= box.maxX + epsilon
-                    && localHit.y >= box.minY - epsilon && localHit.y <= box.maxY + epsilon
-                    && localHit.z >= box.minZ - epsilon && localHit.z <= box.maxZ + epsilon) {
+        for (AABB box : SHAPE_BOXES) {
+            if (localHit.x >= box.minX - HIT_EPSILON && localHit.x <= box.maxX + HIT_EPSILON
+                    && localHit.y >= box.minY - HIT_EPSILON && localHit.y <= box.maxY + HIT_EPSILON
+                    && localHit.z >= box.minZ - HIT_EPSILON && localHit.z <= box.maxZ + HIT_EPSILON) {
                 return true;
             }
         }

@@ -75,6 +75,5 @@ public class TheWitchsLegacyClient {
                 ModBlocks.WILLOW_CANOPY_LEAVES.get(),
                 ModBlocks.WILLOW_LEAVES.get()
         );
-
     }
 }

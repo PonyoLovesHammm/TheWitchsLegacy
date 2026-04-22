@@ -28,6 +28,10 @@ public class WitchCauldronRenderer implements BlockEntityRenderer<WitchCauldronB
     private static final float LIQUID_MIN = 3.0F / 16.0F;
     private static final float LIQUID_MAX = 13.0F / 16.0F;
     private static final float SURFACE_OFFSET = 0.001F;
+    private static final int LIQUID_ALPHA = 150;
+    private static final float LEVEL_ONE_SURFACE = 7.0F / 16.0F;
+    private static final float LEVEL_TWO_SURFACE = 9.0F / 16.0F;
+    private static final float LEVEL_THREE_SURFACE = 11.0F / 16.0F;
 
     private final MaterialSet materials;
 
@@ -66,32 +70,46 @@ public class WitchCauldronRenderer implements BlockEntityRenderer<WitchCauldronB
 
         TextureAtlasSprite waterSprite = this.materials.get(WATER_MATERIAL);
         float surfaceY = getSurfaceHeight(renderState.level) + SURFACE_OFFSET;
-        int color = ARGB.color(150, renderState.liquidColor);
+        int color = ARGB.color(LIQUID_ALPHA, renderState.liquidColor);
         float minU = waterSprite.getU0();
         float maxU = waterSprite.getU1();
         float minV = waterSprite.getV0();
         float maxV = waterSprite.getV1();
 
         submitNodeCollector.submitCustomGeometry(poseStack, RenderTypes.entityNoOutline(TextureAtlas.LOCATION_BLOCKS), (pose, vertexConsumer) -> {
-            addVertex(vertexConsumer, pose, LIQUID_MIN, surfaceY, LIQUID_MAX, minU, maxV, renderState.lightCoords, color);
-            addVertex(vertexConsumer, pose, LIQUID_MAX, surfaceY, LIQUID_MAX, maxU, maxV, renderState.lightCoords, color);
-            addVertex(vertexConsumer, pose, LIQUID_MAX, surfaceY, LIQUID_MIN, maxU, minV, renderState.lightCoords, color);
-            addVertex(vertexConsumer, pose, LIQUID_MIN, surfaceY, LIQUID_MIN, minU, minV, renderState.lightCoords, color);
-
-            // Draw the underside as well so the surface stays readable through transparency from low view angles.
-            addVertex(vertexConsumer, pose, LIQUID_MIN, surfaceY, LIQUID_MIN, minU, minV, renderState.lightCoords, color);
-            addVertex(vertexConsumer, pose, LIQUID_MAX, surfaceY, LIQUID_MIN, maxU, minV, renderState.lightCoords, color);
-            addVertex(vertexConsumer, pose, LIQUID_MAX, surfaceY, LIQUID_MAX, maxU, maxV, renderState.lightCoords, color);
-            addVertex(vertexConsumer, pose, LIQUID_MIN, surfaceY, LIQUID_MAX, minU, maxV, renderState.lightCoords, color);
+            submitSurface(vertexConsumer, pose, surfaceY, minU, maxU, minV, maxV, renderState.lightCoords, color);
         });
     }
 
     private static float getSurfaceHeight(int level) {
         return switch (level) {
-            case 1 -> 7.0F / 16.0F;
-            case 2 -> 9.0F / 16.0F;
-            default -> 11.0F / 16.0F;
+            case 1 -> LEVEL_ONE_SURFACE;
+            case 2 -> LEVEL_TWO_SURFACE;
+            default -> LEVEL_THREE_SURFACE;
         };
+    }
+
+    private static void submitSurface(
+            VertexConsumer vertexConsumer,
+            PoseStack.Pose pose,
+            float surfaceY,
+            float minU,
+            float maxU,
+            float minV,
+            float maxV,
+            int lightCoords,
+            int color
+    ) {
+        addVertex(vertexConsumer, pose, LIQUID_MIN, surfaceY, LIQUID_MAX, minU, maxV, lightCoords, color);
+        addVertex(vertexConsumer, pose, LIQUID_MAX, surfaceY, LIQUID_MAX, maxU, maxV, lightCoords, color);
+        addVertex(vertexConsumer, pose, LIQUID_MAX, surfaceY, LIQUID_MIN, maxU, minV, lightCoords, color);
+        addVertex(vertexConsumer, pose, LIQUID_MIN, surfaceY, LIQUID_MIN, minU, minV, lightCoords, color);
+
+        // Draw the underside as well so the surface stays readable through transparency from low view angles.
+        addVertex(vertexConsumer, pose, LIQUID_MIN, surfaceY, LIQUID_MIN, minU, minV, lightCoords, color);
+        addVertex(vertexConsumer, pose, LIQUID_MAX, surfaceY, LIQUID_MIN, maxU, minV, lightCoords, color);
+        addVertex(vertexConsumer, pose, LIQUID_MAX, surfaceY, LIQUID_MAX, maxU, maxV, lightCoords, color);
+        addVertex(vertexConsumer, pose, LIQUID_MIN, surfaceY, LIQUID_MAX, minU, maxV, lightCoords, color);
     }
 
     private static void addVertex(

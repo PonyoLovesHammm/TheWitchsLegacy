@@ -17,6 +17,8 @@ import net.minecraft.world.level.storage.ValueOutput;
 public class WitchCauldronBlockEntity extends BlockEntity {
     private static final int HEAT_UP_TICKS = 100;
     private static final int DEFAULT_LIQUID_COLOR = 0x3F76E4;
+    private static final String HEATING_TICKS_TAG = "HeatingTicks";
+    private static final String LIQUID_COLOR_TAG = "LiquidColor";
 
     private int heatingTicks;
     private int liquidColor = DEFAULT_LIQUID_COLOR;
@@ -50,15 +52,15 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        output.putInt("HeatingTicks", this.heatingTicks);
-        output.putInt("LiquidColor", this.liquidColor);
+        output.putInt(HEATING_TICKS_TAG, this.heatingTicks);
+        output.putInt(LIQUID_COLOR_TAG, this.liquidColor);
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        this.heatingTicks = input.getIntOr("HeatingTicks", 0);
-        this.liquidColor = input.getIntOr("LiquidColor", DEFAULT_LIQUID_COLOR);
+        this.heatingTicks = input.getIntOr(HEATING_TICKS_TAG, 0);
+        this.liquidColor = input.getIntOr(LIQUID_COLOR_TAG, DEFAULT_LIQUID_COLOR);
     }
 
     @Override
@@ -82,6 +84,10 @@ public class WitchCauldronBlockEntity extends BlockEntity {
             return true;
         }
 
+        return isLitCampfire(state);
+    }
+
+    private static boolean isLitCampfire(BlockState state) {
         return state.is(BlockTags.CAMPFIRES) && state.hasProperty(CampfireBlock.LIT) && state.getValue(CampfireBlock.LIT);
     }
 }
