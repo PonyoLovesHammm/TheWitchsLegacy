@@ -15,6 +15,9 @@ public final class ModBlockEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WitchOvenBlockEntity>> WITCH_OVEN =
             BLOCK_ENTITIES.register("witch_oven",
                     () -> new BlockEntityType<>(WitchOvenBlockEntity::new, java.util.Set.of(ModBlocks.WITCH_OVEN.get())));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<AltarBlockEntity>> ALTAR =
+            BLOCK_ENTITIES.register("altar",
+                    () -> new BlockEntityType<>(AltarBlockEntity::new, java.util.Set.of(ModBlocks.ALTAR.get())));
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WitchCauldronBlockEntity>> WITCH_CAULDRON =
             BLOCK_ENTITIES.register("witch_cauldron",

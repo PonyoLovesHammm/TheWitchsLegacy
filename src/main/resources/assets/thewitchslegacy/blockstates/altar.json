@@ -1,72 +1,140 @@
 {
   "variants": {
-    "north=false,east=false,south=false,west=false": {
+    "activated=false,north=false,east=false,south=false,west=false": {
       "model": "thewitchslegacy:block/altar/altar"
     },
-    "north=true,east=false,south=false,west=false": {
+    "activated=false,north=true,east=false,south=false,west=false": {
       "model": "thewitchslegacy:block/altar/altar_end"
     },
-    "north=false,east=true,south=false,west=false": {
+    "activated=false,north=false,east=true,south=false,west=false": {
       "model": "thewitchslegacy:block/altar/altar_end",
       "y": 90,
       "uvlock": true
     },
-    "north=false,east=false,south=true,west=false": {
+    "activated=false,north=false,east=false,south=true,west=false": {
       "model": "thewitchslegacy:block/altar/altar_end",
       "y": 180,
       "uvlock": true
     },
-    "north=false,east=false,south=false,west=true": {
+    "activated=false,north=false,east=false,south=false,west=true": {
       "model": "thewitchslegacy:block/altar/altar_end",
       "y": 270,
       "uvlock": true
     },
-    "north=true,east=false,south=true,west=false": {
+    "activated=false,north=true,east=false,south=true,west=false": {
       "model": "thewitchslegacy:block/altar/altar_straight"
     },
-    "north=false,east=true,south=false,west=true": {
+    "activated=false,north=false,east=true,south=false,west=true": {
       "model": "thewitchslegacy:block/altar/altar_straight",
       "y": 90,
       "uvlock": true
     },
-    "north=true,east=true,south=false,west=false": {
+    "activated=false,north=true,east=true,south=false,west=false": {
       "model": "thewitchslegacy:block/altar/altar_corner",
       "y": 90,
       "uvlock": true
     },
-    "north=false,east=true,south=true,west=false": {
+    "activated=false,north=false,east=true,south=true,west=false": {
       "model": "thewitchslegacy:block/altar/altar_corner",
       "y": 180,
       "uvlock": true
     },
-    "north=false,east=false,south=true,west=true": {
+    "activated=false,north=false,east=false,south=true,west=true": {
       "model": "thewitchslegacy:block/altar/altar_corner",
       "y": 270,
       "uvlock": true
     },
-    "north=true,east=false,south=false,west=true": {
+    "activated=false,north=true,east=false,south=false,west=true": {
       "model": "thewitchslegacy:block/altar/altar_corner"
     },
-    "north=true,east=true,south=true,west=false": {
+    "activated=false,north=true,east=true,south=true,west=false": {
       "model": "thewitchslegacy:block/altar/altar_tee",
       "y": 90,
       "uvlock": true
     },
-    "north=false,east=true,south=true,west=true": {
+    "activated=false,north=false,east=true,south=true,west=true": {
       "model": "thewitchslegacy:block/altar/altar_tee",
       "y": 180,
       "uvlock": true
     },
-    "north=true,east=false,south=true,west=true": {
+    "activated=false,north=true,east=false,south=true,west=true": {
       "model": "thewitchslegacy:block/altar/altar_tee",
       "y": 270,
       "uvlock": true
     },
-    "north=true,east=true,south=false,west=true": {
+    "activated=false,north=true,east=true,south=false,west=true": {
       "model": "thewitchslegacy:block/altar/altar_tee"
     },
-    "north=true,east=true,south=true,west=true": {
+    "activated=false,north=true,east=true,south=true,west=true": {
       "model": "thewitchslegacy:block/altar/altar_cross"
+    },
+    "activated=true,north=false,east=false,south=false,west=false": {
+      "model": "thewitchslegacy:block/altar/altar_infused"
+    },
+    "activated=true,north=true,east=false,south=false,west=false": {
+      "model": "thewitchslegacy:block/altar/altar_end_infused"
+    },
+    "activated=true,north=false,east=true,south=false,west=false": {
+      "model": "thewitchslegacy:block/altar/altar_end_infused",
+      "y": 90,
+      "uvlock": true
+    },
+    "activated=true,north=false,east=false,south=true,west=false": {
+      "model": "thewitchslegacy:block/altar/altar_end_infused",
+      "y": 180,
+      "uvlock": true
+    },
+    "activated=true,north=false,east=false,south=false,west=true": {
+      "model": "thewitchslegacy:block/altar/altar_end_infused",
+      "y": 270,
+      "uvlock": true
+    },
+    "activated=true,north=true,east=false,south=true,west=false": {
+      "model": "thewitchslegacy:block/altar/altar_straight_infused"
+    },
+    "activated=true,north=false,east=true,south=false,west=true": {
+      "model": "thewitchslegacy:block/altar/altar_straight_infused",
+      "y": 90,
+      "uvlock": true
+    },
+    "activated=true,north=true,east=true,south=false,west=false": {
+      "model": "thewitchslegacy:block/altar/altar_corner_infused",
+      "y": 90,
+      "uvlock": true
+    },
+    "activated=true,north=false,east=true,south=true,west=false": {
+      "model": "thewitchslegacy:block/altar/altar_corner_infused",
+      "y": 180,
+      "uvlock": true
+    },
+    "activated=true,north=false,east=false,south=true,west=true": {
+      "model": "thewitchslegacy:block/altar/altar_corner_infused",
+      "y": 270,
+      "uvlock": true
+    },
+    "activated=true,north=true,east=false,south=false,west=true": {
+      "model": "thewitchslegacy:block/altar/altar_corner_infused"
+    },
+    "activated=true,north=true,east=true,south=true,west=false": {
+      "model": "thewitchslegacy:block/altar/altar_tee_infused",
+      "y": 90,
+      "uvlock": true
+    },
+    "activated=true,north=false,east=true,south=true,west=true": {
+      "model": "thewitchslegacy:block/altar/altar_tee_infused",
+      "y": 180,
+      "uvlock": true
+    },
+    "activated=true,north=true,east=false,south=true,west=true": {
+      "model": "thewitchslegacy:block/altar/altar_tee_infused",
+      "y": 270,
+      "uvlock": true
+    },
+    "activated=true,north=true,east=true,south=false,west=true": {
+      "model": "thewitchslegacy:block/altar/altar_tee_infused"
+    },
+    "activated=true,north=true,east=true,south=true,west=true": {
+      "model": "thewitchslegacy:block/altar/altar_cross_infused"
     }
   }
 }

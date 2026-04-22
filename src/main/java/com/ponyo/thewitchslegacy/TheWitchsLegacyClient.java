@@ -3,6 +3,7 @@ package com.ponyo.thewitchslegacy;
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.block.entity.ModBlockEntities;
 import com.ponyo.thewitchslegacy.block.entity.client.WitchCauldronRenderer;
+import com.ponyo.thewitchslegacy.client.gui.AltarScreen;
 import com.ponyo.thewitchslegacy.client.gui.WitchOvenScreen;
 import com.ponyo.thewitchslegacy.entity.ModEntities;
 import com.ponyo.thewitchslegacy.entity.client.MandrakeModel;
@@ -58,6 +59,7 @@ public class TheWitchsLegacyClient {
     @SubscribeEvent
     static void registerMenuScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.WITCH_OVEN.get(), WitchOvenScreen::new);
+        event.register(ModMenuTypes.ALTAR.get(), AltarScreen::new);
     }
 
     @SubscribeEvent

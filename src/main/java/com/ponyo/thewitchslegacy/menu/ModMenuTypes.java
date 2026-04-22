@@ -14,6 +14,8 @@ public final class ModMenuTypes {
 
     public static final DeferredHolder<MenuType<?>, MenuType<WitchOvenMenu>> WITCH_OVEN =
             MENUS.register("witch_oven", () -> IMenuTypeExtension.create(WitchOvenMenu::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<AltarMenu>> ALTAR =
+            MENUS.register("altar", () -> IMenuTypeExtension.create(AltarMenu::new));
 
     private ModMenuTypes() {
     }

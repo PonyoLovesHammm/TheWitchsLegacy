@@ -1,0 +1,6 @@
+{
+  "parent": "thewitchslegacy:block/altar/altar_cross",
+  "textures": {
+    "top": "thewitchslegacy:block/altar/altar_top_infused"
+  }
+}

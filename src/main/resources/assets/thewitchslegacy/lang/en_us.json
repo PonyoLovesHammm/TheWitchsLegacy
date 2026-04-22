@@ -176,6 +176,10 @@
   "block.thewitchslegacy.fiery_glyph": "Fiery Glyph",
   "block.thewitchslegacy.otherwhere_glyph": "Otherwhere Glyph",
 
+  "gui.thewitchslegacy.altar.title": "Altar",
+  "gui.thewitchslegacy.altar.power": "%s / %s",
+  "gui.thewitchslegacy.altar.rate": "Recharge Rate: %s/s",
+
   "sounds.thewitchslegacy.chalk_draw": "Chalk draws",
   "sounds.thewitchslegacy.mandrake_scream_1": "Mandrake screams",
   "sounds.thewitchslegacy.mandrake_scream_2": "Mandrake screams",
