@@ -178,13 +178,23 @@ public class WitchCauldron extends BaseEntityBlock implements SimpleWaterloggedB
             return;
         }
 
+        int liquidColor = WitchCauldronBlockEntity.DEFAULT_LIQUID_COLOR;
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        if (blockEntity instanceof WitchCauldronBlockEntity cauldronBlockEntity) {
+            liquidColor = cauldronBlockEntity.getLiquidColor();
+        }
+
+        double red = ((liquidColor >> 16) & 0xFF) / 255.0D;
+        double green = ((liquidColor >> 8) & 0xFF) / 255.0D;
+        double blue = (liquidColor & 0xFF) / 255.0D;
+
         int particleCount = 1 + random.nextInt(2);
         for (int i = 0; i < particleCount; i++) {
             double particleX = pos.getX() + (PARTICLE_MIN + random.nextDouble() * PARTICLE_RANGE) / 16.0;
             double particleY = pos.getY() + PARTICLE_Y;
             double particleZ = pos.getZ() + (PARTICLE_MIN + random.nextDouble() * PARTICLE_RANGE) / 16.0;
 
-            level.addParticle(ModParticles.CAULDRON_BUBBLE.get(), particleX, particleY, particleZ, 0.0, 0.0, 0.0);
+            level.addParticle(ModParticles.CAULDRON_BUBBLE.get(), particleX, particleY, particleZ, red, green, blue);
 
             if (random.nextFloat() < 0.18F) {
                 level.addParticle(ParticleTypes.BUBBLE_POP, particleX, particleY + 0.03, particleZ, 0.0, 0.0, 0.0);

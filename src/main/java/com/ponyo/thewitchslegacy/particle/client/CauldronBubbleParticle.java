@@ -7,6 +7,7 @@ import net.minecraft.client.particle.SingleQuadParticle;
 import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 
 public class CauldronBubbleParticle extends SingleQuadParticle {
@@ -15,17 +16,23 @@ public class CauldronBubbleParticle extends SingleQuadParticle {
             double x,
             double y,
             double z,
-            double xd,
-            double yd,
-            double zd,
+            double red,
+            double green,
+            double blue,
             TextureAtlasSprite sprite
     ) {
         super(level, x, y, z, sprite);
         this.setSize(0.02F, 0.02F);
         this.quadSize = this.quadSize * (this.random.nextFloat() * 0.35F + 0.2F);
-        this.xd = xd * 0.15F + (this.random.nextFloat() * 2.0F - 1.0F) * 0.004F;
-        this.yd = yd * 0.15F + 0.004F + this.random.nextFloat() * 0.004F;
-        this.zd = zd * 0.15F + (this.random.nextFloat() * 2.0F - 1.0F) * 0.004F;
+        // Motion is procedural; incoming velocity slots are repurposed as RGB tint.
+        this.xd = (this.random.nextFloat() * 2.0F - 1.0F) * 0.004F;
+        this.yd = 0.004F + this.random.nextFloat() * 0.004F;
+        this.zd = (this.random.nextFloat() * 2.0F - 1.0F) * 0.004F;
+        this.setColor(
+                Mth.clamp((float) red, 0.0F, 1.0F),
+                Mth.clamp((float) green, 0.0F, 1.0F),
+                Mth.clamp((float) blue, 0.0F, 1.0F)
+        );
         this.lifetime = 6 + this.random.nextInt(5);
     }
 

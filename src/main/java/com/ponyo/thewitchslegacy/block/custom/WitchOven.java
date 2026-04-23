@@ -170,10 +170,12 @@ public class WitchOven extends BaseEntityBlock implements SimpleWaterloggedBlock
 
         // Spawn a lower-rate chimney plume while the oven is lit.
         int chimneyParticles = 1 + (random.nextFloat() < 0.5F ? 1 : 0);
+        Direction chimneyDirection = direction.getOpposite();
+        double chimneyOffset = 5.0 / 16.0;
         for (int i = 0; i < chimneyParticles; i++) {
-            double chimneyX = pos.getX() + 0.5;
+            double chimneyX = pos.getX() + 0.5 + chimneyDirection.getStepX() * chimneyOffset;
             double chimneyY = pos.getY() + 1.0;
-            double chimneyZ = pos.getZ() + 13.0 / 16.0;
+            double chimneyZ = pos.getZ() + 0.5 + chimneyDirection.getStepZ() * chimneyOffset;
             double chimneyXSpeed = random.nextDouble() * 0.02 - 0.01;
             double chimneyYSpeed = 0.03 + random.nextDouble() * 0.01;
             double chimneyZSpeed = random.nextDouble() * 0.02 - 0.01;

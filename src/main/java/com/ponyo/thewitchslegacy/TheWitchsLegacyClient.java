@@ -2,6 +2,7 @@ package com.ponyo.thewitchslegacy;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.block.entity.ModBlockEntities;
+import com.ponyo.thewitchslegacy.client.gui.DistilleryScreen;
 import com.ponyo.thewitchslegacy.block.entity.client.WitchCauldronRenderer;
 import com.ponyo.thewitchslegacy.client.gui.AltarScreen;
 import com.ponyo.thewitchslegacy.client.gui.WitchOvenScreen;
@@ -60,6 +61,7 @@ public class TheWitchsLegacyClient {
     static void registerMenuScreens(RegisterMenuScreensEvent event) {
         event.register(ModMenuTypes.WITCH_OVEN.get(), WitchOvenScreen::new);
         event.register(ModMenuTypes.ALTAR.get(), AltarScreen::new);
+        event.register(ModMenuTypes.DISTILLERY.get(), DistilleryScreen::new);
     }
 
     @SubscribeEvent

@@ -23,6 +23,10 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("witch_cauldron",
                     () -> new BlockEntityType<>(WitchCauldronBlockEntity::new, java.util.Set.of(ModBlocks.WITCH_CAULDRON.get())));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DistilleryBlockEntity>> DISTILLERY =
+            BLOCK_ENTITIES.register("distillery",
+                    () -> new BlockEntityType<>(DistilleryBlockEntity::new, java.util.Set.of(ModBlocks.DISTILLERY.get())));
+
     private ModBlockEntities() {
     }
 
