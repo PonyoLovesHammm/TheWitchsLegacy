@@ -2,6 +2,7 @@
   "creativetab.thewitchslegacy.thewitchslegacy_items": "The Witch's Legacy",
 
   "item.thewitchslegacy.infused_stone": "Infused Stone",
+  "item.thewitchslegacy.infused_stone_charged": "Charged Infused Stone",
   "item.thewitchslegacy.soft_clay_jar": "Soft Clay Jar",
   "item.thewitchslegacy.clay_jar": "Clay Jar",
   "item.thewitchslegacy.wood_ash": "Wood Ash",
@@ -96,6 +97,9 @@
   "item.thewitchslegacy.witch_oven": "Witch's Oven",
   "item.thewitchslegacy.distillery": "Distillery",
   "item.thewitchslegacy.kettle": "Kettle",
+  "item.thewitchslegacy.chalice": "Chalice",
+  "item.thewitchslegacy.filled_chalice": "Filled Chalice",
+  "item.thewitchslegacy.infinity_egg": "Infinity Egg",
   "item.thewitchslegacy.magic_mirror": "Magic Mirror",
 
   "item.thewitchslegacy.rowan_berry_pie": "Rowan Berry Pie",
@@ -170,6 +174,9 @@
   "block.thewitchslegacy.witch_oven": "Witch's Oven",
   "block.thewitchslegacy.distillery": "Distillery",
   "block.thewitchslegacy.kettle": "Kettle",
+  "block.thewitchslegacy.chalice": "Chalice",
+  "block.thewitchslegacy.filled_chalice": "Filled Chalice",
+  "block.thewitchslegacy.infinity_egg": "Infinity Egg",
   "block.thewitchslegacy.magic_mirror": "Magic Mirror",
   "block.thewitchslegacy.white_glyph": "White Glyph",
   "block.thewitchslegacy.golden_glyph": "Golden Glyph",
@@ -179,6 +186,9 @@
   "gui.thewitchslegacy.altar.title": "Altar",
   "gui.thewitchslegacy.altar.power": "%s / %s",
   "gui.thewitchslegacy.altar.rate": "Recharge Rate: %s/s",
+  "message.thewitchslegacy.unknown_ritual": "Unknown ritual",
+  "message.thewitchslegacy.altar_power_insufficient": "Altar power insufficient",
+  "message.thewitchslegacy.ritual_failed_items_picked_up": "Ritual failed - Items Picked Up",
 
   "sounds.thewitchslegacy.chalk_draw": "Chalk draws",
   "sounds.thewitchslegacy.mandrake_scream_1": "Mandrake screams",

@@ -7,6 +7,7 @@ import com.ponyo.thewitchslegacy.item.ModCreativeModeTabs;
 import com.ponyo.thewitchslegacy.item.ModItems;
 import com.ponyo.thewitchslegacy.menu.ModMenuTypes;
 import com.ponyo.thewitchslegacy.particle.ModParticles;
+import com.ponyo.thewitchslegacy.ritual.RitualManager;
 import com.ponyo.thewitchslegacy.sound.ModSounds;
 import com.ponyo.thewitchslegacy.worldgen.tree.ModTreeGrowers;
 import org.slf4j.Logger;
@@ -53,6 +54,7 @@ public class TheWitchsLegacy {
         // Note that this is necessary if and only if we want *this* class (TheWitchsLegacy) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.addListener(RitualManager::onServerTick);
 
         ModCreativeModeTabs.register(modEventBus);
 

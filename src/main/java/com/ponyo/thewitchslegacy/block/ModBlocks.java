@@ -6,6 +6,7 @@ import com.ponyo.thewitchslegacy.block.custom.GlintWeed;
 import com.ponyo.thewitchslegacy.block.custom.EmberMoss;
 import com.ponyo.thewitchslegacy.block.custom.Altar;
 import com.ponyo.thewitchslegacy.block.custom.Candelabra;
+import com.ponyo.thewitchslegacy.block.custom.Chalice;
 import com.ponyo.thewitchslegacy.block.custom.Distillery;
 import com.ponyo.thewitchslegacy.block.custom.Kettle;
 import com.ponyo.thewitchslegacy.block.custom.MagicMirror;
@@ -435,6 +436,21 @@ public class ModBlocks {
             "kettle",
             () -> new Kettle(
                     decorativeProps("kettle", SoundType.METAL, 2.0F)));
+
+    public static final DeferredBlock<Block> CHALICE = registerBlock(
+            "chalice",
+            () -> new Chalice(
+                    decorativeProps("chalice", SoundType.METAL, 1.0F)));
+
+    public static final DeferredBlock<Block> FILLED_CHALICE = registerBlock(
+            "filled_chalice",
+            () -> new Chalice(
+                    decorativeProps("filled_chalice", SoundType.METAL, 1.0F)));
+
+    public static final DeferredBlock<Block> INFINITY_EGG = registerBlock(
+            "infinity_egg",
+            () -> new Block(
+                    decorativeProps("infinity_egg", SoundType.METAL, 3.0F)));
 
     public static final DeferredBlock<Block> MAGIC_MIRROR = registerBlock(
             "magic_mirror",

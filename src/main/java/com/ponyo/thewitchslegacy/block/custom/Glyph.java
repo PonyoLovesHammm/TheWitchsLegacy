@@ -1,13 +1,16 @@
 package com.ponyo.thewitchslegacy.block.custom;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
-import com.ponyo.thewitchslegacy.item.ModItems;
+import com.ponyo.thewitchslegacy.ritual.RitualManager;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -26,16 +29,6 @@ public class Glyph extends Block {
     public Glyph(Properties properties) {
         super(properties);
         this.registerDefaultState(this.stateDefinition.any().setValue(VARIANT, 0));
-    }
-
-    private void spawnSmokeParticles(Level level, BlockPos pos) {
-        for (int i = 0; i < 5; i++) {
-            double x = pos.getX() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4;
-            double y = pos.getY() + 0.1;
-            double z = pos.getZ() + 0.5 + (level.random.nextDouble() - 0.5) * 0.4;
-
-            level.addParticle(ParticleTypes.SMOKE, x, y, z, 0.0, 0.02, 0.0);
-        }
     }
 
     @Override
@@ -73,11 +66,21 @@ public class Glyph extends Block {
     }
 
     @Override
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
+                                          InteractionHand hand, BlockHitResult hitResult) {
+        return tryTriggerRitual(state, level, pos, player);
+    }
+
+    @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
-        if (player.getMainHandItem().isEmpty() && state.is(ModBlocks.GOLDEN_GLYPH.get())) {
+        return tryTriggerRitual(state, level, pos, player);
+    }
+
+    private InteractionResult tryTriggerRitual(BlockState state, Level level, BlockPos pos, Player player) {
+        if (state.is(ModBlocks.GOLDEN_GLYPH.get())) {
             level.playSound(player, pos, SoundEvents.AMETHYST_CLUSTER_PLACE, SoundSource.BLOCKS, 1f, 1f);
-            if (level.isClientSide()) {
-                spawnSmokeParticles(level, pos);
+            if (!level.isClientSide() && level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
+                RitualManager.tryTrigger(serverLevel, pos, serverPlayer);
             }
             return InteractionResult.SUCCESS;
         }

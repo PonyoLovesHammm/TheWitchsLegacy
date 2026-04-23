@@ -21,6 +21,7 @@ public class ModCreativeModeTabs {
                     .displayItems((parameters, output) -> {
                         //General Items
                         output.accept(ModItems.INFUSED_STONE);
+                        output.accept(ModItems.INFUSED_STONE_CHARGED);
                         output.accept(ModItems.SOFT_CLAY_JAR);
                         output.accept(ModItems.CLAY_JAR);
                         output.accept(ModItems.WOOD_ASH);
@@ -117,6 +118,9 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.WITCH_OVEN);
                         output.accept(ModBlocks.DISTILLERY);
                         output.accept(ModBlocks.KETTLE);
+                        output.accept(ModBlocks.CHALICE);
+                        output.accept(ModBlocks.FILLED_CHALICE);
+                        output.accept(ModBlocks.INFINITY_EGG);
                         output.accept(ModBlocks.MAGIC_MIRROR);
                         output.accept(ModBlocks.ALTAR);
                     }).build());

@@ -104,6 +104,27 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
         player.openMenu(this, this.getBlockPos());
     }
 
+    public int getCurrentPower() {
+        return this.currentPower;
+    }
+
+    public int getDistributionRange() {
+        return this.distributionRange;
+    }
+
+    public boolean consumePower(int amount) {
+        if (amount <= 0) {
+            return true;
+        }
+        if (this.currentPower < amount) {
+            return false;
+        }
+
+        this.currentPower -= amount;
+        this.setChanged();
+        return true;
+    }
+
     public static void serverTick(ServerLevel level, BlockPos pos, BlockState state, AltarBlockEntity blockEntity) {
         if (!blockEntity.isController()) {
             return;

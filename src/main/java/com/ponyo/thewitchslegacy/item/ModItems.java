@@ -13,6 +13,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.Consumables;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 import net.neoforged.bus.api.IEventBus;
@@ -26,6 +27,13 @@ public class ModItems {
 
     //Default Items!
     public static final DeferredItem<Item> INFUSED_STONE = registerItem("infused_stone", Item::new);
+    public static final DeferredItem<Item> INFUSED_STONE_CHARGED = registerItem("infused_stone_charged",
+            properties -> new Item(properties) {
+                @Override
+                public boolean isFoil(ItemStack stack) {
+                    return true;
+                }
+            });
     public static final DeferredItem<Item> SOFT_CLAY_JAR = registerItem("soft_clay_jar", Item::new);
     public static final DeferredItem<Item> CLAY_JAR = registerItem("clay_jar", Item::new);
     public static final DeferredItem<Item> WOOD_ASH = registerItem("wood_ash", Item::new);
