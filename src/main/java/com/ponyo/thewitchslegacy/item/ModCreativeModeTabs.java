@@ -30,6 +30,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.WITCHS_CLAIM_FILLED);
                         output.accept(ModItems.BARK_OF_THE_ANCIENT);
                         output.accept(ModItems.BREATH_OF_THE_GODDESS);
+                        output.accept(ModItems.ENDER_DEW);
                         output.accept(ModItems.ECHOES_OF_THE_LOST);
                         output.accept(ModItems.GUST_OF_THE_ARID_WINDS);
                         output.accept(ModItems.HEART_OF_THE_WILD);

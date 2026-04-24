@@ -42,6 +42,7 @@ public class ModItems {
     public static final DeferredItem<Item> WITCHS_CLAIM_FILLED = registerItem("witchs_claim_filled", Item::new);
     public static final DeferredItem<Item> BARK_OF_THE_ANCIENT = registerItem("bark_of_the_ancient", Item::new);
     public static final DeferredItem<Item> BREATH_OF_THE_GODDESS = registerItem("breath_of_the_goddess", Item::new);
+    public static final DeferredItem<Item> ENDER_DEW = registerItem("ender_dew", Item::new);
     public static final DeferredItem<Item> ECHOES_OF_THE_LOST = registerItem("echoes_of_the_lost", Item::new);
     public static final DeferredItem<Item> GUST_OF_THE_ARID_WINDS = registerItem("gust_of_the_arid_winds", Item::new);
     public static final DeferredItem<Item> HEART_OF_THE_WILD = registerItem("heart_of_the_wild", Item::new);
