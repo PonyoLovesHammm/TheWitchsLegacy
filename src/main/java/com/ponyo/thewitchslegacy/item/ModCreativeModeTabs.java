@@ -2,6 +2,8 @@ package com.ponyo.thewitchslegacy.item;
 
 import com.ponyo.thewitchslegacy.TheWitchsLegacy;
 import com.ponyo.thewitchslegacy.block.ModBlocks;
+import com.ponyo.thewitchslegacy.item.custom.CircleTalisman;
+import com.ponyo.thewitchslegacy.ritual.RitualRingSize;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
@@ -56,6 +58,25 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.GOLDEN_CHALK);
                         output.accept(ModItems.FIERY_CHALK);
                         output.accept(ModItems.OTHERWHERE_CHALK);
+                        output.accept(ModItems.CIRCLE_TALISMAN);
+                        output.accept(CircleTalisman.createWithSingleRing(ModItems.CIRCLE_TALISMAN.get(),
+                                RitualRingSize.SMALL, CircleTalisman.RingColor.WHITE));
+                        output.accept(CircleTalisman.createWithSingleRing(ModItems.CIRCLE_TALISMAN.get(),
+                                RitualRingSize.SMALL, CircleTalisman.RingColor.FIERY));
+                        output.accept(CircleTalisman.createWithSingleRing(ModItems.CIRCLE_TALISMAN.get(),
+                                RitualRingSize.SMALL, CircleTalisman.RingColor.OTHERWHERE));
+                        output.accept(CircleTalisman.createWithSingleRing(ModItems.CIRCLE_TALISMAN.get(),
+                                RitualRingSize.MEDIUM, CircleTalisman.RingColor.WHITE));
+                        output.accept(CircleTalisman.createWithSingleRing(ModItems.CIRCLE_TALISMAN.get(),
+                                RitualRingSize.MEDIUM, CircleTalisman.RingColor.FIERY));
+                        output.accept(CircleTalisman.createWithSingleRing(ModItems.CIRCLE_TALISMAN.get(),
+                                RitualRingSize.MEDIUM, CircleTalisman.RingColor.OTHERWHERE));
+                        output.accept(CircleTalisman.createWithSingleRing(ModItems.CIRCLE_TALISMAN.get(),
+                                RitualRingSize.LARGE, CircleTalisman.RingColor.WHITE));
+                        output.accept(CircleTalisman.createWithSingleRing(ModItems.CIRCLE_TALISMAN.get(),
+                                RitualRingSize.LARGE, CircleTalisman.RingColor.FIERY));
+                        output.accept(CircleTalisman.createWithSingleRing(ModItems.CIRCLE_TALISMAN.get(),
+                                RitualRingSize.LARGE, CircleTalisman.RingColor.OTHERWHERE));
                         output.accept(ModItems.MUTANDIS);
                         output.accept(ModItems.MUTANDIS_EXTREMIS);
                         //Food Items
@@ -85,6 +106,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.HAWTHORN_DOOR);
                         output.accept(ModBlocks.HAWTHORN_TRAPDOOR);
                         output.accept(ModBlocks.HAWTHORN_SAPLING);
+                        output.accept(ModBlocks.HAWTHORN_LEAVES);
                         output.accept(ModBlocks.WILLOW_LOG);
                         output.accept(ModBlocks.WILLOW_PLANKS);
                         output.accept(ModBlocks.WILLOW_STAIRS);
@@ -96,6 +118,8 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.WILLOW_DOOR);
                         output.accept(ModBlocks.WILLOW_TRAPDOOR);
                         output.accept(ModBlocks.WILLOW_SAPLING);
+                        output.accept(ModBlocks.WILLOW_LEAVES);
+                        output.accept(ModBlocks.WILLOW_CANOPY_LEAVES);
                         //Special Blocks
                         output.accept(ModBlocks.CANDELABRA);
                         output.accept(ModBlocks.WHITE_CANDELABRA);

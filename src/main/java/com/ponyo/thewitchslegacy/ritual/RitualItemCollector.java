@@ -13,24 +13,24 @@ final class RitualItemCollector {
     private RitualItemCollector() {
     }
 
-    static List<Item> itemsToConsume(List<RitualItemRequirement> requirements) {
-        List<Item> items = new ArrayList<>();
+    static List<RitualItemRequirement> itemsToConsume(List<RitualItemRequirement> requirements) {
+        List<RitualItemRequirement> items = new ArrayList<>();
         for (RitualItemRequirement requirement : requirements) {
             if (!requirement.consume()) {
                 continue;
             }
 
             for (int i = 0; i < requirement.count(); i++) {
-                items.add(requirement.item());
+                items.add(requirement);
             }
         }
         return items;
     }
 
-    static ItemConsumeResult consumeOneItem(ServerLevel level, BlockPos centerPos, Item item) {
+    static ItemConsumeResult consumeOneItem(ServerLevel level, BlockPos centerPos, RitualItemRequirement requirement) {
         for (ItemEntity itemEntity : RitualMatcher.getNearbyItems(level, centerPos)) {
             ItemStack stack = itemEntity.getItem();
-            if (!stack.is(item)) {
+            if (!requirement.matcher().test(stack)) {
                 continue;
             }
 

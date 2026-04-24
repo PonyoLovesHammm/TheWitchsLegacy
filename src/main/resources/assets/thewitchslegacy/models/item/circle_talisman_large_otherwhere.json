@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "thewitchslegacy:item/circle_talisman/circle_talisman_large_otherwhere"
+  }
+}

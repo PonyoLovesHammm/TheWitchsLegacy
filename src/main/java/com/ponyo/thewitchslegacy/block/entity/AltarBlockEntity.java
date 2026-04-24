@@ -134,7 +134,9 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
             return;
         }
 
-        int nearbyPower = AltarPowerSources.scanNearbyPower(level, pos);
+        Set<BlockPos> multiblockPositions = getMultiblockPositions(level, pos);
+        BlockPos powerScanOrigin = getPowerScanOrigin(multiblockPositions, pos);
+        int nearbyPower = AltarPowerSources.scanNearbyPower(level, powerScanOrigin);
         AltarBonuses bonuses = getBonuses(level, pos);
         int modifiedMaxPower = getModifiedMaxPower(nearbyPower, bonuses.maxPowerBonusMultiplier(), bonuses.globalMultiplier());
         int newRate = getRechargeRate(nearbyPower, bonuses.rechargeBonusMultiplier(), bonuses.globalMultiplier());
@@ -278,6 +280,48 @@ public class AltarBlockEntity extends BlockEntity implements MenuProvider {
         }
 
         return positions;
+    }
+
+    private static BlockPos getPowerScanOrigin(Set<BlockPos> multiblockPositions, BlockPos fallbackPos) {
+        if (multiblockPositions.isEmpty()) {
+            return fallbackPos;
+        }
+
+        double averageX = 0.0;
+        double averageZ = 0.0;
+        for (BlockPos altarPos : multiblockPositions) {
+            averageX += altarPos.getX();
+            averageZ += altarPos.getZ();
+        }
+
+        averageX /= multiblockPositions.size();
+        averageZ /= multiblockPositions.size();
+
+        BlockPos bestPos = null;
+        double bestDistance = Double.MAX_VALUE;
+        for (BlockPos altarPos : multiblockPositions) {
+            double dx = altarPos.getX() - averageX;
+            double dz = altarPos.getZ() - averageZ;
+            double distance = (dx * dx) + (dz * dz);
+
+            if (bestPos == null
+                    || distance < bestDistance
+                    || (distance == bestDistance && compareNorthWestFirst(altarPos, bestPos) < 0)) {
+                bestPos = altarPos;
+                bestDistance = distance;
+            }
+        }
+
+        return bestPos != null ? bestPos : fallbackPos;
+    }
+
+    private static int compareNorthWestFirst(BlockPos first, BlockPos second) {
+        int xCompare = Integer.compare(first.getX(), second.getX());
+        if (xCompare != 0) {
+            return xCompare;
+        }
+
+        return Integer.compare(first.getZ(), second.getZ());
     }
 
     private static boolean hasRegistryPath(BlockState state, String path) {

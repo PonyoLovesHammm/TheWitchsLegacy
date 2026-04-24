@@ -19,12 +19,16 @@ public final class RitualEffects {
     }
 
     public static void spawnItem(ServerLevel level, BlockPos pos, Item item) {
+        spawnItem(level, pos, new ItemStack(item));
+    }
+
+    public static void spawnItem(ServerLevel level, BlockPos pos, ItemStack stack) {
         ItemEntity itemEntity = new ItemEntity(
                 level,
                 pos.getX() + 0.5,
                 pos.getY() + 0.5,
                 pos.getZ() + 0.5,
-                new ItemStack(item)
+                stack
         );
         itemEntity.setDefaultPickUpDelay();
         level.addFreshEntity(itemEntity);

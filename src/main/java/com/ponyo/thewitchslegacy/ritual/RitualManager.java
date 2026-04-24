@@ -21,20 +21,14 @@ public final class RitualManager {
     }
 
     public static boolean tryTrigger(ServerLevel level, BlockPos centerPos, ServerPlayer player) {
-        RitualDefinition ritual = RitualMatcher.findMatchingRitual(level, centerPos);
+        List<ItemEntity> nearbyItems = RitualMatcher.getNearbyItems(level, centerPos);
+        RitualDefinition ritual = RitualMatcher.findMatchingRitual(level, centerPos, nearbyItems);
         if (ritual == null) {
             player.displayClientMessage(Component.translatable("message.thewitchslegacy.unknown_ritual"), true);
             RitualVisuals.playFailureSmoke(level, centerPos);
             return true;
         }
         if (isRitualActive(level, centerPos)) {
-            return true;
-        }
-
-        List<ItemEntity> nearbyItems = RitualMatcher.getNearbyItems(level, centerPos);
-        if (!RitualMatcher.hasRequiredItems(nearbyItems, ritual.itemRequirements())) {
-            player.displayClientMessage(Component.translatable("message.thewitchslegacy.unknown_ritual"), true);
-            RitualVisuals.playFailureSmoke(level, centerPos);
             return true;
         }
 
@@ -83,11 +77,17 @@ public final class RitualManager {
                 RitualVisuals.playCastingParticles(level, activeRitual.centerPos());
             }
 
+            if (!activeRitual.ritual().ringMatcher().matches(level, activeRitual.centerPos())) {
+                failRitual(event, level, activeRitual);
+                iterator.remove();
+                continue;
+            }
+
             if (gameTime < activeRitual.nextConsumeTick()) {
                 continue;
             }
 
-            Item itemToConsume = activeRitual.nextItemToConsume();
+            RitualItemRequirement itemToConsume = activeRitual.nextItemToConsume();
             if (itemToConsume == null) {
                 activeRitual.ritual().effect().execute(level, activeRitual.centerPos());
                 iterator.remove();

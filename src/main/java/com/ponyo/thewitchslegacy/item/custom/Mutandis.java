@@ -40,11 +40,6 @@ public class Mutandis extends Item {
     //Creates a list of possible Plant Mutations
     private static final List<WeightedPlantMutation> PLANT_MUTATIONS = List.of(
             //There are 30 normal minecraft block... to not skew the possibility of getting Witch's Legacy block, should increase weight
-            /*
-            The XXXX's are there to remember to switch it to whatever location the block get stored in
-            new WeightedPlantMutation(XXXXXXXXXX.GLINT_WEED.get(), 1),
-            new WeightedPlantMutation(XXXXXXXXXX.EMBER_MOSS.get(), 1),
-            */
             new WeightedPlantMutation(ModBlocks.SPANISH_MOSS::get, 5),
             new WeightedPlantMutation(ModBlocks.ROWAN_SAPLING::get, 5),
             new WeightedPlantMutation(ModBlocks.HAWTHORN_SAPLING::get, 5),
@@ -61,10 +56,12 @@ public class Mutandis extends Item {
             new WeightedPlantMutation(() -> Blocks.ACACIA_SAPLING, 1),
             new WeightedPlantMutation(() -> Blocks.DARK_OAK_SAPLING, 1),
             new WeightedPlantMutation(() -> Blocks.MANGROVE_PROPAGULE, 1),
+            new WeightedPlantMutation(() -> Blocks.PALE_OAK_SAPLING, 1),
             new WeightedPlantMutation(() -> Blocks.AZALEA, 1),
             new WeightedPlantMutation(() -> Blocks.FLOWERING_AZALEA, 1),
             new WeightedPlantMutation(() -> Blocks.CHERRY_SAPLING, 1),
             new WeightedPlantMutation(() -> Blocks.BIG_DRIPLEAF, 1),
+            new WeightedPlantMutation(() -> Blocks.SMALL_DRIPLEAF, 1),
             new WeightedPlantMutation(() -> Blocks.PEONY, 1),
             new WeightedPlantMutation(() -> Blocks.SUNFLOWER, 1),
             new WeightedPlantMutation(() -> Blocks.LILAC, 1),
@@ -79,7 +76,8 @@ public class Mutandis extends Item {
             new WeightedPlantMutation(() -> Blocks.CORNFLOWER, 1),
             new WeightedPlantMutation(() -> Blocks.RED_TULIP, 1),
             new WeightedPlantMutation(() -> Blocks.PINK_TULIP, 1),
-            new WeightedPlantMutation(() -> Blocks.ORANGE_TULIP, 1)
+            new WeightedPlantMutation(() -> Blocks.ORANGE_TULIP, 1),
+            new WeightedPlantMutation(() -> Blocks.WHITE_TULIP, 1)
             );
 
     private static final List<WeightedBlockMutation> BLOCK_MUTATIONS = List.of(

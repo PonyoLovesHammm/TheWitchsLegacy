@@ -3,13 +3,10 @@ package com.ponyo.thewitchslegacy.ritual;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 final class RitualMatcher {
     private static final double ITEM_RADIUS = 7.0;
@@ -17,9 +14,9 @@ final class RitualMatcher {
     private RitualMatcher() {
     }
 
-    static RitualDefinition findMatchingRitual(ServerLevel level, BlockPos centerPos) {
+    static RitualDefinition findMatchingRitual(ServerLevel level, BlockPos centerPos, List<ItemEntity> nearbyItems) {
         for (RitualDefinition ritual : ModRituals.ALL) {
-            if (matchesRings(level, centerPos, ritual.ringRequirements())) {
+            if (ritual.ringMatcher().matches(level, centerPos) && hasRequiredItems(nearbyItems, ritual.itemRequirements())) {
                 return ritual;
             }
         }
@@ -35,32 +32,20 @@ final class RitualMatcher {
     }
 
     static boolean hasRequiredItems(List<ItemEntity> itemEntities, List<RitualItemRequirement> requirements) {
-        Map<Item, Integer> available = countItems(itemEntities);
         for (RitualItemRequirement requirement : requirements) {
-            if (available.getOrDefault(requirement.item(), 0) < requirement.count()) {
+            int matchedCount = 0;
+            for (ItemEntity itemEntity : itemEntities) {
+                ItemStack stack = itemEntity.getItem();
+                if (!requirement.matcher().test(stack)) {
+                    continue;
+                }
+                matchedCount += stack.getCount();
+            }
+
+            if (matchedCount < requirement.count()) {
                 return false;
             }
         }
         return true;
-    }
-
-    private static boolean matchesRings(ServerLevel level, BlockPos centerPos, List<RitualRingRequirement> requirements) {
-        for (RitualRingRequirement requirement : requirements) {
-            for (BlockPos offset : RitualPatterns.positionsFor(requirement.size())) {
-                if (!level.getBlockState(centerPos.offset(offset)).is(requirement.glyphBlock())) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    private static Map<Item, Integer> countItems(List<ItemEntity> itemEntities) {
-        Map<Item, Integer> counts = new HashMap<>();
-        for (ItemEntity itemEntity : itemEntities) {
-            ItemStack stack = itemEntity.getItem();
-            counts.merge(stack.getItem(), stack.getCount(), Integer::sum);
-        }
-        return counts;
     }
 }

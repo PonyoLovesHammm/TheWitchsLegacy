@@ -14,13 +14,13 @@ final class ActiveRitual {
     private final ResourceKey<Level> dimension;
     private final BlockPos centerPos;
     private final RitualDefinition ritual;
-    private final List<Item> itemsToConsume;
+    private final List<RitualItemRequirement> itemsToConsume;
     private final List<Item> consumedItems = new ArrayList<>();
     private int nextItemIndex;
     private long nextConsumeTick;
 
     ActiveRitual(UUID playerId, ResourceKey<Level> dimension, BlockPos centerPos, RitualDefinition ritual,
-                 List<Item> itemsToConsume, long nextConsumeTick) {
+                 List<RitualItemRequirement> itemsToConsume, long nextConsumeTick) {
         this.playerId = playerId;
         this.dimension = dimension;
         this.centerPos = centerPos;
@@ -49,7 +49,7 @@ final class ActiveRitual {
         return this.nextConsumeTick;
     }
 
-    Item nextItemToConsume() {
+    RitualItemRequirement nextItemToConsume() {
         return this.nextItemIndex >= this.itemsToConsume.size() ? null : this.itemsToConsume.get(this.nextItemIndex);
     }
 
@@ -57,8 +57,8 @@ final class ActiveRitual {
         return this.consumedItems;
     }
 
-    void advance(Item consumedItem, long nextConsumeTick) {
-        this.consumedItems.add(consumedItem);
+    void advance(RitualItemRequirement consumedItem, long nextConsumeTick) {
+        this.consumedItems.add(consumedItem.item());
         this.nextItemIndex++;
         this.nextConsumeTick = nextConsumeTick;
     }

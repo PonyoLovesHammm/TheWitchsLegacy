@@ -3,6 +3,7 @@ package com.ponyo.thewitchslegacy.item;
 import com.ponyo.thewitchslegacy.TheWitchsLegacy;
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.item.custom.Chalk;
+import com.ponyo.thewitchslegacy.item.custom.CircleTalisman;
 import com.ponyo.thewitchslegacy.item.custom.CropSeeds;
 import com.ponyo.thewitchslegacy.item.custom.Mutandis;
 import net.minecraft.core.registries.Registries;
@@ -70,6 +71,8 @@ public class ModItems {
     public static final DeferredItem<Item> GOLDEN_CHALK = registerItem("golden_chalk", Chalk::new);
     public static final DeferredItem<Item> FIERY_CHALK = registerItem("fiery_chalk", Chalk::new);
     public static final DeferredItem<Item> OTHERWHERE_CHALK = registerItem("otherwhere_chalk", Chalk::new);
+    public static final DeferredItem<Item> CIRCLE_TALISMAN = registerItem("circle_talisman",
+            properties -> new CircleTalisman(properties.stacksTo(1)));
     public static final DeferredItem<Item> MUTANDIS = registerItem("mutandis", Mutandis::new);
     public static final DeferredItem<Item> MUTANDIS_EXTREMIS = registerItem("mutandis_extremis", Mutandis::new);
 
