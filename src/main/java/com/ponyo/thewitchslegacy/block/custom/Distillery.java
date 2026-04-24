@@ -2,6 +2,7 @@ package com.ponyo.thewitchslegacy.block.custom;
 
 import com.mojang.serialization.MapCodec;
 import com.ponyo.thewitchslegacy.block.entity.DistilleryBlockEntity;
+import com.ponyo.thewitchslegacy.block.entity.ModBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,6 +21,8 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -138,6 +141,13 @@ public class Distillery extends BaseEntityBlock implements SimpleWaterloggedBloc
     @Override
     protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction side) {
         return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
+    }
+
+    @Override
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        return !level.isClientSide()
+                ? createTickerHelper(blockEntityType, ModBlockEntities.DISTILLERY.get(), DistilleryBlockEntity::tickServer)
+                : null;
     }
 
     private static VoxelShape getFacingShape(Direction direction) {

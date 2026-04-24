@@ -9,50 +9,61 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public class DistilleryMenu extends AbstractContainerMenu {
+    private static final int DATA_COUNT = 2;
     private static final int INV_SLOT_START = DistilleryBlockEntity.SLOT_COUNT;
     private static final int INV_SLOT_END = INV_SLOT_START + 27;
     private static final int HOTBAR_SLOT_START = INV_SLOT_END;
     private static final int HOTBAR_SLOT_END = HOTBAR_SLOT_START + 9;
 
     private final Container container;
+    private final ContainerData data;
 
     public DistilleryMenu(int containerId, Inventory inventory, RegistryFriendlyByteBuf extraData) {
-        this(containerId, inventory, getContainer(inventory, extraData));
+        this(containerId, inventory, getClientDependencies(inventory, extraData));
     }
 
-    public DistilleryMenu(int containerId, Inventory inventory, Container container) {
+    public DistilleryMenu(int containerId, Inventory inventory, Container container, ContainerData data) {
         super(ModMenuTypes.DISTILLERY.get(), containerId);
         checkContainerSize(container, DistilleryBlockEntity.SLOT_COUNT);
+        checkContainerDataCount(data, DATA_COUNT);
         this.container = container;
+        this.data = data;
 
-        this.addSlot(new Slot(container, DistilleryBlockEntity.INPUT_SLOT_A, 91, 16));
-        this.addSlot(new Slot(container, DistilleryBlockEntity.INPUT_SLOT_B, 91, 34));
-        this.addSlot(new Slot(container, DistilleryBlockEntity.JAR_SLOT, 91, 56) {
+        this.addSlot(new Slot(container, DistilleryBlockEntity.INPUT_SLOT_A, 71, 17));
+        this.addSlot(new Slot(container, DistilleryBlockEntity.INPUT_SLOT_B, 89, 17));
+        this.addSlot(new Slot(container, DistilleryBlockEntity.JAR_SLOT, 26, 52) {
             @Override
             public boolean mayPlace(ItemStack stack) {
                 return stack.is(ModItems.CLAY_JAR.get());
             }
         });
 
-        this.addSlot(new OutputSlot(container, DistilleryBlockEntity.OUTPUT_SLOT_START, 129, 25));
-        this.addSlot(new OutputSlot(container, DistilleryBlockEntity.OUTPUT_SLOT_START + 1, 147, 25));
-        this.addSlot(new OutputSlot(container, DistilleryBlockEntity.OUTPUT_SLOT_START + 2, 129, 43));
-        this.addSlot(new OutputSlot(container, DistilleryBlockEntity.OUTPUT_SLOT_START + 3, 147, 43));
+        this.addSlot(new OutputSlot(container, DistilleryBlockEntity.OUTPUT_SLOT_START, 50, 52));
+        this.addSlot(new OutputSlot(container, DistilleryBlockEntity.OUTPUT_SLOT_START + 1, 70, 52));
+        this.addSlot(new OutputSlot(container, DistilleryBlockEntity.OUTPUT_SLOT_START + 2, 90, 52));
+        this.addSlot(new OutputSlot(container, DistilleryBlockEntity.OUTPUT_SLOT_START + 3, 110, 52));
 
         addPlayerInventory(inventory);
+        this.addDataSlots(data);
     }
 
-    private static Container getContainer(Inventory inventory, RegistryFriendlyByteBuf extraData) {
+    private DistilleryMenu(int containerId, Inventory inventory, ClientDependencies dependencies) {
+        this(containerId, inventory, dependencies.container(), dependencies.data());
+    }
+
+    private static ClientDependencies getClientDependencies(Inventory inventory, RegistryFriendlyByteBuf extraData) {
         BlockPos pos = extraData.readBlockPos();
         if (inventory.player.level().getBlockEntity(pos) instanceof DistilleryBlockEntity blockEntity) {
-            return blockEntity;
+            return new ClientDependencies(blockEntity, blockEntity.getDataAccess());
         }
 
-        return new SimpleContainer(DistilleryBlockEntity.SLOT_COUNT);
+        return new ClientDependencies(new SimpleContainer(DistilleryBlockEntity.SLOT_COUNT), new SimpleContainerData(DATA_COUNT));
     }
 
     private void addPlayerInventory(Inventory inventory) {
@@ -124,5 +135,29 @@ public class DistilleryMenu extends AbstractContainerMenu {
         public boolean mayPlace(ItemStack stack) {
             return false;
         }
+    }
+
+    public int getBrewingTicksRemaining() {
+        return this.data.get(0);
+    }
+
+    public int getTotalBrewingTicks() {
+        return this.data.get(1);
+    }
+
+    public float getBrewingProgress() {
+        int totalBrewingTicks = this.getTotalBrewingTicks();
+        if (totalBrewingTicks <= 0) {
+            return 0.0F;
+        }
+
+        return (float) (totalBrewingTicks - this.getBrewingTicksRemaining()) / totalBrewingTicks;
+    }
+
+    public boolean isBrewing() {
+        return this.getBrewingTicksRemaining() > 0 && this.getTotalBrewingTicks() > 0;
+    }
+
+    private record ClientDependencies(Container container, ContainerData data) {
     }
 }

@@ -14,7 +14,7 @@ public class WitchOvenScreen extends AbstractContainerScreen<WitchOvenMenu> {
     private static final Identifier TEXTURE = Identifier.withDefaultNamespace("textures/gui/container/furnace.png");
     private static final Identifier LIT_PROGRESS_SPRITE = Identifier.withDefaultNamespace("container/furnace/lit_progress");
     private static final Identifier BURN_PROGRESS_SPRITE = Identifier.withDefaultNamespace("container/furnace/burn_progress");
-    private static final Identifier CUSTOM_SLOT_TEXTURE = Identifier.fromNamespaceAndPath(TheWitchsLegacy.MODID, "textures/gui/witch_oven_slot.png");
+    private static final Identifier CUSTOM_SLOT_TEXTURE = Identifier.fromNamespaceAndPath(TheWitchsLegacy.MODID, "textures/gui/jar_slot_overlay.png");
 
     public WitchOvenScreen(WitchOvenMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
