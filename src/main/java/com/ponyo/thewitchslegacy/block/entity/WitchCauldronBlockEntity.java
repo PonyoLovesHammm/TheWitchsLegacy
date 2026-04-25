@@ -3,6 +3,7 @@ package com.ponyo.thewitchslegacy.block.entity;
 import com.ponyo.thewitchslegacy.block.custom.WitchCauldron;
 import com.ponyo.thewitchslegacy.block.entity.cauldron.WitchCauldronRecipe;
 import com.ponyo.thewitchslegacy.block.entity.cauldron.WitchCauldronRecipes;
+import com.ponyo.thewitchslegacy.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.particles.ColorParticleOption;
@@ -44,6 +45,10 @@ public class WitchCauldronBlockEntity extends BlockEntity {
     private static final int FAILED_BREW_COLOR = 0x5A462F;
     private static final int SUCCESS_CELEBRATION_TICKS_TOTAL = 32;
     private static final int SUCCESS_PARTICLES_PER_TICK = 10;
+    private static final int BUBBLE_SOUND_INTERVAL = 16;
+    private static final float BUBBLE_SOUND_VOLUME = 0.42F;
+    private static final float BUBBLE_ACCENT_VOLUME = 0.26F;
+    private static final int QUICKLIME_RESET_POOF_COUNT = 18;
     // Swap these values to quickly retheme the success celebration particle.
     private static final float SUCCESS_PARTICLE_RED = 0.66F;
     private static final float SUCCESS_PARTICLE_GREEN = 0.28F;
@@ -83,6 +88,10 @@ public class WitchCauldronBlockEntity extends BlockEntity {
             return;
         }
 
+        if (blockEntity.tryHandleQuicklimeReset(level, pos, state)) {
+            return;
+        }
+
         if (blockEntity.successCelebrationTicks > 0 && level instanceof ServerLevel serverLevel) {
             blockEntity.tickSuccessCelebration(serverLevel, pos, state);
             return;
@@ -91,6 +100,8 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         if (!state.getValue(WitchCauldron.BUBBLING)) {
             return;
         }
+
+        blockEntity.playBubblingSound(level, pos);
 
         if (!blockEntity.brewFailed && blockEntity.tryConsumeDroppedIngredient(level, pos)) {
             Optional<WitchCauldronRecipe> recipeMatch = WitchCauldronRecipes.findExactMatch(blockEntity.ingredientCounts);
@@ -166,6 +177,28 @@ public class WitchCauldronBlockEntity extends BlockEntity {
         return false;
     }
 
+    private boolean tryHandleQuicklimeReset(Level level, BlockPos pos, BlockState state) {
+        AABB inputBounds = ITEM_INPUT_BOUNDS.move(pos);
+        for (ItemEntity itemEntity : level.getEntitiesOfClass(ItemEntity.class, inputBounds, entity -> entity.isAlive() && entity.getItem().is(ModItems.QUICKLIME.get()))) {
+            ItemStack stack = itemEntity.getItem();
+            stack.shrink(1);
+            if (stack.isEmpty()) {
+                itemEntity.discard();
+            } else {
+                itemEntity.setItem(stack);
+            }
+
+            if (level instanceof ServerLevel serverLevel) {
+                spawnQuicklimeResetEffect(serverLevel, pos);
+            }
+
+            resetCauldron(level, pos, state);
+            return true;
+        }
+
+        return false;
+    }
+
     private void beginSuccessCelebration(ServerLevel level, BlockPos pos, WitchCauldronRecipe recipe) {
         this.pendingResult = recipe.createResultStack();
         this.setLiquidColor(recipe.resultColor());
@@ -232,16 +265,7 @@ public class WitchCauldronBlockEntity extends BlockEntity {
             level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.55F, 1.35F);
         }
 
-        this.pendingResult = ItemStack.EMPTY;
-        this.successCelebrationTicks = 0;
-        this.successCelebrationAngle = 0.0F;
-        this.heatingTicks = 0;
-        this.liquidColor = DEFAULT_LIQUID_COLOR;
-        this.brewFailed = false;
-        this.setChanged();
-        BlockState clearedState = state.setValue(WitchCauldron.LEVEL, 0).setValue(WitchCauldron.BUBBLING, false);
-        level.setBlock(pos, clearedState, 3);
-        level.sendBlockUpdated(pos, state, clearedState, 3);
+        resetCauldron(level, pos, state);
     }
 
     private void failBrew(ServerLevel level, BlockPos pos) {
@@ -282,6 +306,47 @@ public class WitchCauldronBlockEntity extends BlockEntity {
 
         if (this.liquidColor != DEFAULT_LIQUID_COLOR) {
             this.setLiquidColor(DEFAULT_LIQUID_COLOR);
+        }
+    }
+
+    private void resetCauldron(Level level, BlockPos pos, BlockState state) {
+        this.ingredientCounts.clear();
+        this.ticksSinceLastIngredient = -1;
+        this.pendingResult = ItemStack.EMPTY;
+        this.successCelebrationTicks = 0;
+        this.successCelebrationAngle = 0.0F;
+        this.heatingTicks = 0;
+        this.brewFailed = false;
+        this.liquidColor = DEFAULT_LIQUID_COLOR;
+        this.setChanged();
+
+        BlockState clearedState = state.setValue(WitchCauldron.LEVEL, 0).setValue(WitchCauldron.BUBBLING, false);
+        level.setBlock(pos, clearedState, 3);
+        level.sendBlockUpdated(pos, state, clearedState, 3);
+    }
+
+    private static void spawnQuicklimeResetEffect(ServerLevel level, BlockPos pos) {
+        double centerX = pos.getX() + 0.5D;
+        double centerY = pos.getY() + 0.82D;
+        double centerZ = pos.getZ() + 0.5D;
+
+        level.sendParticles(ParticleTypes.EXPLOSION, centerX, centerY, centerZ, 1, 0.0D, 0.0D, 0.0D, 0.0D);
+        level.sendParticles(ParticleTypes.CLOUD, centerX, centerY, centerZ, QUICKLIME_RESET_POOF_COUNT, 0.18D, 0.10D, 0.18D, 0.03D);
+        level.sendParticles(ParticleTypes.SPLASH, centerX, centerY, centerZ, 10, 0.16D, 0.04D, 0.16D, 0.08D);
+        level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 0.45F, 1.35F);
+    }
+
+    private void playBubblingSound(Level level, BlockPos pos) {
+        if ((level.getGameTime() + pos.asLong()) % BUBBLE_SOUND_INTERVAL != 0L) {
+            return;
+        }
+
+        float ambientPitch = 0.92F + level.random.nextFloat() * 0.12F;
+        level.playSound(null, pos, SoundEvents.BUBBLE_COLUMN_UPWARDS_AMBIENT, SoundSource.BLOCKS, BUBBLE_SOUND_VOLUME, ambientPitch);
+
+        if (level.random.nextFloat() < 0.35F) {
+            float accentPitch = 0.94F + level.random.nextFloat() * 0.12F;
+            level.playSound(null, pos, SoundEvents.BUBBLE_COLUMN_WHIRLPOOL_AMBIENT, SoundSource.BLOCKS, BUBBLE_ACCENT_VOLUME, accentPitch);
         }
     }
 

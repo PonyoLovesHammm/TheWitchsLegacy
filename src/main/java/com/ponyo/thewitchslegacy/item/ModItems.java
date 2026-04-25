@@ -39,6 +39,10 @@ public class ModItems {
     public static final DeferredItem<Item> SOFT_CLAY_JAR = registerItem("soft_clay_jar", Item::new);
     public static final DeferredItem<Item> CLAY_JAR = registerItem("clay_jar", Item::new);
     public static final DeferredItem<Item> WOOD_ASH = registerItem("wood_ash", Item::new);
+    public static final DeferredItem<Item> QUICKLIME = registerItem("quicklime", Item::new);
+    public static final DeferredItem<Item> SELENITE_SHARD = registerItem("selenite_shard", Item::new);
+    public static final DeferredItem<Item> REFINED_EVIL = registerItem("refined_evil", Item::new);
+    public static final DeferredItem<Item> DEMON_HEART = registerItem("demon_heart", Item::new);
     public static final DeferredItem<Item> BONE_NEEDLE = registerItem("bone_needle", Item::new);
     public static final DeferredItem<Item> WAYSTONE = registerItem("waystone", WaystoneItem::new);
     public static final DeferredItem<Item> BOUND_WAYSTONE = registerItem("bound_waystone", WaystoneItem::new);
@@ -47,7 +51,14 @@ public class ModItems {
     public static final DeferredItem<Item> WITCHS_CLAIM_FILLED = registerItem("witchs_claim_filled", Item::new);
     public static final DeferredItem<Item> BARK_OF_THE_ANCIENT = registerItem("bark_of_the_ancient", Item::new);
     public static final DeferredItem<Item> BREATH_OF_THE_GODDESS = registerItem("breath_of_the_goddess", Item::new);
+    public static final DeferredItem<Item> TEAR_OF_THE_GODDESS = registerItem("tear_of_the_goddess", Item::new);
+    public static final DeferredItem<Item> DIAMOND_VAPOR = registerItem("diamond_vapor", Item::new);
+    public static final DeferredItem<Item> ODOR_OF_PURITY = registerItem("odor_of_purity", Item::new);
+    public static final DeferredItem<Item> REEK_OF_MISFORTUNE = registerItem("reek_of_misfortune", Item::new);
+    public static final DeferredItem<Item> DROP_OF_LUCK = registerItem("drop_of_luck", Item::new);
+    public static final DeferredItem<Item> DEMONIC_BLOOD = registerItem("demonic_blood", Item::new);
     public static final DeferredItem<Item> ENDER_DEW = registerItem("ender_dew", Item::new);
+    public static final DeferredItem<Item> OIL_OF_VITRIOL = registerItem("oil_of_vitriol", Item::new);
     public static final DeferredItem<Item> ECHOES_OF_THE_LOST = registerItem("echoes_of_the_lost", Item::new);
     public static final DeferredItem<Item> GUST_OF_THE_ARID_WINDS = registerItem("gust_of_the_arid_winds", Item::new);
     public static final DeferredItem<Item> HEART_OF_THE_WILD = registerItem("heart_of_the_wild", Item::new);

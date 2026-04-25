@@ -5,13 +5,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
-public record DistilleryRecipeOutput(Identifier itemId, int count) {
+public record DistilleryRecipeOutput(Identifier itemId, int count, int jarCost) {
+    public DistilleryRecipeOutput(Identifier itemId, int count) {
+        this(itemId, count, 0);
+    }
+
     public Item item() {
         Item item = BuiltInRegistries.ITEM.getValue(this.itemId);
         return item != null ? item : Items.AIR;
-    }
-
-    public int jarCost() {
-        return this.count;
     }
 }
