@@ -11,8 +11,11 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 //Defines a new Item class of Chalk which will behave like any items unless an override functionality is used
 public class Chalk extends Item {
@@ -54,19 +57,9 @@ public class Chalk extends Item {
         if (!level.isClientSide()) {
             //picks a random glyph variant between 0-11
             int variant = level.getRandom().nextInt(12);
-
-            //if using white chalk, place a white glyph block with a random variant
-            if (usedItem == ModItems.WHITE_CHALK.get()) {
-                level.setBlock(placePos, ModBlocks.WHITE_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, variant), 3);
-                //if using golden chalk, only return the variant 0 (that's all that exists)
-            } else if (usedItem == ModItems.GOLDEN_CHALK.get()) {
-                level.setBlock(placePos, ModBlocks.GOLDEN_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, 0), 3);
-                //if using red chalk, place a red glyph block with a random variant
-            } else if (usedItem == ModItems.FIERY_CHALK.get()) {
-                level.setBlock(placePos, ModBlocks.FIERY_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, variant), 3);
-                //if using purple chalk, place a purple glyph block with a random variant
-            } else if (usedItem == ModItems.OTHERWHERE_CHALK.get()) {
-                level.setBlock(placePos, ModBlocks.OTHERWHERE_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, variant), 3);
+            BlockState glyphState = glyphStateForItem(usedItem, variant);
+            if (glyphState != null) {
+                level.setBlock(placePos, glyphState, 3);
             }
             //damage the chalk durability by 1, and if the items breaks, triggers the items breaking
             context.getItemInHand().hurtAndBreak(1, ((ServerLevel) level), context.getPlayer(),
@@ -76,5 +69,59 @@ public class Chalk extends Item {
             level.playSound(null, placePos, ModSounds.CHALK_DRAW.get(), SoundSource.BLOCKS);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    public static boolean isTransformChalk(ItemStack stack) {
+        Item item = stack.getItem();
+        return item == ModItems.WHITE_CHALK.get()
+                || item == ModItems.FIERY_CHALK.get()
+                || item == ModItems.OTHERWHERE_CHALK.get();
+    }
+
+    public static BlockState glyphStateForStack(ItemStack stack, int variant) {
+        return glyphStateForItem(stack.getItem(), variant);
+    }
+
+    public static Block glyphBlockForStack(ItemStack stack) {
+        Item item = stack.getItem();
+        if (item == ModItems.WHITE_CHALK.get()) {
+            return ModBlocks.WHITE_GLYPH.get();
+        }
+        if (item == ModItems.GOLDEN_CHALK.get()) {
+            return ModBlocks.GOLDEN_GLYPH.get();
+        }
+        if (item == ModItems.FIERY_CHALK.get()) {
+            return ModBlocks.FIERY_GLYPH.get();
+        }
+        if (item == ModItems.OTHERWHERE_CHALK.get()) {
+            return ModBlocks.OTHERWHERE_GLYPH.get();
+        }
+        return null;
+    }
+
+    private static BlockState glyphStateForItem(Item item, int variant) {
+        Block glyphBlock = glyphBlockForItem(item);
+        if (glyphBlock == null) {
+            return null;
+        }
+
+        int clampedVariant = glyphBlock == ModBlocks.GOLDEN_GLYPH.get() ? 0 : Math.max(0, Math.min(variant, 11));
+        return glyphBlock.defaultBlockState().setValue(Glyph.VARIANT, clampedVariant);
+    }
+
+    private static Block glyphBlockForItem(Item item) {
+        if (item == ModItems.WHITE_CHALK.get()) {
+            return ModBlocks.WHITE_GLYPH.get();
+        }
+        if (item == ModItems.GOLDEN_CHALK.get()) {
+            return ModBlocks.GOLDEN_GLYPH.get();
+        }
+        if (item == ModItems.FIERY_CHALK.get()) {
+            return ModBlocks.FIERY_GLYPH.get();
+        }
+        if (item == ModItems.OTHERWHERE_CHALK.get()) {
+            return ModBlocks.OTHERWHERE_GLYPH.get();
+        }
+        return null;
     }
 }

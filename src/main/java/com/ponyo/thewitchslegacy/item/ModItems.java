@@ -83,10 +83,14 @@ public class ModItems {
             properties -> new CropSeeds(ModBlocks.WATER_ARTICHOKE_CROP::get, properties, true));
 
     //Special Items
-    public static final DeferredItem<Item> WHITE_CHALK = registerItem("white_chalk", Chalk::new);
-    public static final DeferredItem<Item> GOLDEN_CHALK = registerItem("golden_chalk", Chalk::new);
-    public static final DeferredItem<Item> FIERY_CHALK = registerItem("fiery_chalk", Chalk::new);
-    public static final DeferredItem<Item> OTHERWHERE_CHALK = registerItem("otherwhere_chalk", Chalk::new);
+    public static final DeferredItem<Item> WHITE_CHALK = registerItem("white_chalk",
+            properties -> new Chalk(properties.durability(120)));
+    public static final DeferredItem<Item> GOLDEN_CHALK = registerItem("golden_chalk",
+            properties -> new Chalk(properties.durability(120)));
+    public static final DeferredItem<Item> FIERY_CHALK = registerItem("fiery_chalk",
+            properties -> new Chalk(properties.durability(120)));
+    public static final DeferredItem<Item> OTHERWHERE_CHALK = registerItem("otherwhere_chalk",
+            properties -> new Chalk(properties.durability(120)));
     public static final DeferredItem<Item> CIRCLE_TALISMAN = registerItem("circle_talisman",
             properties -> new CircleTalisman(properties.stacksTo(1)));
     public static final DeferredItem<Item> MUTANDIS = registerItem("mutandis", Mutandis::new);

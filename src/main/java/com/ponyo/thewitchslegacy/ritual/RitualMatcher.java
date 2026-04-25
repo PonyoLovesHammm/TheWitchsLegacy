@@ -12,7 +12,7 @@ import java.util.List;
 final class RitualMatcher {
     private static final double ITEM_RADIUS = 7.0;
     private static final Comparator<RitualDefinition> MATCH_PRIORITY = Comparator
-            .comparingInt((RitualDefinition ritual) -> ritual.itemRequirements().size())
+            .comparingInt(RitualMatcher::totalRequiredItemCount)
             .thenComparingInt(ritual -> ritual.ringRequirements().size())
             .thenComparingInt(RitualDefinition::altarPowerCost);
 
@@ -51,5 +51,13 @@ final class RitualMatcher {
             }
         }
         return true;
+    }
+
+    private static int totalRequiredItemCount(RitualDefinition ritual) {
+        int total = 0;
+        for (RitualItemRequirement requirement : ritual.itemRequirements()) {
+            total += requirement.count();
+        }
+        return total;
     }
 }
