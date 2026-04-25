@@ -3,6 +3,7 @@ package com.ponyo.thewitchslegacy;
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.block.entity.ModBlockEntities;
 import com.ponyo.thewitchslegacy.entity.ModEntities;
+import com.ponyo.thewitchslegacy.familiar.FamiliarManager;
 import com.ponyo.thewitchslegacy.item.ModCreativeModeTabs;
 import com.ponyo.thewitchslegacy.item.ModItems;
 import com.ponyo.thewitchslegacy.menu.ModMenuTypes;
@@ -55,6 +56,7 @@ public class TheWitchsLegacy {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.addListener(RitualManager::onServerTick);
+        NeoForge.EVENT_BUS.addListener(FamiliarManager::onLivingDeath);
 
         ModCreativeModeTabs.register(modEventBus);
 

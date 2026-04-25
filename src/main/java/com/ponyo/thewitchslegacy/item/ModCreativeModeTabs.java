@@ -28,6 +28,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.CLAY_JAR);
                         output.accept(ModItems.WOOD_ASH);
                         output.accept(ModItems.BONE_NEEDLE);
+                        output.accept(ModItems.WAYSTONE);
                         output.accept(ModItems.WITCHS_CLAIM);
                         output.accept(ModItems.WITCHS_CLAIM_FILLED);
                         output.accept(ModItems.BARK_OF_THE_ANCIENT);

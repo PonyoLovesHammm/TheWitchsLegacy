@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayList;
@@ -32,6 +32,13 @@ public final class RitualManager {
             return true;
         }
 
+        Component startFailure = ritual.startValidator().validate(level, centerPos, player);
+        if (startFailure != null) {
+            player.displayClientMessage(startFailure, true);
+            RitualVisuals.playFailureSmoke(level, centerPos);
+            return true;
+        }
+
         AltarBlockEntity altar = RitualAltarSupport.findBestSupportingAltar(level, centerPos, ritual.altarPowerCost());
         if (ritual.altarPowerCost() > 0 && altar == null) {
             player.displayClientMessage(Component.translatable("message.thewitchslegacy.altar_power_insufficient"), true);
@@ -47,6 +54,26 @@ public final class RitualManager {
 
         startRitual(level, centerPos, ritual, player);
         return true;
+    }
+
+    public static boolean cancelActiveRitual(ServerLevel level, BlockPos centerPos, ServerPlayer player) {
+        Iterator<ActiveRitual> iterator = ACTIVE_RITUALS.iterator();
+        while (iterator.hasNext()) {
+            ActiveRitual activeRitual = iterator.next();
+            if (!activeRitual.dimension().equals(level.dimension()) || !activeRitual.centerPos().equals(centerPos)) {
+                continue;
+            }
+
+            iterator.remove();
+            player.displayClientMessage(Component.translatable("message.thewitchslegacy.ritual_cancelled"), true);
+            RitualVisuals.playFailureSmoke(level, centerPos);
+            for (ItemStack stack : activeRitual.consumedItems()) {
+                RitualEffects.spawnItem(level, centerPos.above(1), stack);
+            }
+            return true;
+        }
+
+        return false;
     }
 
     public static boolean isRitualActive(ServerLevel level, BlockPos centerPos) {
@@ -89,7 +116,16 @@ public final class RitualManager {
 
             RitualItemRequirement itemToConsume = activeRitual.nextItemToConsume();
             if (itemToConsume == null) {
-                activeRitual.ritual().effect().execute(level, activeRitual.centerPos());
+                ServerPlayer player = event.getServer().getPlayerList().getPlayer(activeRitual.playerId());
+                if (player != null) {
+                    Component completionFailure = activeRitual.ritual().startValidator().validate(level, activeRitual.centerPos(), player);
+                    if (completionFailure != null) {
+                        failRitual(event, level, activeRitual, completionFailure);
+                        iterator.remove();
+                        continue;
+                    }
+                    activeRitual.ritual().effect().execute(level, activeRitual.centerPos(), player);
+                }
                 iterator.remove();
                 continue;
             }
@@ -102,7 +138,7 @@ public final class RitualManager {
             }
 
             RitualVisuals.playItemConsumedEffects(level, result.x(), result.y(), result.z());
-            activeRitual.advance(itemToConsume, gameTime + ITEM_CONSUME_INTERVAL_TICKS);
+            activeRitual.advance(result.consumedStack(), gameTime + ITEM_CONSUME_INTERVAL_TICKS);
         }
     }
 
@@ -118,15 +154,23 @@ public final class RitualManager {
     }
 
     private static void failRitual(ServerTickEvent.Post event, ServerLevel level, ActiveRitual activeRitual) {
+        failRitual(event, level, activeRitual, null);
+    }
+
+    private static void failRitual(ServerTickEvent.Post event, ServerLevel level, ActiveRitual activeRitual, Component failureMessage) {
         ServerPlayer player = event.getServer().getPlayerList().getPlayer(activeRitual.playerId());
         if (player == null) {
             return;
         }
 
-        player.displayClientMessage(Component.translatable("message.thewitchslegacy.ritual_failed_items_picked_up"), true);
+        if (failureMessage != null) {
+            player.displayClientMessage(failureMessage, true);
+        } else {
+            player.displayClientMessage(Component.translatable("message.thewitchslegacy.ritual_failed_items_picked_up"), true);
+        }
         RitualVisuals.playFailureSmoke(level, activeRitual.centerPos());
-        for (Item item : activeRitual.consumedItems()) {
-            RitualEffects.spawnItem(level, activeRitual.centerPos().above(1), item);
+        for (ItemStack stack : activeRitual.consumedItems()) {
+            RitualEffects.spawnItem(level, activeRitual.centerPos().above(1), stack);
         }
     }
 }

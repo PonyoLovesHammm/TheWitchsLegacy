@@ -6,21 +6,25 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 
+import java.util.Comparator;
 import java.util.List;
 
 final class RitualMatcher {
     private static final double ITEM_RADIUS = 7.0;
+    private static final Comparator<RitualDefinition> MATCH_PRIORITY = Comparator
+            .comparingInt((RitualDefinition ritual) -> ritual.itemRequirements().size())
+            .thenComparingInt(ritual -> ritual.ringRequirements().size())
+            .thenComparingInt(RitualDefinition::altarPowerCost);
 
     private RitualMatcher() {
     }
 
     static RitualDefinition findMatchingRitual(ServerLevel level, BlockPos centerPos, List<ItemEntity> nearbyItems) {
-        for (RitualDefinition ritual : ModRituals.ALL) {
-            if (ritual.ringMatcher().matches(level, centerPos) && hasRequiredItems(nearbyItems, ritual.itemRequirements())) {
-                return ritual;
-            }
-        }
-        return null;
+        return ModRituals.ALL.stream()
+                .filter(ritual -> ritual.ringMatcher().matches(level, centerPos))
+                .filter(ritual -> hasRequiredItems(nearbyItems, ritual.itemRequirements()))
+                .max(MATCH_PRIORITY)
+                .orElse(null);
     }
 
     static List<ItemEntity> getNearbyItems(ServerLevel level, BlockPos centerPos) {

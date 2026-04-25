@@ -6,6 +6,7 @@ import com.ponyo.thewitchslegacy.item.custom.Chalk;
 import com.ponyo.thewitchslegacy.item.custom.CircleTalisman;
 import com.ponyo.thewitchslegacy.item.custom.CropSeeds;
 import com.ponyo.thewitchslegacy.item.custom.Mutandis;
+import com.ponyo.thewitchslegacy.item.custom.WaystoneItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
@@ -39,6 +40,9 @@ public class ModItems {
     public static final DeferredItem<Item> CLAY_JAR = registerItem("clay_jar", Item::new);
     public static final DeferredItem<Item> WOOD_ASH = registerItem("wood_ash", Item::new);
     public static final DeferredItem<Item> BONE_NEEDLE = registerItem("bone_needle", Item::new);
+    public static final DeferredItem<Item> WAYSTONE = registerItem("waystone", WaystoneItem::new);
+    public static final DeferredItem<Item> BOUND_WAYSTONE = registerItem("bound_waystone", WaystoneItem::new);
+    public static final DeferredItem<Item> BLOODED_WAYSTONE = registerItem("blooded_waystone", WaystoneItem::new);
     public static final DeferredItem<Item> WITCHS_CLAIM = registerItem("witchs_claim", Item::new);
     public static final DeferredItem<Item> WITCHS_CLAIM_FILLED = registerItem("witchs_claim_filled", Item::new);
     public static final DeferredItem<Item> BARK_OF_THE_ANCIENT = registerItem("bark_of_the_ancient", Item::new);

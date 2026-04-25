@@ -30,10 +30,10 @@ public final class RiteOfCharging {
                         new RitualItemRequirement(ModItems.TOUCH_OF_REGROWTH.get(), 1, true)
                 ),
                 2000,
-                (level, centerPos) -> {
+                (level, centerPos, player) -> {
                     BlockPos outputPos = centerPos.above(1);
                     RitualEffects.playCompletionEffects(level, outputPos);
-                    RitualEffects.spawnItem(level, outputPos, ModItems.INFUSED_STONE_CHARGED.get());
+                    RitualEffects.spawnOutputItem(level, outputPos, ModItems.INFUSED_STONE_CHARGED.get());
                 }
         );
     }

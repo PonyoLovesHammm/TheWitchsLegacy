@@ -2,7 +2,7 @@ package com.ponyo.thewitchslegacy.ritual;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ final class ActiveRitual {
     private final BlockPos centerPos;
     private final RitualDefinition ritual;
     private final List<RitualItemRequirement> itemsToConsume;
-    private final List<Item> consumedItems = new ArrayList<>();
+    private final List<ItemStack> consumedItems = new ArrayList<>();
     private int nextItemIndex;
     private long nextConsumeTick;
 
@@ -53,12 +53,12 @@ final class ActiveRitual {
         return this.nextItemIndex >= this.itemsToConsume.size() ? null : this.itemsToConsume.get(this.nextItemIndex);
     }
 
-    List<Item> consumedItems() {
+    List<ItemStack> consumedItems() {
         return this.consumedItems;
     }
 
-    void advance(RitualItemRequirement consumedItem, long nextConsumeTick) {
-        this.consumedItems.add(consumedItem.item());
+    void advance(ItemStack consumedItem, long nextConsumeTick) {
+        this.consumedItems.add(consumedItem);
         this.nextItemIndex++;
         this.nextConsumeTick = nextConsumeTick;
     }

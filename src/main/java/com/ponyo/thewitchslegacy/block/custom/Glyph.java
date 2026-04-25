@@ -80,7 +80,11 @@ public class Glyph extends Block {
         if (state.is(ModBlocks.GOLDEN_GLYPH.get())) {
             level.playSound(player, pos, SoundEvents.AMETHYST_CLUSTER_PLACE, SoundSource.BLOCKS, 1f, 1f);
             if (!level.isClientSide() && level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
-                RitualManager.tryTrigger(serverLevel, pos, serverPlayer);
+                if (RitualManager.isRitualActive(serverLevel, pos)) {
+                    RitualManager.cancelActiveRitual(serverLevel, pos, serverPlayer);
+                } else {
+                    RitualManager.tryTrigger(serverLevel, pos, serverPlayer);
+                }
             }
             return InteractionResult.SUCCESS;
         }

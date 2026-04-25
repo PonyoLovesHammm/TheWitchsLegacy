@@ -34,6 +34,7 @@ final class RitualItemCollector {
                 continue;
             }
 
+            ItemStack consumedStack = stack.copyWithCount(1);
             double x = itemEntity.getX();
             double y = itemEntity.getY() + 0.1;
             double z = itemEntity.getZ();
@@ -45,12 +46,12 @@ final class RitualItemCollector {
                 itemEntity.setItem(stack);
             }
 
-            return new ItemConsumeResult(x, y, z);
+            return new ItemConsumeResult(x, y, z, consumedStack);
         }
 
         return null;
     }
 
-    record ItemConsumeResult(double x, double y, double z) {
+    record ItemConsumeResult(double x, double y, double z, ItemStack consumedStack) {
     }
 }
