@@ -1,74 +1,157 @@
 {
   "model": {
-    "type": "minecraft:range_dispatch",
-    "property": "minecraft:custom_model_data",
-    "fallback": {
-      "type": "minecraft:model",
-      "model": "thewitchslegacy:item/circle_talisman"
-    },
-    "entries": [
+    "type": "minecraft:composite",
+    "models": [
       {
-        "threshold": 1,
-        "model": {
-          "type": "minecraft:model",
-          "model": "thewitchslegacy:item/circle_talisman_small_white"
-        }
+        "type": "minecraft:model",
+        "model": "thewitchslegacy:item/circle_talisman"
       },
       {
-        "threshold": 2,
-        "model": {
-          "type": "minecraft:model",
-          "model": "thewitchslegacy:item/circle_talisman_small_fiery"
-        }
+        "type": "minecraft:select",
+        "property": "minecraft:custom_model_data",
+        "index": 0,
+        "fallback": {
+          "type": "minecraft:empty"
+        },
+        "cases": [
+          {
+            "when": "white",
+            "model": {
+              "type": "minecraft:model",
+              "model": "thewitchslegacy:item/circle_talisman_small",
+              "tints": [
+                {
+                  "type": "minecraft:constant",
+                  "value": 15724527
+                }
+              ]
+            }
+          },
+          {
+            "when": "fiery",
+            "model": {
+              "type": "minecraft:model",
+              "model": "thewitchslegacy:item/circle_talisman_small",
+              "tints": [
+                {
+                  "type": "minecraft:constant",
+                  "value": 12925741
+                }
+              ]
+            }
+          },
+          {
+            "when": "otherwhere",
+            "model": {
+              "type": "minecraft:model",
+              "model": "thewitchslegacy:item/circle_talisman_small",
+              "tints": [
+                {
+                  "type": "minecraft:constant",
+                  "value": 9123545
+                }
+              ]
+            }
+          }
+        ]
       },
       {
-        "threshold": 3,
-        "model": {
-          "type": "minecraft:model",
-          "model": "thewitchslegacy:item/circle_talisman_small_otherwhere"
-        }
+        "type": "minecraft:select",
+        "property": "minecraft:custom_model_data",
+        "index": 1,
+        "fallback": {
+          "type": "minecraft:empty"
+        },
+        "cases": [
+          {
+            "when": "white",
+            "model": {
+              "type": "minecraft:model",
+              "model": "thewitchslegacy:item/circle_talisman_medium",
+              "tints": [
+                {
+                  "type": "minecraft:constant",
+                  "value": 15724527
+                }
+              ]
+            }
+          },
+          {
+            "when": "fiery",
+            "model": {
+              "type": "minecraft:model",
+              "model": "thewitchslegacy:item/circle_talisman_medium",
+              "tints": [
+                {
+                  "type": "minecraft:constant",
+                  "value": 12925741
+                }
+              ]
+            }
+          },
+          {
+            "when": "otherwhere",
+            "model": {
+              "type": "minecraft:model",
+              "model": "thewitchslegacy:item/circle_talisman_medium",
+              "tints": [
+                {
+                  "type": "minecraft:constant",
+                  "value": 9123545
+                }
+              ]
+            }
+          }
+        ]
       },
       {
-        "threshold": 4,
-        "model": {
-          "type": "minecraft:model",
-          "model": "thewitchslegacy:item/circle_talisman_medium_white"
-        }
-      },
-      {
-        "threshold": 5,
-        "model": {
-          "type": "minecraft:model",
-          "model": "thewitchslegacy:item/circle_talisman_medium_fiery"
-        }
-      },
-      {
-        "threshold": 6,
-        "model": {
-          "type": "minecraft:model",
-          "model": "thewitchslegacy:item/circle_talisman_medium_otherwhere"
-        }
-      },
-      {
-        "threshold": 7,
-        "model": {
-          "type": "minecraft:model",
-          "model": "thewitchslegacy:item/circle_talisman_large_white"
-        }
-      },
-      {
-        "threshold": 8,
-        "model": {
-          "type": "minecraft:model",
-          "model": "thewitchslegacy:item/circle_talisman_large_fiery"
-        }
-      },
-      {
-        "threshold": 9,
-        "model": {
-          "type": "minecraft:model",
-          "model": "thewitchslegacy:item/circle_talisman_large_otherwhere"
-        }
+        "type": "minecraft:select",
+        "property": "minecraft:custom_model_data",
+        "index": 2,
+        "fallback": {
+          "type": "minecraft:empty"
+        },
+        "cases": [
+          {
+            "when": "white",
+            "model": {
+              "type": "minecraft:model",
+              "model": "thewitchslegacy:item/circle_talisman_large",
+              "tints": [
+                {
+                  "type": "minecraft:constant",
+                  "value": 15724527
+                }
+              ]
+            }
+          },
+          {
+            "when": "fiery",
+            "model": {
+              "type": "minecraft:model",
+              "model": "thewitchslegacy:item/circle_talisman_large",
+              "tints": [
+                {
+                  "type": "minecraft:constant",
+                  "value": 12925741
+                }
+              ]
+            }
+          },
+          {
+            "when": "otherwhere",
+            "model": {
+              "type": "minecraft:model",
+              "model": "thewitchslegacy:item/circle_talisman_large",
+              "tints": [
+                {
+                  "type": "minecraft:constant",
+                  "value": 9123545
+                }
+              ]
+            }
+          }
+        ]
       }
     ]
   }

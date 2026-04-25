@@ -34,6 +34,7 @@ public class CircleTalisman extends Item {
     private static final String SIZE_TAG = "Size";
     private static final String COLOR_TAG = "Color";
     private static final Comparator<RingData> RING_ORDER = Comparator.comparingInt(ring -> ring.size().ordinal());
+    private static final int RING_TIER_COUNT = RitualRingSize.values().length;
 
     public CircleTalisman(Properties properties) {
         super(properties);
@@ -197,9 +198,9 @@ public class CircleTalisman extends Item {
         tag.put(TALISMAN_RINGS_TAG, ringTags);
         CustomData.set(DataComponents.CUSTOM_DATA, stack, tag);
         stack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(
-                List.of((float) selectModelData(normalizedRings)),
                 List.of(),
                 List.of(),
+                createModelSelectors(normalizedRings),
                 List.of()
         ));
     }
@@ -209,13 +210,17 @@ public class CircleTalisman extends Item {
         stack.remove(DataComponents.CUSTOM_MODEL_DATA);
     }
 
-    private static int selectModelData(List<RingData> rings) {
-        if (rings.isEmpty()) {
-            return 0;
+    private static List<String> createModelSelectors(List<RingData> rings) {
+        List<String> selectors = new ArrayList<>(RING_TIER_COUNT);
+        for (int i = 0; i < RING_TIER_COUNT; i++) {
+            selectors.add("");
         }
 
-        RingData outermostRing = rings.stream().max(RING_ORDER).orElseThrow();
-        return outermostRing.color().modelDataFor(outermostRing.size());
+        for (RingData ring : rings.stream().limit(RING_TIER_COUNT).toList()) {
+            selectors.set(ring.size().ordinal(), ring.color().serializedName());
+        }
+
+        return List.copyOf(selectors);
     }
 
     private static String serializeRingSize(RitualRingSize size) {
@@ -240,19 +245,19 @@ public class CircleTalisman extends Item {
     }
 
     public enum RingColor {
-        WHITE("white", 1) {
+        WHITE("white") {
             @Override
             public Block glyphBlock() {
                 return ModBlocks.WHITE_GLYPH.get();
             }
         },
-        FIERY("fiery", 2) {
+        FIERY("fiery") {
             @Override
             public Block glyphBlock() {
                 return ModBlocks.FIERY_GLYPH.get();
             }
         },
-        OTHERWHERE("otherwhere", 3) {
+        OTHERWHERE("otherwhere") {
             @Override
             public Block glyphBlock() {
                 return ModBlocks.OTHERWHERE_GLYPH.get();
@@ -260,25 +265,15 @@ public class CircleTalisman extends Item {
         };
 
         private final String serializedName;
-        private final int modelOffset;
 
-        RingColor(String serializedName, int modelOffset) {
+        RingColor(String serializedName) {
             this.serializedName = serializedName;
-            this.modelOffset = modelOffset;
         }
 
         public abstract Block glyphBlock();
 
         public String serializedName() {
             return serializedName;
-        }
-
-        public int modelDataFor(RitualRingSize size) {
-            return switch (size) {
-                case SMALL -> modelOffset;
-                case MEDIUM -> modelOffset + 3;
-                case LARGE -> modelOffset + 6;
-            };
         }
 
         public static RingColor fromSerializedName(String name) {
