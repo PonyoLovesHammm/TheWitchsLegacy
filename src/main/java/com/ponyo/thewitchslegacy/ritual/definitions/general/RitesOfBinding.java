@@ -1,4 +1,4 @@
-package com.ponyo.thewitchslegacy.ritual.definitions.rites_of_binding;
+package com.ponyo.thewitchslegacy.ritual.definitions.general;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.item.ModItems;
@@ -15,6 +15,7 @@ import com.ponyo.thewitchslegacy.ritual.RitualStartValidator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.level.block.Block;
@@ -23,11 +24,11 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public final class RiteOfBinding {
+public final class RitesOfBinding {
     private static final double SMALL_RING_PLAYER_HORIZONTAL_RADIUS = 3.5D;
     private static final double SMALL_RING_PLAYER_VERTICAL_RADIUS = 2.5D;
 
-    private RiteOfBinding() {
+    private RitesOfBinding() {
     }
 
     public static RitualDefinition createTalismanBinding1() {
@@ -66,6 +67,29 @@ public final class RiteOfBinding {
         ));
     }
 
+    public static RitualDefinition createWaystoneBinding3() {
+        return createWaystoneDuplicationBinding("waystone_binding_3", 500, List.of(
+                RitualRingRequirement.small(ModBlocks.WHITE_GLYPH.get())
+        ), List.of(
+                boundOrBloodedWaystoneRequirement(),
+                new RitualItemRequirement(ModItems.WAYSTONE.get(), 1, true),
+                new RitualItemRequirement(ModItems.ENDER_DEW.get(), 1, true),
+                new RitualItemRequirement(ModItems.ROOT_OF_REMEMBRANCE.get(), 1, true)
+        ));
+    }
+
+    public static RitualDefinition createWaystoneBinding4() {
+        return createWaystoneDuplicationBinding("waystone_binding_4", 0, List.of(
+                RitualRingRequirement.small(ModBlocks.WHITE_GLYPH.get())
+        ), List.of(
+                boundOrBloodedWaystoneRequirement(),
+                new RitualItemRequirement(ModItems.WAYSTONE.get(), 1, true),
+                new RitualItemRequirement(ModItems.ENDER_DEW.get(), 1, true),
+                new RitualItemRequirement(ModItems.ROOT_OF_REMEMBRANCE.get(), 1, true),
+                new RitualItemRequirement(ModItems.INFUSED_STONE_CHARGED.get(), 1, true)
+        ));
+    }
+
     public static RitualDefinition createBloodedWaystone1() {
         return createBloodedWaystoneBinding("blooded_waystone_1", 500, List.of(
                 RitualRingRequirement.small(ModBlocks.WHITE_GLYPH.get())
@@ -96,10 +120,10 @@ public final class RiteOfBinding {
                 List.of(),
                 itemRequirements,
                 altarPowerCost,
-                (level, centerPos, player) -> {
+                (level, centerPos, player, consumedItems) -> {
                     List<CircleTalisman.RingData> rings = detectBindableRings(level, centerPos);
                     if (rings.isEmpty()) {
-                        return;
+                        return null;
                     }
 
                     clearMatchedRings(level, centerPos, rings);
@@ -108,6 +132,7 @@ public final class RiteOfBinding {
                     RitualEffects.playCompletionEffects(level, outputPos);
                     RitualEffects.spawnOutputItem(level, outputPos, CircleTalisman.createWithRings(ModItems.CIRCLE_TALISMAN.get(), rings));
                     RitualEffects.spawnChargedStoneRemainderIfNeeded(level, outputPos, itemRequirements);
+                    return null;
                 },
                 (level, centerPos) -> !detectBindableRings(level, centerPos).isEmpty()
         );
@@ -121,12 +146,37 @@ public final class RiteOfBinding {
                 ringRequirements,
                 itemRequirements,
                 altarPowerCost,
-                (level, centerPos, player) -> {
+                (level, centerPos, player, consumedItems) -> {
                     BlockPos outputPos = centerPos.above(1);
                     RitualEffects.playCompletionEffects(level, outputPos);
                     RitualEffects.spawnOutputItem(level, outputPos,
                             WaystoneItem.createBoundWaystone(ModItems.BOUND_WAYSTONE.get(), level, centerPos));
                     RitualEffects.spawnChargedStoneRemainderIfNeeded(level, outputPos, itemRequirements);
+                    return null;
+                }
+        );
+    }
+
+    private static RitualDefinition createWaystoneDuplicationBinding(String id, int altarPowerCost, List<RitualRingRequirement> ringRequirements,
+                                                                     List<RitualItemRequirement> itemRequirements) {
+        return new RitualDefinition(
+                id,
+                "ritual.thewitchslegacy." + id,
+                ringRequirements,
+                itemRequirements,
+                altarPowerCost,
+                (level, centerPos, player, consumedItems) -> {
+                    ItemStack sourceWaystone = findBoundOrBloodedWaystone(consumedItems);
+                    if (sourceWaystone.isEmpty()) {
+                        return null;
+                    }
+
+                    BlockPos outputPos = centerPos.above(1);
+                    RitualEffects.playCompletionEffects(level, outputPos);
+                    RitualEffects.spawnOutputItem(level, outputPos, sourceWaystone.copy());
+                    RitualEffects.spawnOutputItem(level, outputPos, sourceWaystone.copy());
+                    RitualEffects.spawnChargedStoneRemainderIfNeeded(level, outputPos, itemRequirements);
+                    return null;
                 }
         );
     }
@@ -139,10 +189,10 @@ public final class RiteOfBinding {
                 ringRequirements,
                 itemRequirements,
                 altarPowerCost,
-                (level, centerPos, player) -> {
+                (level, centerPos, player, consumedItems) -> {
                     ServerPlayer bloodTarget = findClosestPlayerInSmallCircle(level, centerPos);
                     if (bloodTarget == null) {
-                        return;
+                        return null;
                     }
 
                     BlockPos outputPos = centerPos.above(1);
@@ -150,9 +200,19 @@ public final class RiteOfBinding {
                     RitualEffects.spawnOutputItem(level, outputPos,
                             WaystoneItem.createBloodedWaystone(ModItems.BLOODED_WAYSTONE.get(), bloodTarget));
                     RitualEffects.spawnChargedStoneRemainderIfNeeded(level, outputPos, itemRequirements);
+                    return null;
                 },
                 RitualRingMatcher.allRequired(ringRequirements),
                 createBloodedWaystoneStartValidator()
+        );
+    }
+
+    private static RitualItemRequirement boundOrBloodedWaystoneRequirement() {
+        return new RitualItemRequirement(
+                ModItems.BOUND_WAYSTONE.get(),
+                1,
+                true,
+                stack -> stack.is(ModItems.BOUND_WAYSTONE.get()) || stack.is(ModItems.BLOODED_WAYSTONE.get())
         );
     }
 
@@ -193,6 +253,16 @@ public final class RiteOfBinding {
         return dx * dx + dz * dz;
     }
 
+    private static ItemStack findBoundOrBloodedWaystone(List<ItemStack> consumedItems) {
+        for (ItemStack stack : consumedItems) {
+            if (stack.is(ModItems.BOUND_WAYSTONE.get()) || stack.is(ModItems.BLOODED_WAYSTONE.get())) {
+                return stack;
+            }
+        }
+
+        return ItemStack.EMPTY;
+    }
+
     private static List<CircleTalisman.RingData> detectBindableRings(net.minecraft.server.level.ServerLevel level, BlockPos centerPos) {
         List<CircleTalisman.RingData> rings = new ArrayList<>();
 
@@ -229,4 +299,5 @@ public final class RiteOfBinding {
             }
         }
     }
+
 }

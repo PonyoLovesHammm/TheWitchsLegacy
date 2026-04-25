@@ -1,4 +1,4 @@
-package com.ponyo.thewitchslegacy.ritual.definitions.rites_of_binding;
+package com.ponyo.thewitchslegacy.ritual.definitions.general;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.familiar.FamiliarManager;
@@ -40,16 +40,17 @@ public final class FamiliarBinding {
                 List.of(),
                 itemRequirements,
                 8000,
-                (level, centerPos, player) -> {
+                (level, centerPos, player, consumedItems) -> {
                     Cat cat = findBindableCat(level, centerPos, player);
                     if (cat == null) {
-                        return;
+                        return null;
                     }
 
                     cat.setCustomName(Component.literal("steve"));
                     FamiliarManager.bindCatFamiliar(player, cat);
 
                     RitualEffects.playCompletionEffects(level, centerPos.above());
+                    return null;
                 },
                 createRingMatcher(),
                 createStartValidator()

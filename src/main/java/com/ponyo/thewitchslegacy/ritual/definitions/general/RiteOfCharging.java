@@ -1,4 +1,4 @@
-package com.ponyo.thewitchslegacy.ritual.definitions;
+package com.ponyo.thewitchslegacy.ritual.definitions.general;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.item.ModItems;
@@ -30,10 +30,11 @@ public final class RiteOfCharging {
                         new RitualItemRequirement(ModItems.TOUCH_OF_REGROWTH.get(), 1, true)
                 ),
                 2000,
-                (level, centerPos, player) -> {
+                (level, centerPos, player, consumedItems) -> {
                     BlockPos outputPos = centerPos.above(1);
                     RitualEffects.playCompletionEffects(level, outputPos);
                     RitualEffects.spawnOutputItem(level, outputPos, ModItems.INFUSED_STONE_CHARGED.get());
+                    return null;
                 }
         );
     }

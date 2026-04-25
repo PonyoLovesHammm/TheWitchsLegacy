@@ -10,8 +10,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Iterator;
 
 public final class RitualManager {
     private static final int ITEM_CONSUME_INTERVAL_TICKS = 20;
@@ -124,7 +124,15 @@ public final class RitualManager {
                         iterator.remove();
                         continue;
                     }
-                    activeRitual.ritual().effect().execute(level, activeRitual.centerPos(), player);
+                    activeRitual.ritual().effect().execute(
+                            level,
+                            activeRitual.centerPos(),
+                            player,
+                            List.copyOf(activeRitual.consumedItems())
+                    );
+                    if (completionFailure != null) {
+                        failRitual(event, level, activeRitual, completionFailure);
+                    }
                 }
                 iterator.remove();
                 continue;

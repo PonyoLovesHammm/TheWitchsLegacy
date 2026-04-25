@@ -48,7 +48,7 @@ public class WaystoneItem extends Item {
     public static void bindToLocation(ItemStack stack, Level level, BlockPos glyphPos) {
         CompoundTag root = getRootTag(stack);
         CompoundTag locationTag = new CompoundTag();
-        writeLocation(locationTag, level.dimension().toString(), glyphPos.getX(), glyphPos.getY(), glyphPos.getZ());
+        writeLocation(locationTag, level.dimension().identifier().toString(), glyphPos.getX(), glyphPos.getY(), glyphPos.getZ());
         root.put(LOCATION_TAG, locationTag);
         CustomData.set(DataComponents.CUSTOM_DATA, stack, root);
     }
