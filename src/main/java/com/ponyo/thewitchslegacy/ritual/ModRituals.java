@@ -4,6 +4,7 @@ import com.ponyo.thewitchslegacy.ritual.definitions.general.FamiliarBinding;
 import com.ponyo.thewitchslegacy.ritual.definitions.general.GlyphicTransformation;
 import com.ponyo.thewitchslegacy.ritual.definitions.general.RiteOfCharging;
 import com.ponyo.thewitchslegacy.ritual.definitions.general.RitesOfBinding;
+import com.ponyo.thewitchslegacy.ritual.definitions.transposition.IronTransposition;
 import com.ponyo.thewitchslegacy.ritual.definitions.transposition.WaystoneTransposition;
 
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ public final class ModRituals {
     public static final RitualDefinition WAYSTONE_BINDING_3 = RitesOfBinding.createWaystoneBinding3();
     public static final RitualDefinition WAYSTONE_BINDING_4 = RitesOfBinding.createWaystoneBinding4();
     public static final RitualDefinition WAYSTONE_TRANSPOSITION = WaystoneTransposition.create();
+    public static final RitualDefinition IRON_TRANSPOSITION = IronTransposition.create();
     public static final RitualDefinition BLOODED_WAYSTONE_1 = RitesOfBinding.createBloodedWaystone1();
     public static final RitualDefinition BLOODED_WAYSTONE_2 = RitesOfBinding.createBloodedWaystone2();
     public static final RitualDefinition FAMILIAR_BINDING = FamiliarBinding.create();
@@ -37,6 +39,7 @@ public final class ModRituals {
         rituals.add(WAYSTONE_BINDING_3);
         rituals.add(WAYSTONE_BINDING_4);
         rituals.add(WAYSTONE_TRANSPOSITION);
+        rituals.add(IRON_TRANSPOSITION);
         rituals.addAll(GLYPHIC_TRANSFORMATIONS);
         rituals.add(BLOODED_WAYSTONE_1);
         rituals.add(BLOODED_WAYSTONE_2);

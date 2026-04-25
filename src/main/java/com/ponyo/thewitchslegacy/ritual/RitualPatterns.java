@@ -2,7 +2,11 @@ package com.ponyo.thewitchslegacy.ritual;
 
 import net.minecraft.core.BlockPos;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public final class RitualPatterns {
     private static final List<BlockPos> SMALL_RING = List.of(
@@ -32,6 +36,30 @@ public final class RitualPatterns {
             case MEDIUM -> MEDIUM_RING;
             case LARGE -> LARGE_RING;
         };
+    }
+
+    public static List<BlockPos> filledPositionsFor(RitualRingSize size) {
+        Map<Integer, Integer> minXByZ = new HashMap<>();
+        Map<Integer, Integer> maxXByZ = new HashMap<>();
+        for (BlockPos offset : positionsFor(size)) {
+            int z = offset.getZ();
+            minXByZ.merge(z, offset.getX(), Math::min);
+            maxXByZ.merge(z, offset.getX(), Math::max);
+        }
+
+        List<BlockPos> filled = new ArrayList<>();
+        minXByZ.entrySet().stream()
+                .sorted(Comparator.comparingInt(Map.Entry::getKey))
+                .forEach(entry -> {
+                    int z = entry.getKey();
+                    int minX = entry.getValue();
+                    int maxX = maxXByZ.get(z);
+                    for (int x = minX; x <= maxX; x++) {
+                        filled.add(offset(x, z));
+                    }
+                });
+
+        return List.copyOf(filled);
     }
 
     private static BlockPos offset(int x, int z) {
