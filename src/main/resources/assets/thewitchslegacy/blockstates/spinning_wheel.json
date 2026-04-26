@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "thewitchslegacy:block/spinning_wheel_frame"
+    },
+    "facing=south": {
+      "model": "thewitchslegacy:block/spinning_wheel_frame",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "thewitchslegacy:block/spinning_wheel_frame",
+      "y": 270
+    },
+    "facing=east": {
+      "model": "thewitchslegacy:block/spinning_wheel_frame",
+      "y": 90
+    }
+  }
+}

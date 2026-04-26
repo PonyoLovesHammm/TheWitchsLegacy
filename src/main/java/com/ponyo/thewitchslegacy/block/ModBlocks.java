@@ -12,6 +12,7 @@ import com.ponyo.thewitchslegacy.block.custom.Kettle;
 import com.ponyo.thewitchslegacy.block.custom.MagicMirror;
 import com.ponyo.thewitchslegacy.block.custom.WitchCrop;
 import com.ponyo.thewitchslegacy.block.custom.SpanishMoss;
+import com.ponyo.thewitchslegacy.block.custom.SpinningWheel;
 import com.ponyo.thewitchslegacy.block.custom.WalkthroughLeaves;
 import com.ponyo.thewitchslegacy.block.custom.WitchCauldron;
 import com.ponyo.thewitchslegacy.block.custom.WitchOven;
@@ -431,6 +432,11 @@ public class ModBlocks {
             "distillery",
             () -> new Distillery(
                     decorativeProps("distillery", SoundType.METAL, 3.0F)));
+
+    public static final DeferredBlock<Block> SPINNING_WHEEL = registerBlock(
+            "spinning_wheel",
+            () -> new SpinningWheel(
+                    decorativeProps("spinning_wheel", SoundType.WOOD, 2.5F)));
 
     public static final DeferredBlock<Block> KETTLE = registerBlock(
             "kettle",

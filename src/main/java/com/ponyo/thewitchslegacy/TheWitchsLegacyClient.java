@@ -2,6 +2,7 @@ package com.ponyo.thewitchslegacy;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.block.entity.ModBlockEntities;
+import com.ponyo.thewitchslegacy.block.entity.client.SpinningWheelRenderer;
 import com.ponyo.thewitchslegacy.client.gui.DistilleryScreen;
 import com.ponyo.thewitchslegacy.block.entity.client.WitchCauldronRenderer;
 import com.ponyo.thewitchslegacy.client.gui.AltarScreen;
@@ -22,11 +23,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.client.model.standalone.SimpleUnbakedStandaloneModel;
 
 // This class will not load on dedicated servers. Accessing client side code from here is safe.
 @Mod(value = TheWitchsLegacy.MODID, dist = Dist.CLIENT)
@@ -50,6 +53,7 @@ public class TheWitchsLegacyClient {
     static void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.MANDRAKE.get(), MandrakeRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.WITCH_CAULDRON.get(), WitchCauldronRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.SPINNING_WHEEL.get(), SpinningWheelRenderer::new);
     }
 
     @SubscribeEvent
@@ -79,5 +83,11 @@ public class TheWitchsLegacyClient {
                 ModBlocks.WILLOW_CANOPY_LEAVES.get(),
                 ModBlocks.WILLOW_LEAVES.get()
         );
+    }
+
+    @SubscribeEvent
+    static void registerStandaloneModels(ModelEvent.RegisterStandalone event) {
+        event.register(SpinningWheelRenderer.WHEEL_MODEL, SimpleUnbakedStandaloneModel.blockStateModel(SpinningWheelRenderer.WHEEL_MODEL_ID));
+        event.register(SpinningWheelRenderer.BOBBIN_MODEL, SimpleUnbakedStandaloneModel.blockStateModel(SpinningWheelRenderer.BOBBIN_MODEL_ID));
     }
 }

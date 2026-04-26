@@ -19,6 +19,7 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -47,6 +48,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class TheWitchsLegacy {
     public static final String MODID = "thewitchslegacy";
     public static final Logger LOGGER = LogUtils.getLogger();
+
+    public static Identifier id(String path) {
+        return Identifier.fromNamespaceAndPath(MODID, path);
+    }
 
     public TheWitchsLegacy(IEventBus modEventBus, ModContainer modContainer) {
         // Register the commonSetup method for modloading

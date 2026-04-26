@@ -1,0 +1,17 @@
+{
+  "parent": "thewitchslegacy:block/spinning_wheel",
+  "elements": [
+    {
+      "from": [6.5, 7.75, 2.1],
+      "to": [9.5, 9.75, 4.1],
+      "faces": {
+        "north": {"uv": [2, 5, 5, 7], "texture": "#texture"},
+        "east": {"uv": [0, 5, 2, 7], "texture": "#texture"},
+        "south": {"uv": [5, 7, 2, 5], "texture": "#texture"},
+        "west": {"uv": [0, 5, 2, 7], "texture": "#texture"},
+        "up": {"uv": [2, 5, 5, 7], "texture": "#texture"},
+        "down": {"uv": [2, 7, 5, 5], "texture": "#texture"}
+      }
+    }
+  ]
+}
