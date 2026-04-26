@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 
-public class WaystoneItem extends Item {
+public class Waystone extends Item {
     private static final String LOCATION_TAG = "WaystoneLocation";
     private static final String DIMENSION_TAG = "Dimension";
     private static final String X_TAG = "X";
@@ -29,7 +29,7 @@ public class WaystoneItem extends Item {
     private static final String ENTITY_UUID_TAG = "EntityUuid";
     private static final String ENTITY_NAME_TAG = "EntityName";
 
-    public WaystoneItem(Properties properties) {
+    public Waystone(Properties properties) {
         super(properties);
     }
 
@@ -54,12 +54,16 @@ public class WaystoneItem extends Item {
     }
 
     public static void bindToPlayer(ItemStack stack, ServerPlayer player) {
+        bindToPlayer(stack, player.getUUID(), player.getName().getString());
+    }
+
+    public static void bindToPlayer(ItemStack stack, UUID playerUuid, String playerName) {
         CompoundTag root = getRootTag(stack);
         root.remove(LOCATION_TAG);
 
         CompoundTag bloodTargetTag = new CompoundTag();
-        bloodTargetTag.putString(ENTITY_UUID_TAG, player.getUUID().toString());
-        bloodTargetTag.putString(ENTITY_NAME_TAG, player.getName().getString());
+        bloodTargetTag.putString(ENTITY_UUID_TAG, playerUuid.toString());
+        bloodTargetTag.putString(ENTITY_NAME_TAG, playerName);
         root.put(BLOOD_TARGET_TAG, bloodTargetTag);
 
         CustomData.set(DataComponents.CUSTOM_DATA, stack, root);

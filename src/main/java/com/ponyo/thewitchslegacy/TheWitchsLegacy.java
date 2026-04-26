@@ -6,6 +6,7 @@ import com.ponyo.thewitchslegacy.entity.ModEntities;
 import com.ponyo.thewitchslegacy.familiar.FamiliarManager;
 import com.ponyo.thewitchslegacy.item.ModCreativeModeTabs;
 import com.ponyo.thewitchslegacy.item.ModItems;
+import com.ponyo.thewitchslegacy.item.custom.WitchsClaimSavedData;
 import com.ponyo.thewitchslegacy.menu.ModMenuTypes;
 import com.ponyo.thewitchslegacy.particle.ModParticles;
 import com.ponyo.thewitchslegacy.ritual.RitualManager;
@@ -57,6 +58,7 @@ public class TheWitchsLegacy {
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.addListener(RitualManager::onServerTick);
         NeoForge.EVENT_BUS.addListener(FamiliarManager::onLivingDeath);
+        NeoForge.EVENT_BUS.addListener(WitchsClaimSavedData::onPlayerSetSpawn);
 
         ModCreativeModeTabs.register(modEventBus);
 

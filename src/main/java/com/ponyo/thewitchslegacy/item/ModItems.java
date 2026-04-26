@@ -6,7 +6,8 @@ import com.ponyo.thewitchslegacy.item.custom.Chalk;
 import com.ponyo.thewitchslegacy.item.custom.CircleTalisman;
 import com.ponyo.thewitchslegacy.item.custom.CropSeeds;
 import com.ponyo.thewitchslegacy.item.custom.Mutandis;
-import com.ponyo.thewitchslegacy.item.custom.WaystoneItem;
+import com.ponyo.thewitchslegacy.item.custom.Waystone;
+import com.ponyo.thewitchslegacy.item.custom.WitchsClaim;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
@@ -44,11 +45,13 @@ public class ModItems {
     public static final DeferredItem<Item> REFINED_EVIL = registerItem("refined_evil", Item::new);
     public static final DeferredItem<Item> DEMON_HEART = registerItem("demon_heart", Item::new);
     public static final DeferredItem<Item> BONE_NEEDLE = registerItem("bone_needle", Item::new);
-    public static final DeferredItem<Item> WAYSTONE = registerItem("waystone", WaystoneItem::new);
-    public static final DeferredItem<Item> BOUND_WAYSTONE = registerItem("bound_waystone", WaystoneItem::new);
-    public static final DeferredItem<Item> BLOODED_WAYSTONE = registerItem("blooded_waystone", WaystoneItem::new);
-    public static final DeferredItem<Item> WITCHS_CLAIM = registerItem("witchs_claim", Item::new);
-    public static final DeferredItem<Item> WITCHS_CLAIM_FILLED = registerItem("witchs_claim_filled", Item::new);
+    public static final DeferredItem<Item> WAYSTONE = registerItem("waystone", Waystone::new);
+    public static final DeferredItem<Item> BOUND_WAYSTONE = registerItem("bound_waystone", Waystone::new);
+    public static final DeferredItem<Item> BLOODED_WAYSTONE = registerItem("blooded_waystone", Waystone::new);
+    public static final DeferredItem<Item> WITCHS_CLAIM = registerItem("witchs_claim",
+            properties -> new WitchsClaim(properties.stacksTo(16)));
+    public static final DeferredItem<Item> WITCHS_CLAIM_FILLED = registerItem("witchs_claim_filled",
+            properties -> new WitchsClaim(properties.stacksTo(16)));
     public static final DeferredItem<Item> BARK_OF_THE_ANCIENT = registerItem("bark_of_the_ancient", Item::new);
     public static final DeferredItem<Item> BREATH_OF_THE_GODDESS = registerItem("breath_of_the_goddess", Item::new);
     public static final DeferredItem<Item> TEAR_OF_THE_GODDESS = registerItem("tear_of_the_goddess", Item::new);

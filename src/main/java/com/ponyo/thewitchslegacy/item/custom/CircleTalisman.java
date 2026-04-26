@@ -22,6 +22,12 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.SnowLayerBlock;
+import net.minecraft.world.level.block.VineBlock;
+import net.minecraft.world.level.block.WaterlilyBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.ArrayList;
@@ -89,7 +95,7 @@ public class CircleTalisman extends Item {
             return InteractionResult.FAIL;
         }
 
-        BlockPos centerPos = context.getClickedPos();
+        BlockPos centerPos = resolveCenterSupportPos(level, context.getClickedPos());
         if (!canPlaceStoredRings(level, centerPos, rings)) {
             return InteractionResult.FAIL;
         }
@@ -111,7 +117,7 @@ public class CircleTalisman extends Item {
         if (!centerSupportState.isFaceSturdy(level, centerPos, Direction.UP)) {
             return false;
         }
-        if (!centerGlyphState.canBeReplaced()) {
+        if (!isSoftObstacle(centerGlyphState)) {
             return false;
         }
 
@@ -125,7 +131,7 @@ public class CircleTalisman extends Item {
                 if (!supportState.isFaceSturdy(level, supportPos, Direction.UP)) {
                     return false;
                 }
-                if (!glyphState.canBeReplaced()) {
+                if (!isSoftObstacle(glyphState)) {
                     return false;
                 }
             }
@@ -135,16 +141,46 @@ public class CircleTalisman extends Item {
     }
 
     private static void placeStoredRings(Level level, BlockPos centerPos, List<RingData> rings) {
-        level.setBlock(centerPos.above(), ModBlocks.GOLDEN_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, 0), 3);
+        replaceBlockAndPlaceGlyph(level, centerPos.above(),
+                ModBlocks.GOLDEN_GLYPH.get().defaultBlockState().setValue(Glyph.VARIANT, 0));
 
         for (RingData ring : rings) {
             Block glyphBlock = ring.color().glyphBlock();
             for (BlockPos offset : RitualPatterns.positionsFor(ring.size())) {
                 BlockPos glyphPos = centerPos.offset(offset).above();
                 int variant = level.getRandom().nextInt(12);
-                level.setBlock(glyphPos, glyphBlock.defaultBlockState().setValue(Glyph.VARIANT, variant), 3);
+                replaceBlockAndPlaceGlyph(level, glyphPos, glyphBlock.defaultBlockState().setValue(Glyph.VARIANT, variant));
             }
         }
+    }
+
+    private static BlockPos resolveCenterSupportPos(Level level, BlockPos clickedPos) {
+        BlockPos currentPos = clickedPos;
+        while (isSoftObstacle(level.getBlockState(currentPos))) {
+            currentPos = currentPos.below();
+        }
+        return currentPos;
+    }
+
+    private static void replaceBlockAndPlaceGlyph(Level level, BlockPos pos, BlockState glyphState) {
+        BlockState replacedState = level.getBlockState(pos);
+        if (!replacedState.isAir()) {
+            level.destroyBlock(pos, true);
+        }
+        level.setBlock(pos, glyphState, 3);
+    }
+
+    private static boolean isSoftObstacle(BlockState state) {
+        Block block = state.getBlock();
+        return state.isAir()
+                || state.canBeReplaced()
+                || block instanceof Glyph
+                || block instanceof BushBlock
+                || block instanceof DoublePlantBlock
+                || block instanceof CropBlock
+                || block instanceof SnowLayerBlock
+                || block instanceof VineBlock
+                || block instanceof WaterlilyBlock;
     }
 
     private static List<RingData> getStoredRings(ItemStack stack) {

@@ -3,7 +3,7 @@ package com.ponyo.thewitchslegacy.ritual.definitions.general;
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.item.ModItems;
 import com.ponyo.thewitchslegacy.item.custom.CircleTalisman;
-import com.ponyo.thewitchslegacy.item.custom.WaystoneItem;
+import com.ponyo.thewitchslegacy.item.custom.Waystone;
 import com.ponyo.thewitchslegacy.ritual.RitualDefinition;
 import com.ponyo.thewitchslegacy.ritual.RitualEffects;
 import com.ponyo.thewitchslegacy.ritual.RitualItemRequirement;
@@ -150,7 +150,7 @@ public final class RitesOfBinding {
                     BlockPos outputPos = centerPos.above(1);
                     RitualEffects.playCompletionEffects(level, outputPos);
                     RitualEffects.spawnOutputItem(level, outputPos,
-                            WaystoneItem.createBoundWaystone(ModItems.BOUND_WAYSTONE.get(), level, centerPos));
+                            Waystone.createBoundWaystone(ModItems.BOUND_WAYSTONE.get(), level, centerPos));
                     RitualEffects.spawnChargedStoneRemainderIfNeeded(level, outputPos, itemRequirements);
                     return null;
                 }
@@ -198,7 +198,7 @@ public final class RitesOfBinding {
                     BlockPos outputPos = centerPos.above(1);
                     RitualEffects.playCompletionEffects(level, outputPos);
                     RitualEffects.spawnOutputItem(level, outputPos,
-                            WaystoneItem.createBloodedWaystone(ModItems.BLOODED_WAYSTONE.get(), bloodTarget));
+                            Waystone.createBloodedWaystone(ModItems.BLOODED_WAYSTONE.get(), bloodTarget));
                     RitualEffects.spawnChargedStoneRemainderIfNeeded(level, outputPos, itemRequirements);
                     return null;
                 },

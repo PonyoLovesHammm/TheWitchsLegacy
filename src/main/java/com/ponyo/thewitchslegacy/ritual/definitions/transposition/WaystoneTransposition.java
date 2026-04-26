@@ -2,7 +2,7 @@ package com.ponyo.thewitchslegacy.ritual.definitions.transposition;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.item.ModItems;
-import com.ponyo.thewitchslegacy.item.custom.WaystoneItem;
+import com.ponyo.thewitchslegacy.item.custom.Waystone;
 import com.ponyo.thewitchslegacy.ritual.RitualDefinition;
 import com.ponyo.thewitchslegacy.ritual.RitualEffects;
 import com.ponyo.thewitchslegacy.ritual.RitualItemRequirement;
@@ -90,7 +90,7 @@ public final class WaystoneTransposition {
         }
 
         if (sourceWaystone.is(ModItems.BOUND_WAYSTONE.get())) {
-            WaystoneItem.StoredLocation location = WaystoneItem.getStoredLocation(sourceWaystone).orElse(null);
+            Waystone.StoredLocation location = Waystone.getStoredLocation(sourceWaystone).orElse(null);
             if (location == null) {
                 return null;
             }
@@ -114,7 +114,7 @@ public final class WaystoneTransposition {
             );
         }
 
-        WaystoneItem.BloodTarget bloodTarget = WaystoneItem.getBloodTarget(sourceWaystone).orElse(null);
+        Waystone.BloodTarget bloodTarget = Waystone.getBloodTarget(sourceWaystone).orElse(null);
         if (bloodTarget == null) {
             return null;
         }
