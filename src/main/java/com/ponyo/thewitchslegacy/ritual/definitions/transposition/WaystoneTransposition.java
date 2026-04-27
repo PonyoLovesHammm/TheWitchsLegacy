@@ -37,7 +37,12 @@ public final class WaystoneTransposition {
                 itemRequirements,
                 0,
                 (level, centerPos, player, consumedItems) -> {
-                    TeleportTarget target = resolveTeleportTarget(level, consumedItems);
+                    TeleportResolution resolution = resolveTeleportTarget(level, consumedItems);
+                    if (resolution.status() == TeleportStatus.PLAYER_OFFLINE) {
+                        return Component.translatable("message.thewitchslegacy.player_offline");
+                    }
+
+                    TeleportTarget target = resolution.target();
                     if (target == null) {
                         return Component.translatable("message.thewitchslegacy.waystone_target_unavailable");
                     }
@@ -83,53 +88,53 @@ public final class WaystoneTransposition {
         return ItemStack.EMPTY;
     }
 
-    private static TeleportTarget resolveTeleportTarget(ServerLevel level, List<ItemStack> consumedItems) {
+    private static TeleportResolution resolveTeleportTarget(ServerLevel level, List<ItemStack> consumedItems) {
         ItemStack sourceWaystone = findBoundOrBloodedWaystone(consumedItems);
         if (sourceWaystone.isEmpty()) {
-            return null;
+            return TeleportResolution.unavailable();
         }
 
         if (sourceWaystone.is(ModItems.BOUND_WAYSTONE.get())) {
             Waystone.StoredLocation location = Waystone.getStoredLocation(sourceWaystone).orElse(null);
             if (location == null) {
-                return null;
+                return TeleportResolution.unavailable();
             }
 
             Identifier dimensionId = parseDimensionIdentifier(location.dimensionId());
             if (dimensionId == null) {
-                return null;
+                return TeleportResolution.unavailable();
             }
 
             ResourceKey<Level> dimensionKey = ResourceKey.create(Registries.DIMENSION, dimensionId);
             ServerLevel targetLevel = level.getServer().getLevel(dimensionKey);
             if (targetLevel == null) {
-                return null;
+                return TeleportResolution.unavailable();
             }
 
-            return new TeleportTarget(
+            return TeleportResolution.success(new TeleportTarget(
                     targetLevel,
                     location.x() + 0.5D,
                     location.y() + 1.0D,
                     location.z() + 0.5D
-            );
+            ));
         }
 
         Waystone.BloodTarget bloodTarget = Waystone.getBloodTarget(sourceWaystone).orElse(null);
         if (bloodTarget == null) {
-            return null;
+            return TeleportResolution.unavailable();
         }
 
         ServerPlayer targetPlayer = level.getServer().getPlayerList().getPlayer(bloodTarget.entityUuid());
         if (targetPlayer == null) {
-            return null;
+            return TeleportResolution.playerOffline();
         }
 
-        return new TeleportTarget(
+        return TeleportResolution.success(new TeleportTarget(
                 (ServerLevel) targetPlayer.level(),
                 targetPlayer.getX(),
                 targetPlayer.getY(),
                 targetPlayer.getZ()
-        );
+        ));
     }
 
     private static Identifier parseDimensionIdentifier(String rawDimensionId) {
@@ -152,5 +157,25 @@ public final class WaystoneTransposition {
     }
 
     private record TeleportTarget(ServerLevel level, double x, double y, double z) {
+    }
+
+    private record TeleportResolution(TeleportStatus status, TeleportTarget target) {
+        private static TeleportResolution success(TeleportTarget target) {
+            return new TeleportResolution(TeleportStatus.SUCCESS, target);
+        }
+
+        private static TeleportResolution unavailable() {
+            return new TeleportResolution(TeleportStatus.UNAVAILABLE, null);
+        }
+
+        private static TeleportResolution playerOffline() {
+            return new TeleportResolution(TeleportStatus.PLAYER_OFFLINE, null);
+        }
+    }
+
+    private enum TeleportStatus {
+        SUCCESS,
+        UNAVAILABLE,
+        PLAYER_OFFLINE
     }
 }

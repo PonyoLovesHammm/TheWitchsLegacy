@@ -3,6 +3,7 @@ package com.ponyo.thewitchslegacy.item.custom;
 import com.ponyo.thewitchslegacy.item.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -21,6 +22,7 @@ import java.util.function.Consumer;
 
 public class WitchsClaim extends Item {
     private static final double BACK_STEAL_DOT_THRESHOLD = -0.35D;
+    private static final int CLAIM_COOLDOWN_TICKS = 100;
 
     public WitchsClaim(Properties properties) {
         super(properties);
@@ -46,12 +48,20 @@ public class WitchsClaim extends Item {
         }
 
         var normalizedBedPos = WitchsClaimSavedData.normalizeBedPos(level, clickedPos);
-        var owner = WitchsClaimSavedData.get((ServerLevel) level).getBedOwner(level, normalizedBedPos);
+        WitchsClaimSavedData claimData = WitchsClaimSavedData.get((ServerLevel) level);
+        if (!claimData.canClaimBed(level, normalizedBedPos)) {
+            player.displayClientMessage(Component.translatable("message.thewitchslegacy.witchs_claim_bed_used_today"), true);
+            return InteractionResult.FAIL;
+        }
+
+        var owner = claimData.getBedOwner(level, normalizedBedPos);
         if (owner.isEmpty()) {
             player.displayClientMessage(Component.translatable("message.thewitchslegacy.witchs_claim_no_bed_owner"), true);
             return InteractionResult.FAIL;
         }
 
+        claimData.markBedClaimed(level, normalizedBedPos);
+        applyClaimCooldown(player, stack);
         fillClaim(player, context.getHand(), owner.get().ownerId(), owner.get().ownerName());
         return InteractionResult.SUCCESS;
     }
@@ -67,10 +77,14 @@ public class WitchsClaim extends Item {
         }
 
         if (!isBehindTarget(player, targetPlayer)) {
+            applyClaimCooldown(player, stack);
             player.displayClientMessage(Component.translatable("message.thewitchslegacy.witchs_claim_caught"), true);
+            targetPlayer.displayClientMessage(Component.translatable("message.thewitchslegacy.witchs_claim_attempted"), true);
+            targetPlayer.playSound(SoundEvents.NOTE_BLOCK_BIT.value(), 0.8F, 1.6F);
             return InteractionResult.FAIL;
         }
 
+        applyClaimCooldown(player, stack);
         fillClaim(player, usedHand, targetPlayer.getUUID().toString(), targetPlayer.getName().getString());
         return InteractionResult.SUCCESS;
     }
@@ -109,6 +123,10 @@ public class WitchsClaim extends Item {
     private static ItemStack bindClaim(ItemStack stack, String ownerId, String ownerName) {
         Waystone.bindToPlayer(stack, java.util.UUID.fromString(ownerId), ownerName);
         return stack;
+    }
+
+    private static void applyClaimCooldown(Player player, ItemStack stack) {
+        player.getCooldowns().addCooldown(stack, CLAIM_COOLDOWN_TICKS);
     }
 
     private static boolean isBehindTarget(Player thief, Player target) {

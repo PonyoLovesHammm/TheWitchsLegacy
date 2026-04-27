@@ -32,9 +32,11 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.REFINED_EVIL);
                         output.accept(ModItems.DEMON_HEART);
                         output.accept(ModItems.BONE_NEEDLE);
+                        output.accept(ModItems.POPPET);
+                        output.accept(ModItems.VOODOO_POPPET);
+                        output.accept(ModItems.VOODOO_PROTECTION_POPPET);
                         output.accept(ModItems.WAYSTONE);
                         output.accept(ModItems.WITCHS_CLAIM);
-                        output.accept(ModItems.WITCHS_CLAIM_FILLED);
                         output.accept(ModItems.BARK_OF_THE_ANCIENT);
                         output.accept(ModItems.BREATH_OF_THE_GODDESS);
                         output.accept(ModItems.TEAR_OF_THE_GODDESS);

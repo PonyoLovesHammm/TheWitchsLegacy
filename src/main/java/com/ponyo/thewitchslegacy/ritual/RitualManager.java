@@ -124,14 +124,14 @@ public final class RitualManager {
                         iterator.remove();
                         continue;
                     }
-                    activeRitual.ritual().effect().execute(
+                    Component effectMessage = activeRitual.ritual().effect().execute(
                             level,
                             activeRitual.centerPos(),
                             player,
                             List.copyOf(activeRitual.consumedItems())
                     );
-                    if (completionFailure != null) {
-                        failRitual(event, level, activeRitual, completionFailure);
+                    if (effectMessage != null) {
+                        player.displayClientMessage(effectMessage, true);
                     }
                 }
                 iterator.remove();

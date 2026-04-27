@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "thewitchslegacy:voodoo_protection_poppet",
+    "thewitchslegacy:witchs_claim_filled"
+  ],
+  "result": {
+    "count": 1,
+    "id": "thewitchslegacy:voodoo_protection_poppet"
+  }
+}

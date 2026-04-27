@@ -6,6 +6,7 @@ import com.ponyo.thewitchslegacy.item.custom.Chalk;
 import com.ponyo.thewitchslegacy.item.custom.CircleTalisman;
 import com.ponyo.thewitchslegacy.item.custom.CropSeeds;
 import com.ponyo.thewitchslegacy.item.custom.Mutandis;
+import com.ponyo.thewitchslegacy.item.custom.Poppet;
 import com.ponyo.thewitchslegacy.item.custom.Waystone;
 import com.ponyo.thewitchslegacy.item.custom.WitchsClaim;
 import net.minecraft.core.registries.Registries;
@@ -45,6 +46,11 @@ public class ModItems {
     public static final DeferredItem<Item> REFINED_EVIL = registerItem("refined_evil", Item::new);
     public static final DeferredItem<Item> DEMON_HEART = registerItem("demon_heart", Item::new);
     public static final DeferredItem<Item> BONE_NEEDLE = registerItem("bone_needle", Item::new);
+    public static final DeferredItem<Item> POPPET = registerItem("poppet", Item::new);
+    public static final DeferredItem<Item> VOODOO_POPPET = registerItem("voodoo_poppet",
+            properties -> new Poppet(properties.stacksTo(1)));
+    public static final DeferredItem<Item> VOODOO_PROTECTION_POPPET = registerItem("voodoo_protection_poppet",
+            properties -> new Item(properties.stacksTo(1)));
     public static final DeferredItem<Item> WAYSTONE = registerItem("waystone", Waystone::new);
     public static final DeferredItem<Item> BOUND_WAYSTONE = registerItem("bound_waystone", Waystone::new);
     public static final DeferredItem<Item> BLOODED_WAYSTONE = registerItem("blooded_waystone", Waystone::new);

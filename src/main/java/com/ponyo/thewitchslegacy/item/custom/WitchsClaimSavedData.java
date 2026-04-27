@@ -39,7 +39,10 @@ public class WitchsClaimSavedData extends SavedData {
                     .forGetter(data -> data.playerBeds),
             Codec.unboundedMap(Codec.STRING, BED_OWNER_RECORD_CODEC)
                     .optionalFieldOf("bed_owners", Map.of())
-                    .forGetter(data -> data.bedOwners)
+                    .forGetter(data -> data.bedOwners),
+            Codec.unboundedMap(Codec.STRING, Codec.LONG)
+                    .optionalFieldOf("bed_claim_days", Map.of())
+                    .forGetter(data -> data.bedClaimDays)
     ).apply(instance, WitchsClaimSavedData::new));
 
     public static final SavedDataType<WitchsClaimSavedData> TYPE = new SavedDataType<>(
@@ -50,14 +53,17 @@ public class WitchsClaimSavedData extends SavedData {
 
     private final Map<String, PlayerBedRecord> playerBeds;
     private final Map<String, BedOwnerRecord> bedOwners;
+    private final Map<String, Long> bedClaimDays;
 
     public WitchsClaimSavedData() {
-        this(new HashMap<>(), new HashMap<>());
+        this(new HashMap<>(), new HashMap<>(), new HashMap<>());
     }
 
-    private WitchsClaimSavedData(Map<String, PlayerBedRecord> playerBeds, Map<String, BedOwnerRecord> bedOwners) {
+    private WitchsClaimSavedData(Map<String, PlayerBedRecord> playerBeds, Map<String, BedOwnerRecord> bedOwners,
+                                 Map<String, Long> bedClaimDays) {
         this.playerBeds = new HashMap<>(playerBeds);
         this.bedOwners = new HashMap<>(bedOwners);
+        this.bedClaimDays = new HashMap<>(bedClaimDays);
     }
 
     public static WitchsClaimSavedData get(ServerLevel level) {
@@ -66,6 +72,19 @@ public class WitchsClaimSavedData extends SavedData {
 
     public Optional<BedOwnerRecord> getBedOwner(Level level, BlockPos bedPos) {
         return Optional.ofNullable(this.bedOwners.get(bedKey(level.dimension().identifier().toString(), bedPos)));
+    }
+
+    public boolean canClaimBed(Level level, BlockPos bedPos) {
+        String key = bedKey(level.dimension().identifier().toString(), bedPos);
+        long currentDay = level.getDayTime() / 24000L;
+        return this.bedClaimDays.getOrDefault(key, -1L) != currentDay;
+    }
+
+    public void markBedClaimed(Level level, BlockPos bedPos) {
+        String key = bedKey(level.dimension().identifier().toString(), bedPos);
+        long currentDay = level.getDayTime() / 24000L;
+        this.bedClaimDays.put(key, currentDay);
+        this.setDirty();
     }
 
     public void bindBed(ServerLevel level, UUID ownerId, String ownerName, BlockPos bedPos) {
