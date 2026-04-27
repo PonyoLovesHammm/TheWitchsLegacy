@@ -29,6 +29,27 @@ public class WitchsClaim extends Item {
     }
 
     @Override
+    public InteractionResult use(Level level, Player player, InteractionHand usedHand) {
+        ItemStack stack = player.getItemInHand(usedHand);
+        if (!stack.is(ModItems.WITCHS_CLAIM.get()) || !player.isShiftKeyDown()) {
+            return InteractionResult.PASS;
+        }
+        if (player.getCooldowns().isOnCooldown(stack)) {
+            return InteractionResult.FAIL;
+        }
+        if (level.isClientSide()) {
+            return InteractionResult.SUCCESS;
+        }
+        if (!(player instanceof ServerPlayer serverPlayer)) {
+            return InteractionResult.FAIL;
+        }
+
+        applyClaimCooldown(player, stack);
+        fillClaim(player, usedHand, serverPlayer.getUUID().toString(), serverPlayer.getName().getString());
+        return InteractionResult.CONSUME;
+    }
+
+    @Override
     public InteractionResult useOn(UseOnContext context) {
         ItemStack stack = context.getItemInHand();
         Player player = context.getPlayer();
@@ -36,6 +57,9 @@ public class WitchsClaim extends Item {
 
         if (!stack.is(ModItems.WITCHS_CLAIM.get()) || player == null || !player.isShiftKeyDown()) {
             return InteractionResult.PASS;
+        }
+        if (player.getCooldowns().isOnCooldown(stack)) {
+            return InteractionResult.FAIL;
         }
 
         var clickedPos = context.getClickedPos();
@@ -70,6 +94,9 @@ public class WitchsClaim extends Item {
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand usedHand) {
         if (!stack.is(ModItems.WITCHS_CLAIM.get()) || !(target instanceof ServerPlayer targetPlayer) || player == target) {
             return InteractionResult.PASS;
+        }
+        if (player.getCooldowns().isOnCooldown(stack)) {
+            return InteractionResult.FAIL;
         }
 
         if (player.level().isClientSide()) {

@@ -32,9 +32,12 @@ import java.util.function.Consumer;
 
 public class Poppet extends Item {
     private static final String THROW_TRIGGERED_TAG = "VoodooThrowTriggered";
-    private static final int CHARGE_TICKS = 80;
+    private static final int CHARGE_TICKS = 20;
+    private static final int PIN_PRICK_COOLDOWN_TICKS = 60;
     private static final float CHARGE_DAMAGE = 2.0F;
     private static final double THROW_PUSH_DISTANCE = 3.5D;
+    private static final float LAVA_IGNITE_SECONDS = 15.0F;
+    private static final float LAVA_DAMAGE = 4.0F;
     private static final String TARGET_UNAVAILABLE_KEY = "message.thewitchslegacy.voodoo_poppet_target_unavailable";
     private static final String TARGET_PROTECTED_KEY = "message.thewitchslegacy.voodoo_poppet_target_protected";
     private static final Set<UUID> DROWN_MIRROR_GUARD = new HashSet<>();
@@ -75,6 +78,9 @@ public class Poppet extends Item {
         ItemStack stack = player.getItemInHand(usedHand);
         if (!stack.is(ModItems.VOODOO_POPPET.get())) {
             return InteractionResult.PASS;
+        }
+        if (player.getCooldowns().isOnCooldown(stack)) {
+            return InteractionResult.FAIL;
         }
 
         if (!player.isShiftKeyDown()) {
@@ -118,6 +124,7 @@ public class Poppet extends Item {
             player.playSound(SoundEvents.CROSSBOW_SHOOT, 0.7F, 0.7F);
         }
 
+        player.getCooldowns().addCooldown(stack, PIN_PRICK_COOLDOWN_TICKS);
         player.stopUsingItem();
     }
 
@@ -131,7 +138,7 @@ public class Poppet extends Item {
             if (entity.getOwner() instanceof ServerPlayer controller) {
                 Optional<ServerPlayer> target = resolveAttackTarget(stack, controller);
                 if (target.isPresent()) {
-                    target.get().lavaHurt();
+                    applyLavaEffect(target.get());
                 }
             }
 
@@ -270,5 +277,10 @@ public class Poppet extends Item {
         Vec3 push = direction.scale(THROW_PUSH_DISTANCE);
         target.push(push.x, 0.35D, push.z);
         target.hurtMarked = true;
+    }
+
+    private static void applyLavaEffect(ServerPlayer target) {
+        target.igniteForSeconds(LAVA_IGNITE_SECONDS);
+        target.hurt(target.damageSources().lava(), LAVA_DAMAGE);
     }
 }
