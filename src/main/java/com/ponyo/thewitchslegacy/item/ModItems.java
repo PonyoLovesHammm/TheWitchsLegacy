@@ -50,7 +50,7 @@ public class ModItems {
     public static final DeferredItem<Item> VOODOO_POPPET = registerItem("voodoo_poppet",
             properties -> new Poppet(properties.stacksTo(1)));
     public static final DeferredItem<Item> VOODOO_PROTECTION_POPPET = registerItem("voodoo_protection_poppet",
-            properties -> new Item(properties.stacksTo(1)));
+            properties -> new Poppet(properties.stacksTo(1)));
     public static final DeferredItem<Item> WAYSTONE = registerItem("waystone", Waystone::new);
     public static final DeferredItem<Item> BOUND_WAYSTONE = registerItem("bound_waystone", Waystone::new);
     public static final DeferredItem<Item> BLOODED_WAYSTONE = registerItem("blooded_waystone", Waystone::new);

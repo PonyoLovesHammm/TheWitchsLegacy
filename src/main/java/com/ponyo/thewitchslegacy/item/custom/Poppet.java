@@ -73,6 +73,10 @@ public class Poppet extends Item {
     @Override
     public InteractionResult use(Level level, Player player, InteractionHand usedHand) {
         ItemStack stack = player.getItemInHand(usedHand);
+        if (!stack.is(ModItems.VOODOO_POPPET.get())) {
+            return InteractionResult.PASS;
+        }
+
         if (!player.isShiftKeyDown()) {
             return InteractionResult.PASS;
         }
@@ -99,7 +103,7 @@ public class Poppet extends Item {
 
     @Override
     public void onUseTick(Level level, LivingEntity livingEntity, ItemStack stack, int remainingUseDuration) {
-        if (level.isClientSide() || !(livingEntity instanceof ServerPlayer player)) {
+        if (!stack.is(ModItems.VOODOO_POPPET.get()) || level.isClientSide() || !(livingEntity instanceof ServerPlayer player)) {
             return;
         }
 
@@ -119,7 +123,7 @@ public class Poppet extends Item {
 
     @Override
     public boolean onEntityItemUpdate(ItemStack stack, ItemEntity entity) {
-        if (entity.level().isClientSide()) {
+        if (!stack.is(ModItems.VOODOO_POPPET.get()) || entity.level().isClientSide()) {
             return false;
         }
 
