@@ -7,8 +7,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -21,10 +25,15 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.entity.living.ArmorHurtEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -38,9 +47,23 @@ public class Poppet extends Item {
     private static final double THROW_PUSH_DISTANCE = 3.5D;
     private static final float LAVA_IGNITE_SECONDS = 15.0F;
     private static final float LAVA_DAMAGE = 4.0F;
+    private static final float DEATH_PROTECTION_HEALTH = 10.0F;
     private static final String TARGET_UNAVAILABLE_KEY = "message.thewitchslegacy.voodoo_poppet_target_unavailable";
     private static final String TARGET_PROTECTED_KEY = "message.thewitchslegacy.voodoo_poppet_target_protected";
+    private static final String VAMPIRIC_TARGET_TAG = "VampiricTarget";
+    private static final String ENTITY_UUID_TAG = "EntityUuid";
+    private static final String ENTITY_NAME_TAG = "EntityName";
+    public static final int HUNGER_PROTECTION_MAX_DURABILITY = 100;
+    private static final EquipmentSlot[] ARMOR_SLOTS = {
+            EquipmentSlot.FEET,
+            EquipmentSlot.LEGS,
+            EquipmentSlot.CHEST,
+            EquipmentSlot.HEAD
+    };
     private static final Set<UUID> DROWN_MIRROR_GUARD = new HashSet<>();
+    private static final Set<UUID> VAMPIRIC_TRANSFER_GUARD = new HashSet<>();
+    private static final Map<UUID, Integer> LAST_FOOD_LEVELS = new HashMap<>();
+    private static final Map<UUID, ToolDamageSnapshot> TOOL_DAMAGE_SNAPSHOTS = new HashMap<>();
 
     public Poppet(Properties properties) {
         super(properties);
@@ -56,6 +79,36 @@ public class Poppet extends Item {
                     if (stack.is(ModItems.VOODOO_PROTECTION_POPPET.get())) {
                         return Component.translatable("item.thewitchslegacy.voodoo_protection_poppet.filled", target.entityName());
                     }
+                    if (stack.is(ModItems.ARMOR_PROTECTION_POPPET.get())) {
+                        return Component.translatable("item.thewitchslegacy.armor_protection_poppet.filled", target.entityName());
+                    }
+                    if (stack.is(ModItems.DEATH_PROTECTION_POPPET.get())) {
+                        return Component.translatable("item.thewitchslegacy.death_protection_poppet.filled", target.entityName());
+                    }
+                    if (stack.is(ModItems.EARTH_PROTECTION_POPPET.get())) {
+                        return Component.translatable("item.thewitchslegacy.earth_protection_poppet.filled", target.entityName());
+                    }
+                    if (stack.is(ModItems.FIRE_PROTECTION_POPPET.get())) {
+                        return Component.translatable("item.thewitchslegacy.fire_protection_poppet.filled", target.entityName());
+                    }
+                    if (stack.is(ModItems.HUNGER_PROTECTION_POPPET.get())) {
+                        return Component.translatable("item.thewitchslegacy.hunger_protection_poppet.filled", target.entityName());
+                    }
+                    if (stack.is(ModItems.TOOL_PROTECTION_POPPET.get())) {
+                        return Component.translatable("item.thewitchslegacy.tool_protection_poppet.filled", target.entityName());
+                    }
+                    if (stack.is(ModItems.WATER_PROTECTION_POPPET.get())) {
+                        return Component.translatable("item.thewitchslegacy.water_protection_poppet.filled", target.entityName());
+                    }
+                    if (stack.is(ModItems.VAMPIRIC_POPPET.get())) {
+                        return getVampiricTarget(stack)
+                                .<Component>map(vampiricTarget -> Component.translatable(
+                                        "item.thewitchslegacy.vampiric_poppet.filled",
+                                        target.entityName(),
+                                        vampiricTarget.entityName()
+                                ))
+                                .orElseGet(() -> super.getName(stack));
+                    }
                     return super.getName(stack);
                 })
                 .orElseGet(() -> super.getName(stack));
@@ -64,10 +117,21 @@ public class Poppet extends Item {
     @Override
     public void appendHoverText(ItemStack stack, Item.TooltipContext context, TooltipDisplay tooltipDisplay, Consumer<Component> tooltipAdder, TooltipFlag tooltipFlag) {
         super.appendHoverText(stack, context, tooltipDisplay, tooltipAdder, tooltipFlag);
+        if (stack.is(ModItems.VAMPIRIC_POPPET.get())) {
+            Optional<Waystone.BloodTarget> source = Waystone.getBloodTarget(stack);
+            Optional<Waystone.BloodTarget> target = getVampiricTarget(stack);
+            if (source.isPresent() && target.isPresent()) {
+                tooltipAdder.accept(Component.translatable(
+                                "tooltip.thewitchslegacy.vampiric_poppet.target",
+                                source.get().entityName(),
+                                target.get().entityName()
+                        )
+                        .withStyle(ChatFormatting.DARK_RED));
+            }
+            return;
+        }
         Waystone.getBloodTarget(stack).ifPresent(target -> tooltipAdder.accept(
-                Component.translatable(stack.is(ModItems.VOODOO_PROTECTION_POPPET.get())
-                                ? "tooltip.thewitchslegacy.voodoo_protection_poppet.target"
-                                : "tooltip.thewitchslegacy.voodoo_poppet.target",
+                Component.translatable(tooltipTargetKey(stack),
                         target.entityName())
                         .withStyle(ChatFormatting.DARK_RED)
         ));
@@ -163,7 +227,7 @@ public class Poppet extends Item {
 
     public static void onItemCrafted(PlayerEvent.ItemCraftedEvent event) {
         ItemStack crafted = event.getCrafting();
-        if (!crafted.is(ModItems.VOODOO_POPPET.get()) && !crafted.is(ModItems.VOODOO_PROTECTION_POPPET.get())) {
+        if (!isBindablePoppet(crafted)) {
             return;
         }
 
@@ -186,6 +250,116 @@ public class Poppet extends Item {
             Waystone.bindToPlayer(crafted, target.entityUuid(), target.entityName());
             CustomData.set(DataComponents.CUSTOM_DATA, crafted, crafted.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag());
         });
+    }
+
+    public static void onLivingDamagePre(LivingDamageEvent.Pre event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+
+        if (event.getSource().is(DamageTypes.FALL)) {
+            absorbFallDamageWithEarthPoppet(event, player);
+        }
+        if (event.getSource().is(DamageTypeTags.IS_FIRE)) {
+            absorbFireDamageWithFirePoppet(event, player);
+        }
+        if (event.getSource().is(DamageTypes.DROWN)) {
+            absorbDrowningDamageWithWaterPoppet(event, player);
+        }
+
+        if (!VAMPIRIC_TRANSFER_GUARD.contains(player.getUUID())) {
+            transferDamageWithVampiricPoppet(event, player);
+        }
+
+        if (player.getHealth() - event.getNewDamage() > 0.0F) {
+            return;
+        }
+
+        Optional<ItemStack> maybePoppet = getCarriedBoundDeathProtectionPoppet(player);
+        if (maybePoppet.isEmpty()) {
+            return;
+        }
+
+        event.setNewDamage(0.0F);
+        player.setHealth(Math.min(player.getMaxHealth(), DEATH_PROTECTION_HEALTH));
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
+        maybePoppet.get().shrink(1);
+    }
+
+    private static void absorbFallDamageWithEarthPoppet(LivingDamageEvent.Pre event, ServerPlayer player) {
+        Optional<ItemStack> maybePoppet = getCarriedBoundEarthProtectionPoppet(player);
+        if (maybePoppet.isEmpty()) {
+            return;
+        }
+
+        absorbDamageWithPoppet(event, maybePoppet.get(), player);
+    }
+
+    private static void transferDamageWithVampiricPoppet(LivingDamageEvent.Pre event, ServerPlayer player) {
+        float incomingDamage = event.getNewDamage();
+        if (incomingDamage <= 0.0F) {
+            return;
+        }
+
+        Optional<VampiricTransfer> maybeTransfer = getCarriedBoundVampiricPoppet(player);
+        if (maybeTransfer.isEmpty()) {
+            return;
+        }
+
+        VampiricTransfer transfer = maybeTransfer.get();
+        ItemStack poppet = transfer.poppet();
+        int remainingDurability = poppet.getMaxDamage() - poppet.getDamageValue();
+        int poppetDamage = Math.min((int) Math.ceil(incomingDamage), remainingDurability);
+        if (poppetDamage <= 0) {
+            return;
+        }
+
+        float transferredDamage = Math.min(incomingDamage, poppetDamage);
+        poppet.hurtAndBreak(poppetDamage, (ServerLevel) player.level(), player, item -> {});
+
+        VAMPIRIC_TRANSFER_GUARD.add(transfer.target().getUUID());
+        try {
+            transfer.target().hurt(event.getSource(), transferredDamage);
+        } finally {
+            VAMPIRIC_TRANSFER_GUARD.remove(transfer.target().getUUID());
+        }
+
+        event.setNewDamage(Math.max(0.0F, incomingDamage - transferredDamage));
+    }
+
+    private static void absorbFireDamageWithFirePoppet(LivingDamageEvent.Pre event, ServerPlayer player) {
+        Optional<ItemStack> maybePoppet = getCarriedBoundFireProtectionPoppet(player);
+        if (maybePoppet.isEmpty()) {
+            return;
+        }
+
+        absorbDamageWithPoppet(event, maybePoppet.get(), player);
+    }
+
+    private static void absorbDrowningDamageWithWaterPoppet(LivingDamageEvent.Pre event, ServerPlayer player) {
+        Optional<ItemStack> maybePoppet = getCarriedBoundWaterProtectionPoppet(player);
+        if (maybePoppet.isEmpty()) {
+            return;
+        }
+
+        absorbDamageWithPoppet(event, maybePoppet.get(), player);
+    }
+
+    private static void absorbDamageWithPoppet(LivingDamageEvent.Pre event, ItemStack poppet, ServerPlayer player) {
+        float incomingDamage = event.getNewDamage();
+        if (incomingDamage <= 0.0F) {
+            return;
+        }
+
+        int remainingDurability = poppet.getMaxDamage() - poppet.getDamageValue();
+        int poppetDamage = Math.min((int) Math.ceil(incomingDamage), remainingDurability);
+        if (poppetDamage <= 0) {
+            return;
+        }
+
+        poppet.hurtAndBreak(poppetDamage, (ServerLevel) player.level(), player, item -> {});
+        event.setNewDamage(Math.max(0.0F, incomingDamage - poppetDamage));
     }
 
     public static void onLivingDamage(LivingDamageEvent.Post event) {
@@ -216,6 +390,162 @@ public class Poppet extends Item {
         }
     }
 
+    public static void onArmorHurt(ArmorHurtEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !(player.level() instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        Optional<ItemStack> maybePoppet = getBoundArmorProtectionPoppet(player);
+        if (maybePoppet.isEmpty()) {
+            return;
+        }
+
+        int redirectedDamage = 0;
+        for (EquipmentSlot slot : ARMOR_SLOTS) {
+            float damage = event.getNewDamage(slot);
+            if (damage > 0.0F && !event.getArmorItemStack(slot).isEmpty()) {
+                redirectedDamage += (int) Math.ceil(damage);
+            }
+        }
+
+        if (redirectedDamage <= 0) {
+            return;
+        }
+
+        ItemStack poppet = maybePoppet.get();
+        poppet.hurtAndBreak(redirectedDamage, serverLevel, player, item -> {});
+
+        for (EquipmentSlot slot : ARMOR_SLOTS) {
+            event.setNewDamage(slot, 0.0F);
+        }
+    }
+
+    public static void onPlayerDestroyItem(PlayerDestroyItemEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || event.getHand() == null) {
+            return;
+        }
+
+        ItemStack original = event.getOriginal();
+        if (!isProtectableTool(original)) {
+            return;
+        }
+
+        Optional<ItemStack> maybePoppet = getCarriedBoundToolProtectionPoppet(player);
+        if (maybePoppet.isEmpty()) {
+            return;
+        }
+
+        ItemStack poppet = maybePoppet.get();
+        int remainingDurability = poppet.getMaxDamage() - poppet.getDamageValue();
+        int damageToRedirect = Math.max(1, original.getMaxDamage() - original.getDamageValue());
+        int redirected = Math.min(damageToRedirect, remainingDurability);
+        if (redirected <= 0) {
+            return;
+        }
+
+        poppet.hurtAndBreak(redirected, player.level(), player, item -> {});
+        ItemStack restored = original.copyWithCount(1);
+        restored.setDamageValue(Math.min(restored.getMaxDamage() - 1, original.getDamageValue() + damageToRedirect - redirected));
+        player.setItemInHand(event.getHand(), restored);
+        rememberToolDamageSnapshot(player);
+    }
+
+    public static void onPlayerTickPre(PlayerTickEvent.Pre event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+
+        redirectToolDamageSinceLastSnapshot(player);
+        rememberToolDamageSnapshot(player);
+    }
+
+    public static void onPlayerTickPost(PlayerTickEvent.Post event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
+            return;
+        }
+
+        redirectToolDamageSinceLastSnapshot(player);
+
+        int currentFood = player.getFoodData().getFoodLevel();
+        UUID playerId = player.getUUID();
+        Integer previousFood = LAST_FOOD_LEVELS.get(playerId);
+        if (previousFood == null) {
+            LAST_FOOD_LEVELS.put(playerId, currentFood);
+            return;
+        }
+
+        if (currentFood < previousFood) {
+            int hungerLoss = previousFood - currentFood;
+            Optional<ItemStack> maybePoppet = getCarriedBoundHungerProtectionPoppet(player);
+            if (maybePoppet.isPresent()) {
+                ItemStack poppet = maybePoppet.get();
+                int remainingDurability = poppet.getMaxDamage() - poppet.getDamageValue();
+                int absorbed = Math.min(hungerLoss, remainingDurability);
+                if (absorbed > 0) {
+                    poppet.setDamageValue(Math.min(poppet.getMaxDamage(), poppet.getDamageValue() + absorbed));
+                    currentFood += absorbed;
+                    player.getFoodData().setFoodLevel(Math.min(20, currentFood));
+                }
+            }
+        }
+
+        LAST_FOOD_LEVELS.put(playerId, player.getFoodData().getFoodLevel());
+        rememberToolDamageSnapshot(player);
+    }
+
+    private static void redirectToolDamageSinceLastSnapshot(ServerPlayer player) {
+        ToolDamageSnapshot previous = TOOL_DAMAGE_SNAPSHOTS.get(player.getUUID());
+        if (previous == null) {
+            return;
+        }
+
+        redirectToolDamage(player, InteractionHand.MAIN_HAND, player.getMainHandItem(), previous.mainHand());
+        redirectToolDamage(player, InteractionHand.OFF_HAND, player.getOffhandItem(), previous.offHand());
+    }
+
+    private static void redirectToolDamage(ServerPlayer player, InteractionHand hand, ItemStack tool, ToolStackSnapshot previous) {
+        if (previous == null || !isProtectableTool(tool) || !tool.is(previous.item()) || tool.getDamageValue() <= previous.damage()) {
+            return;
+        }
+
+        int toolDamage = tool.getDamageValue() - previous.damage();
+        Optional<ItemStack> maybePoppet = getCarriedBoundToolProtectionPoppet(player);
+        if (maybePoppet.isEmpty()) {
+            return;
+        }
+
+        ItemStack poppet = maybePoppet.get();
+        int remainingDurability = poppet.getMaxDamage() - poppet.getDamageValue();
+        int redirected = Math.min(toolDamage, remainingDurability);
+        if (redirected <= 0) {
+            return;
+        }
+
+        poppet.hurtAndBreak(redirected, player.level(), player, item -> {});
+        tool.setDamageValue(Math.max(0, tool.getDamageValue() - redirected));
+        if (hand == InteractionHand.MAIN_HAND) {
+            player.getInventory().setChanged();
+        }
+    }
+
+    private static boolean isProtectableTool(ItemStack stack) {
+        return !stack.isEmpty()
+                && stack.isDamageableItem()
+                && stack.has(DataComponents.TOOL)
+                && !stack.is(ModItems.TOOL_PROTECTION_POPPET.get());
+    }
+
+    private static void rememberToolDamageSnapshot(ServerPlayer player) {
+        TOOL_DAMAGE_SNAPSHOTS.put(player.getUUID(), new ToolDamageSnapshot(
+                createToolStackSnapshot(player.getMainHandItem()),
+                createToolStackSnapshot(player.getOffhandItem())
+        ));
+    }
+
+    private static ToolStackSnapshot createToolStackSnapshot(ItemStack stack) {
+        return isProtectableTool(stack) ? new ToolStackSnapshot(stack.getItem(), stack.getDamageValue()) : null;
+    }
+
     private static Optional<ItemStack> getHeldBoundPoppet(Player player) {
         for (InteractionHand hand : InteractionHand.values()) {
             ItemStack stack = player.getItemInHand(hand);
@@ -224,6 +554,107 @@ public class Poppet extends Item {
             }
         }
         return Optional.empty();
+    }
+
+    private static Optional<ItemStack> getCarriedBoundDeathProtectionPoppet(ServerPlayer player) {
+        return getBoundProtectionPoppet(player, ModItems.DEATH_PROTECTION_POPPET.get());
+    }
+
+    private static Optional<ItemStack> getCarriedBoundEarthProtectionPoppet(ServerPlayer player) {
+        return getBoundProtectionPoppet(player, ModItems.EARTH_PROTECTION_POPPET.get());
+    }
+
+    private static Optional<ItemStack> getCarriedBoundFireProtectionPoppet(ServerPlayer player) {
+        return getBoundProtectionPoppet(player, ModItems.FIRE_PROTECTION_POPPET.get());
+    }
+
+    private static Optional<ItemStack> getCarriedBoundHungerProtectionPoppet(ServerPlayer player) {
+        return getBoundProtectionPoppet(player, ModItems.HUNGER_PROTECTION_POPPET.get());
+    }
+
+    private static Optional<ItemStack> getCarriedBoundToolProtectionPoppet(ServerPlayer player) {
+        return getBoundProtectionPoppet(player, ModItems.TOOL_PROTECTION_POPPET.get());
+    }
+
+    private static Optional<ItemStack> getCarriedBoundWaterProtectionPoppet(ServerPlayer player) {
+        return getBoundProtectionPoppet(player, ModItems.WATER_PROTECTION_POPPET.get());
+    }
+
+    private static Optional<ItemStack> getBoundArmorProtectionPoppet(ServerPlayer player) {
+        return getBoundProtectionPoppet(player, ModItems.ARMOR_PROTECTION_POPPET.get());
+    }
+
+    private static Optional<VampiricTransfer> getCarriedBoundVampiricPoppet(ServerPlayer player) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            if (!stack.is(ModItems.VAMPIRIC_POPPET.get())) {
+                continue;
+            }
+
+            Optional<Waystone.BloodTarget> source = Waystone.getBloodTarget(stack);
+            Optional<Waystone.BloodTarget> target = getVampiricTarget(stack);
+            if (source.isEmpty() || target.isEmpty() || !source.get().entityUuid().equals(player.getUUID())) {
+                continue;
+            }
+
+            ServerPlayer targetPlayer = player.level().getServer().getPlayerList().getPlayer(target.get().entityUuid());
+            if (targetPlayer != null && targetPlayer.isAlive()) {
+                return Optional.of(new VampiricTransfer(stack, targetPlayer));
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private static Optional<ItemStack> getBoundProtectionPoppet(ServerPlayer player, Item poppetItem) {
+        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
+            ItemStack stack = player.getInventory().getItem(slot);
+            if (isBoundFor(stack, poppetItem, player)) {
+                return Optional.of(stack);
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private static boolean isBindablePoppet(ItemStack stack) {
+        return stack.is(ModItems.VOODOO_POPPET.get())
+                || stack.is(ModItems.VOODOO_PROTECTION_POPPET.get())
+                || stack.is(ModItems.ARMOR_PROTECTION_POPPET.get())
+                || stack.is(ModItems.DEATH_PROTECTION_POPPET.get())
+                || stack.is(ModItems.EARTH_PROTECTION_POPPET.get())
+                || stack.is(ModItems.FIRE_PROTECTION_POPPET.get())
+                || stack.is(ModItems.HUNGER_PROTECTION_POPPET.get())
+                || stack.is(ModItems.TOOL_PROTECTION_POPPET.get())
+                || stack.is(ModItems.WATER_PROTECTION_POPPET.get());
+    }
+
+    private static String tooltipTargetKey(ItemStack stack) {
+        if (stack.is(ModItems.VOODOO_PROTECTION_POPPET.get())) {
+            return "tooltip.thewitchslegacy.voodoo_protection_poppet.target";
+        }
+        if (stack.is(ModItems.ARMOR_PROTECTION_POPPET.get())) {
+            return "tooltip.thewitchslegacy.armor_protection_poppet.target";
+        }
+        if (stack.is(ModItems.DEATH_PROTECTION_POPPET.get())) {
+            return "tooltip.thewitchslegacy.death_protection_poppet.target";
+        }
+        if (stack.is(ModItems.EARTH_PROTECTION_POPPET.get())) {
+            return "tooltip.thewitchslegacy.earth_protection_poppet.target";
+        }
+        if (stack.is(ModItems.FIRE_PROTECTION_POPPET.get())) {
+            return "tooltip.thewitchslegacy.fire_protection_poppet.target";
+        }
+        if (stack.is(ModItems.HUNGER_PROTECTION_POPPET.get())) {
+            return "tooltip.thewitchslegacy.hunger_protection_poppet.target";
+        }
+        if (stack.is(ModItems.TOOL_PROTECTION_POPPET.get())) {
+            return "tooltip.thewitchslegacy.tool_protection_poppet.target";
+        }
+        if (stack.is(ModItems.WATER_PROTECTION_POPPET.get())) {
+            return "tooltip.thewitchslegacy.water_protection_poppet.target";
+        }
+        return "tooltip.thewitchslegacy.voodoo_poppet.target";
     }
 
     private static Optional<ServerPlayer> resolveTarget(ItemStack stack, ServerPlayer controller) {
@@ -250,21 +681,53 @@ public class Poppet extends Item {
     }
 
     private static boolean hasBoundProtectionPoppet(ServerPlayer player) {
-        for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
-            ItemStack stack = player.getInventory().getItem(slot);
-            if (isBoundProtectionFor(stack, player)) {
-                return true;
-            }
-        }
-
-        return false;
+        return getBoundProtectionPoppet(player, ModItems.VOODOO_PROTECTION_POPPET.get()).isPresent();
     }
 
-    private static boolean isBoundProtectionFor(ItemStack stack, ServerPlayer player) {
-        return stack.is(ModItems.VOODOO_PROTECTION_POPPET.get())
+    private static boolean isBoundFor(ItemStack stack, Item item, ServerPlayer player) {
+        return stack.is(item)
                 && Waystone.getBloodTarget(stack)
                 .map(target -> target.entityUuid().equals(player.getUUID()))
                 .orElse(false);
+    }
+
+    public static void bindVampiricPoppet(ItemStack stack, Waystone.BloodTarget source, Waystone.BloodTarget target) {
+        Waystone.bindToPlayer(stack, source.entityUuid(), source.entityName());
+        CompoundTag root = getRootTag(stack);
+        CompoundTag targetTag = new CompoundTag();
+        targetTag.putString(ENTITY_UUID_TAG, target.entityUuid().toString());
+        targetTag.putString(ENTITY_NAME_TAG, target.entityName());
+        root.put(VAMPIRIC_TARGET_TAG, targetTag);
+        CustomData.set(DataComponents.CUSTOM_DATA, stack, root);
+    }
+
+    public static Optional<Waystone.BloodTarget> getVampiricTarget(ItemStack stack) {
+        CompoundTag root = getRootTag(stack);
+        if (!root.contains(VAMPIRIC_TARGET_TAG)) {
+            return Optional.empty();
+        }
+
+        CompoundTag targetTag = root.getCompoundOrEmpty(VAMPIRIC_TARGET_TAG);
+        Optional<String> entityUuid = targetTag.getString(ENTITY_UUID_TAG);
+        if (entityUuid.isEmpty()) {
+            return Optional.empty();
+        }
+
+        UUID parsedUuid;
+        try {
+            parsedUuid = UUID.fromString(entityUuid.get());
+        } catch (IllegalArgumentException exception) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new Waystone.BloodTarget(
+                parsedUuid,
+                targetTag.getString(ENTITY_NAME_TAG).orElse("")
+        ));
+    }
+
+    private static CompoundTag getRootTag(ItemStack stack) {
+        return stack.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag();
     }
 
     private static void pushTarget(ServerPlayer target, Vec3 movement) {
@@ -282,5 +745,14 @@ public class Poppet extends Item {
     private static void applyLavaEffect(ServerPlayer target) {
         target.igniteForSeconds(LAVA_IGNITE_SECONDS);
         target.hurt(target.damageSources().lava(), LAVA_DAMAGE);
+    }
+
+    private record ToolDamageSnapshot(ToolStackSnapshot mainHand, ToolStackSnapshot offHand) {
+    }
+
+    private record ToolStackSnapshot(Item item, int damage) {
+    }
+
+    private record VampiricTransfer(ItemStack poppet, ServerPlayer target) {
     }
 }

@@ -10,6 +10,7 @@ import com.ponyo.thewitchslegacy.item.custom.Poppet;
 import com.ponyo.thewitchslegacy.item.custom.WitchsClaimSavedData;
 import com.ponyo.thewitchslegacy.menu.ModMenuTypes;
 import com.ponyo.thewitchslegacy.particle.ModParticles;
+import com.ponyo.thewitchslegacy.recipe.ModRecipeSerializers;
 import com.ponyo.thewitchslegacy.ritual.RitualManager;
 import com.ponyo.thewitchslegacy.sound.ModSounds;
 import com.ponyo.thewitchslegacy.worldgen.tree.ModTreeGrowers;
@@ -49,7 +50,12 @@ public class TheWitchsLegacy {
         NeoForge.EVENT_BUS.addListener(FamiliarManager::onLivingDeath);
         NeoForge.EVENT_BUS.addListener(WitchsClaimSavedData::onPlayerSetSpawn);
         NeoForge.EVENT_BUS.addListener(Poppet::onItemCrafted);
+        NeoForge.EVENT_BUS.addListener(Poppet::onLivingDamagePre);
         NeoForge.EVENT_BUS.addListener(Poppet::onLivingDamage);
+        NeoForge.EVENT_BUS.addListener(Poppet::onArmorHurt);
+        NeoForge.EVENT_BUS.addListener(Poppet::onPlayerDestroyItem);
+        NeoForge.EVENT_BUS.addListener(Poppet::onPlayerTickPre);
+        NeoForge.EVENT_BUS.addListener(Poppet::onPlayerTickPost);
 
         ModCreativeModeTabs.register(modEventBus);
 
@@ -59,6 +65,7 @@ public class TheWitchsLegacy {
         ModItems.register(modEventBus);
         ModMenuTypes.register(modEventBus);
         ModParticles.register(modEventBus);
+        ModRecipeSerializers.register(modEventBus);
 
         ModSounds.register(modEventBus);
         ModTreeGrowers.register(modEventBus);

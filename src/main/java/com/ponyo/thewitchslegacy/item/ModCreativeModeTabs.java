@@ -35,6 +35,14 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.POPPET);
                         output.accept(ModItems.VOODOO_POPPET);
                         output.accept(ModItems.VOODOO_PROTECTION_POPPET);
+                        output.accept(ModItems.ARMOR_PROTECTION_POPPET);
+                        output.accept(ModItems.DEATH_PROTECTION_POPPET);
+                        output.accept(ModItems.EARTH_PROTECTION_POPPET);
+                        output.accept(ModItems.FIRE_PROTECTION_POPPET);
+                        output.accept(ModItems.HUNGER_PROTECTION_POPPET);
+                        output.accept(ModItems.TOOL_PROTECTION_POPPET);
+                        output.accept(ModItems.WATER_PROTECTION_POPPET);
+                        output.accept(ModItems.VAMPIRIC_POPPET);
                         output.accept(ModItems.WAYSTONE);
                         output.accept(ModItems.WITCHS_CLAIM);
                         output.accept(ModItems.BARK_OF_THE_ANCIENT);

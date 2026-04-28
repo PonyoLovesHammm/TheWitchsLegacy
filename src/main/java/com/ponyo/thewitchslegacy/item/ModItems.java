@@ -51,6 +51,22 @@ public class ModItems {
             properties -> new Poppet(properties.stacksTo(1)));
     public static final DeferredItem<Item> VOODOO_PROTECTION_POPPET = registerItem("voodoo_protection_poppet",
             properties -> new Poppet(properties.stacksTo(1)));
+    public static final DeferredItem<Item> ARMOR_PROTECTION_POPPET = registerItem("armor_protection_poppet",
+            properties -> new Poppet(properties.stacksTo(1).durability(500)));
+    public static final DeferredItem<Item> DEATH_PROTECTION_POPPET = registerItem("death_protection_poppet",
+            properties -> new Poppet(properties.stacksTo(1)));
+    public static final DeferredItem<Item> EARTH_PROTECTION_POPPET = registerItem("earth_protection_poppet",
+            properties -> new Poppet(properties.stacksTo(1).durability(60)));
+    public static final DeferredItem<Item> FIRE_PROTECTION_POPPET = registerItem("fire_protection_poppet",
+            properties -> new Poppet(properties.stacksTo(1).durability(40)));
+    public static final DeferredItem<Item> HUNGER_PROTECTION_POPPET = registerItem("hunger_protection_poppet",
+            properties -> new Poppet(properties.stacksTo(1).durability(20)));
+    public static final DeferredItem<Item> TOOL_PROTECTION_POPPET = registerItem("tool_protection_poppet",
+            properties -> new Poppet(properties.stacksTo(1).durability(1000)));
+    public static final DeferredItem<Item> WATER_PROTECTION_POPPET = registerItem("water_protection_poppet",
+            properties -> new Poppet(properties.stacksTo(1).durability(40)));
+    public static final DeferredItem<Item> VAMPIRIC_POPPET = registerItem("vampiric_poppet",
+            properties -> new Poppet(properties.stacksTo(1).durability(1000)));
     public static final DeferredItem<Item> WAYSTONE = registerItem("waystone", Waystone::new);
     public static final DeferredItem<Item> BOUND_WAYSTONE = registerItem("bound_waystone", Waystone::new);
     public static final DeferredItem<Item> BLOODED_WAYSTONE = registerItem("blooded_waystone", Waystone::new);
