@@ -96,8 +96,6 @@ public class ModItems {
 
     //Plant Items!
     public static final DeferredItem<Item> BELLADONA = registerItem("belladona", Item::new);
-    public static final DeferredItem<Item> BELLADONA_SEEDS = registerItem("belladona_seeds",
-            properties -> new CropSeeds(ModBlocks.BELLADONA_CROP::get, properties));
     public static final DeferredItem<Item> SNOWBELL_SEEDS = registerItem("snowbell_seeds",
             properties -> new CropSeeds(ModBlocks.SNOWBELL_CROP::get, properties));
     public static final DeferredItem<Item> ICY_NEEDLE = registerItem("icy_needle", Item::new);

@@ -66,7 +66,8 @@ public class WitchCrop extends CropBlock {
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return shapes[getAge(state)];
+        int age = Math.min(getAge(state), this.shapes.length - 1);
+        return this.shapes[age];
     }
 
     @Override

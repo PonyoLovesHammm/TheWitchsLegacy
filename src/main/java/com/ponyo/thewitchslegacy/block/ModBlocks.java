@@ -332,26 +332,28 @@ public class ModBlocks {
                             .randomTicks()
                             .offsetType(BlockBehaviour.OffsetType.XZ)));
 
-    public static final DeferredBlock<Block> BELLADONA_CROP = registerBlockWithoutItem(
-            "belladona_crop",
-            () -> new WitchCrop(
-                    blockProperties("belladona_crop", BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)),
-                    ModItems.BELLADONA_SEEDS::get,
-                    WitchCrop.createShapes(2.0D, 6.0D, 10.0D, 14.0D)));
+    public static final DeferredBlock<Block> BELLADONA_PLANT = registerBlock(
+            "belladona_plant",
+            () -> new TallFlowerBlock(
+                    decorativeProps("belladona_plant", SoundType.GRASS, 0.0F)
+                            .instabreak()
+                            .replaceable()
+                            .noCollision()
+                            .offsetType(BlockBehaviour.OffsetType.XZ)));
 
     public static final DeferredBlock<Block> SNOWBELL_CROP = registerBlockWithoutItem(
             "snowbell_crop",
             () -> new WitchCrop(
                     blockProperties("snowbell_crop", BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)),
                     ModItems.SNOWBELL_SEEDS::get,
-                    WitchCrop.createShapes(2.0D, 5.0D, 8.0D, 11.0D, 14.0D)));
+                    WitchCrop.createShapes(2.0D, 5.0D, 8.0D, 11.0D, 14.0D, 16.0D)));
 
     public static final DeferredBlock<Block> MANDRAKE_CROP = registerBlockWithoutItem(
             "mandrake_crop",
             () -> new WitchCrop(
                     blockProperties("mandrake_crop", BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)),
                     ModItems.MANDRAKE_SEEDS::get,
-                    WitchCrop.createShapes(2.0D, 5.0D, 8.0D, 11.0D, 14.0D),
+                    WitchCrop.createShapes(2.0D, 6.0D, 10.0D, 14.0D),
                     WitchCrop.SupportType.FARMLAND,
                     ModBlocks::handleMandrakeMatureBreak));
 
@@ -360,7 +362,7 @@ public class ModBlocks {
             () -> new WitchCrop(
                     blockProperties("water_artichoke_crop", BlockBehaviour.Properties.ofFullCopy(Blocks.WHEAT)),
                     ModItems.WATER_ARTICHOKE_SEEDS::get,
-                    WitchCrop.createShapes(2.0D, 6.0D, 10.0D, 14.0D),
+                    WitchCrop.createShapes(2.0D, 5.0D, 8.0D, 11.0D, 14.0D),
                     WitchCrop.SupportType.WATER_SOURCE));
 
     public static final DeferredBlock<Block> GARLIC_CROP = registerBlockWithoutItem(

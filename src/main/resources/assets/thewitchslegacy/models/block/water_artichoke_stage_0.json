@@ -2,6 +2,6 @@
   "parent": "minecraft:block/crop",
   "render_type": "cutout",
   "textures": {
-    "crop": "thewitchslegacy:block/plants/water_artichoke_stage_0"
+    "crop": "thewitchslegacy:block/plants/crops/water_artichoke_stage_0"
   }
 }
