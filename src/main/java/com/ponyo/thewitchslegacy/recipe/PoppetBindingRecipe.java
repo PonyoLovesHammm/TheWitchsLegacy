@@ -131,7 +131,10 @@ public class PoppetBindingRecipe extends CustomRecipe {
         public ItemStack assemble() {
             ItemStack result = poppet.copyWithCount(1);
             Waystone.getBloodTarget(claim)
-                    .ifPresent(target -> Waystone.bindToPlayer(result, target.entityUuid(), target.entityName()));
+                    .ifPresent(target -> {
+                        Waystone.bindToPlayer(result, target.entityUuid(), target.entityName());
+                        Poppet.applyBoundComponents(result);
+                    });
             return result;
         }
     }

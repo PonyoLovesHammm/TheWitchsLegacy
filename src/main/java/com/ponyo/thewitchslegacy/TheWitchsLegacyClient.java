@@ -6,6 +6,7 @@ import com.ponyo.thewitchslegacy.block.entity.client.SpinningWheelRenderer;
 import com.ponyo.thewitchslegacy.client.gui.DistilleryScreen;
 import com.ponyo.thewitchslegacy.block.entity.client.WitchCauldronRenderer;
 import com.ponyo.thewitchslegacy.client.gui.AltarScreen;
+import com.ponyo.thewitchslegacy.client.gui.PoppetShelfScreen;
 import com.ponyo.thewitchslegacy.client.gui.WitchOvenScreen;
 import com.ponyo.thewitchslegacy.entity.ModEntities;
 import com.ponyo.thewitchslegacy.entity.client.MandrakeModel;
@@ -66,6 +67,7 @@ public class TheWitchsLegacyClient {
         event.register(ModMenuTypes.WITCH_OVEN.get(), WitchOvenScreen::new);
         event.register(ModMenuTypes.ALTAR.get(), AltarScreen::new);
         event.register(ModMenuTypes.DISTILLERY.get(), DistilleryScreen::new);
+        event.register(ModMenuTypes.POPPET_SHELF.get(), PoppetShelfScreen::new);
     }
 
     @SubscribeEvent

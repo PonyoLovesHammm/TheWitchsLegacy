@@ -10,6 +10,7 @@ import com.ponyo.thewitchslegacy.block.custom.Chalice;
 import com.ponyo.thewitchslegacy.block.custom.Distillery;
 import com.ponyo.thewitchslegacy.block.custom.Kettle;
 import com.ponyo.thewitchslegacy.block.custom.MagicMirror;
+import com.ponyo.thewitchslegacy.block.custom.PoppetShelf;
 import com.ponyo.thewitchslegacy.block.custom.WitchCrop;
 import com.ponyo.thewitchslegacy.block.custom.SpanishMoss;
 import com.ponyo.thewitchslegacy.block.custom.SpinningWheel;
@@ -437,6 +438,11 @@ public class ModBlocks {
             "spinning_wheel",
             () -> new SpinningWheel(
                     decorativeProps("spinning_wheel", SoundType.WOOD, 2.5F)));
+
+    public static final DeferredBlock<Block> POPPET_SHELF = registerBlock(
+            "poppet_shelf",
+            () -> new PoppetShelf(
+                    decorativeProps("poppet_shelf", SoundType.WOOD, 2.0F)));
 
     public static final DeferredBlock<Block> KETTLE = registerBlock(
             "kettle",

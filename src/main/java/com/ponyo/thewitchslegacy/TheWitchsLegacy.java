@@ -2,6 +2,7 @@ package com.ponyo.thewitchslegacy;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.block.entity.ModBlockEntities;
+import com.ponyo.thewitchslegacy.block.custom.PoppetShelf;
 import com.ponyo.thewitchslegacy.entity.ModEntities;
 import com.ponyo.thewitchslegacy.familiar.FamiliarManager;
 import com.ponyo.thewitchslegacy.item.ModCreativeModeTabs;
@@ -56,6 +57,7 @@ public class TheWitchsLegacy {
         NeoForge.EVENT_BUS.addListener(Poppet::onPlayerDestroyItem);
         NeoForge.EVENT_BUS.addListener(Poppet::onPlayerTickPre);
         NeoForge.EVENT_BUS.addListener(Poppet::onPlayerTickPost);
+        NeoForge.EVENT_BUS.addListener(PoppetShelf::onRightClickBlock);
 
         ModCreativeModeTabs.register(modEventBus);
 

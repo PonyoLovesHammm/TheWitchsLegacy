@@ -165,6 +165,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModBlocks.WITCH_OVEN);
                         output.accept(ModBlocks.DISTILLERY);
                         output.accept(ModBlocks.SPINNING_WHEEL);
+                        output.accept(ModBlocks.POPPET_SHELF);
                         output.accept(ModBlocks.KETTLE);
                         output.accept(ModBlocks.CHALICE);
                         output.accept(ModBlocks.FILLED_CHALICE);

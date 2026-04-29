@@ -1,5 +1,6 @@
 package com.ponyo.thewitchslegacy.item.custom;
 
+import com.ponyo.thewitchslegacy.block.entity.PoppetShelfSavedData;
 import com.ponyo.thewitchslegacy.item.ModItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
@@ -53,6 +54,16 @@ public class Poppet extends Item {
     private static final String VAMPIRIC_TARGET_TAG = "VampiricTarget";
     private static final String ENTITY_UUID_TAG = "EntityUuid";
     private static final String ENTITY_NAME_TAG = "EntityName";
+    private static final int BOUND_POPPET_STACK_SIZE = 1;
+    private static final int VOODOO_POPPET_DURABILITY = 30;
+    private static final int VOODOO_PROTECTION_DURABILITY = 60;
+    private static final int ARMOR_PROTECTION_DURABILITY = 500;
+    private static final int EARTH_PROTECTION_DURABILITY = 60;
+    private static final int FIRE_PROTECTION_DURABILITY = 40;
+    private static final int HUNGER_PROTECTION_DURABILITY = 20;
+    private static final int TOOL_PROTECTION_DURABILITY = 1000;
+    private static final int WATER_PROTECTION_DURABILITY = 40;
+    private static final int VAMPIRIC_POPPET_DURABILITY = 40;
     public static final int HUNGER_PROTECTION_MAX_DURABILITY = 100;
     private static final EquipmentSlot[] ARMOR_SLOTS = {
             EquipmentSlot.FEET,
@@ -182,9 +193,13 @@ public class Poppet extends Item {
             return;
         }
 
-        Optional<ServerPlayer> target = resolveAttackTarget(stack, player);
+        Optional<ServerPlayer> target = resolveTarget(stack, player);
         if (target.isPresent()) {
-            target.get().hurt(level.damageSources().indirectMagic(player, null), CHARGE_DAMAGE);
+            float damage = applyVoodooProtection(target.get(), player, CHARGE_DAMAGE);
+            if (damage > 0.0F) {
+                target.get().hurt(level.damageSources().indirectMagic(player, null), damage);
+                damageVoodooPoppet(stack, player, damage);
+            }
             player.playSound(SoundEvents.CROSSBOW_SHOOT, 0.7F, 0.7F);
         }
 
@@ -200,9 +215,13 @@ public class Poppet extends Item {
 
         if (entity.isInLava()) {
             if (entity.getOwner() instanceof ServerPlayer controller) {
-                Optional<ServerPlayer> target = resolveAttackTarget(stack, controller);
+                Optional<ServerPlayer> target = resolveTarget(stack, controller);
                 if (target.isPresent()) {
-                    applyLavaEffect(target.get());
+                    float damage = applyVoodooProtection(target.get(), controller, LAVA_DAMAGE);
+                    if (damage > 0.0F) {
+                        applyLavaEffect(target.get(), damage);
+                        damageVoodooPoppet(stack, controller, damage);
+                    }
                 }
             }
 
@@ -214,9 +233,10 @@ public class Poppet extends Item {
         if (!data.getBoolean(THROW_TRIGGERED_TAG).orElse(false) && entity.onGround() && entity.getOwner() instanceof ServerPlayer controller) {
             Vec3 movement = entity.getDeltaMovement();
             if (movement.lengthSqr() > 0.01D) {
-                Optional<ServerPlayer> target = resolveAttackTarget(stack, controller);
-                if (target.isPresent()) {
+                Optional<ServerPlayer> target = resolveTarget(stack, controller);
+                if (target.isPresent() && !applyVoodooShoveProtection(target.get(), controller)) {
                     pushTarget(target.get(), movement);
+                    damageVoodooPoppet(stack, controller, 1.0F);
                 }
             }
             data.putBoolean(THROW_TRIGGERED_TAG, true);
@@ -248,7 +268,7 @@ public class Poppet extends Item {
 
         Waystone.getBloodTarget(filledClaim).ifPresent(target -> {
             Waystone.bindToPlayer(crafted, target.entityUuid(), target.entityName());
-            CustomData.set(DataComponents.CUSTOM_DATA, crafted, crafted.getOrDefault(DataComponents.CUSTOM_DATA, CustomData.EMPTY).copyTag());
+            applyBoundComponents(crafted);
         });
     }
 
@@ -275,7 +295,7 @@ public class Poppet extends Item {
             return;
         }
 
-        Optional<ItemStack> maybePoppet = getCarriedBoundDeathProtectionPoppet(player);
+        Optional<PoppetHandle> maybePoppet = getCarriedBoundDeathProtectionPoppet(player);
         if (maybePoppet.isEmpty()) {
             return;
         }
@@ -284,11 +304,11 @@ public class Poppet extends Item {
         player.setHealth(Math.min(player.getMaxHealth(), DEATH_PROTECTION_HEALTH));
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.TOTEM_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
-        maybePoppet.get().shrink(1);
+        maybePoppet.get().shrink(1, player);
     }
 
     private static void absorbFallDamageWithEarthPoppet(LivingDamageEvent.Pre event, ServerPlayer player) {
-        Optional<ItemStack> maybePoppet = getCarriedBoundEarthProtectionPoppet(player);
+        Optional<PoppetHandle> maybePoppet = getCarriedBoundEarthProtectionPoppet(player);
         if (maybePoppet.isEmpty()) {
             return;
         }
@@ -308,7 +328,7 @@ public class Poppet extends Item {
         }
 
         VampiricTransfer transfer = maybeTransfer.get();
-        ItemStack poppet = transfer.poppet();
+        PoppetHandle poppet = transfer.poppet();
         int remainingDurability = poppet.getMaxDamage() - poppet.getDamageValue();
         int poppetDamage = Math.min((int) Math.ceil(incomingDamage), remainingDurability);
         if (poppetDamage <= 0) {
@@ -316,20 +336,23 @@ public class Poppet extends Item {
         }
 
         float transferredDamage = Math.min(incomingDamage, poppetDamage);
-        poppet.hurtAndBreak(poppetDamage, (ServerLevel) player.level(), player, item -> {});
+        poppet.hurtAndBreak(poppetDamage, player);
+        float targetDamage = applyVoodooProtection(transfer.target(), player, transferredDamage);
 
-        VAMPIRIC_TRANSFER_GUARD.add(transfer.target().getUUID());
-        try {
-            transfer.target().hurt(event.getSource(), transferredDamage);
-        } finally {
-            VAMPIRIC_TRANSFER_GUARD.remove(transfer.target().getUUID());
+        if (targetDamage > 0.0F) {
+            VAMPIRIC_TRANSFER_GUARD.add(transfer.target().getUUID());
+            try {
+                transfer.target().hurt(event.getSource(), targetDamage);
+            } finally {
+                VAMPIRIC_TRANSFER_GUARD.remove(transfer.target().getUUID());
+            }
         }
 
-        event.setNewDamage(Math.max(0.0F, incomingDamage - transferredDamage));
+        event.setNewDamage(Math.max(0.0F, incomingDamage - targetDamage));
     }
 
     private static void absorbFireDamageWithFirePoppet(LivingDamageEvent.Pre event, ServerPlayer player) {
-        Optional<ItemStack> maybePoppet = getCarriedBoundFireProtectionPoppet(player);
+        Optional<PoppetHandle> maybePoppet = getCarriedBoundFireProtectionPoppet(player);
         if (maybePoppet.isEmpty()) {
             return;
         }
@@ -338,7 +361,7 @@ public class Poppet extends Item {
     }
 
     private static void absorbDrowningDamageWithWaterPoppet(LivingDamageEvent.Pre event, ServerPlayer player) {
-        Optional<ItemStack> maybePoppet = getCarriedBoundWaterProtectionPoppet(player);
+        Optional<PoppetHandle> maybePoppet = getCarriedBoundWaterProtectionPoppet(player);
         if (maybePoppet.isEmpty()) {
             return;
         }
@@ -346,7 +369,7 @@ public class Poppet extends Item {
         absorbDamageWithPoppet(event, maybePoppet.get(), player);
     }
 
-    private static void absorbDamageWithPoppet(LivingDamageEvent.Pre event, ItemStack poppet, ServerPlayer player) {
+    private static void absorbDamageWithPoppet(LivingDamageEvent.Pre event, PoppetHandle poppet, ServerPlayer player) {
         float incomingDamage = event.getNewDamage();
         if (incomingDamage <= 0.0F) {
             return;
@@ -358,7 +381,7 @@ public class Poppet extends Item {
             return;
         }
 
-        poppet.hurtAndBreak(poppetDamage, (ServerLevel) player.level(), player, item -> {});
+        poppet.hurtAndBreak(poppetDamage, player);
         event.setNewDamage(Math.max(0.0F, incomingDamage - poppetDamage));
     }
 
@@ -376,26 +399,32 @@ public class Poppet extends Item {
             return;
         }
 
-        Optional<ServerPlayer> target = resolveAttackTarget(maybePoppet.get(), controller);
+        Optional<ServerPlayer> target = resolveTarget(maybePoppet.get(), controller);
         if (target.isEmpty()) {
             return;
         }
 
         ServerPlayer victim = target.get();
+        float damage = applyVoodooProtection(victim, controller, event.getNewDamage());
+        if (damage <= 0.0F) {
+            return;
+        }
+
         DROWN_MIRROR_GUARD.add(victim.getUUID());
         try {
-            victim.hurt(victim.damageSources().drown(), event.getNewDamage());
+            victim.hurt(victim.damageSources().drown(), damage);
+            damageVoodooPoppet(maybePoppet.get(), controller, damage);
         } finally {
             DROWN_MIRROR_GUARD.remove(victim.getUUID());
         }
     }
 
     public static void onArmorHurt(ArmorHurtEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player) || !(player.level() instanceof ServerLevel serverLevel)) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || !(player.level() instanceof ServerLevel)) {
             return;
         }
 
-        Optional<ItemStack> maybePoppet = getBoundArmorProtectionPoppet(player);
+        Optional<PoppetHandle> maybePoppet = getBoundArmorProtectionPoppet(player);
         if (maybePoppet.isEmpty()) {
             return;
         }
@@ -412,8 +441,8 @@ public class Poppet extends Item {
             return;
         }
 
-        ItemStack poppet = maybePoppet.get();
-        poppet.hurtAndBreak(redirectedDamage, serverLevel, player, item -> {});
+        PoppetHandle poppet = maybePoppet.get();
+        poppet.hurtAndBreak(redirectedDamage, player);
 
         for (EquipmentSlot slot : ARMOR_SLOTS) {
             event.setNewDamage(slot, 0.0F);
@@ -430,12 +459,12 @@ public class Poppet extends Item {
             return;
         }
 
-        Optional<ItemStack> maybePoppet = getCarriedBoundToolProtectionPoppet(player);
+        Optional<PoppetHandle> maybePoppet = getCarriedBoundToolProtectionPoppet(player);
         if (maybePoppet.isEmpty()) {
             return;
         }
 
-        ItemStack poppet = maybePoppet.get();
+        PoppetHandle poppet = maybePoppet.get();
         int remainingDurability = poppet.getMaxDamage() - poppet.getDamageValue();
         int damageToRedirect = Math.max(1, original.getMaxDamage() - original.getDamageValue());
         int redirected = Math.min(damageToRedirect, remainingDurability);
@@ -443,7 +472,7 @@ public class Poppet extends Item {
             return;
         }
 
-        poppet.hurtAndBreak(redirected, player.level(), player, item -> {});
+        poppet.hurtAndBreak(redirected, player);
         ItemStack restored = original.copyWithCount(1);
         restored.setDamageValue(Math.min(restored.getMaxDamage() - 1, original.getDamageValue() + damageToRedirect - redirected));
         player.setItemInHand(event.getHand(), restored);
@@ -476,13 +505,14 @@ public class Poppet extends Item {
 
         if (currentFood < previousFood) {
             int hungerLoss = previousFood - currentFood;
-            Optional<ItemStack> maybePoppet = getCarriedBoundHungerProtectionPoppet(player);
+            Optional<PoppetHandle> maybePoppet = getCarriedBoundHungerProtectionPoppet(player);
             if (maybePoppet.isPresent()) {
-                ItemStack poppet = maybePoppet.get();
+                PoppetHandle poppet = maybePoppet.get();
                 int remainingDurability = poppet.getMaxDamage() - poppet.getDamageValue();
                 int absorbed = Math.min(hungerLoss, remainingDurability);
                 if (absorbed > 0) {
                     poppet.setDamageValue(Math.min(poppet.getMaxDamage(), poppet.getDamageValue() + absorbed));
+                    poppet.setChanged(player);
                     currentFood += absorbed;
                     player.getFoodData().setFoodLevel(Math.min(20, currentFood));
                 }
@@ -509,19 +539,19 @@ public class Poppet extends Item {
         }
 
         int toolDamage = tool.getDamageValue() - previous.damage();
-        Optional<ItemStack> maybePoppet = getCarriedBoundToolProtectionPoppet(player);
+        Optional<PoppetHandle> maybePoppet = getCarriedBoundToolProtectionPoppet(player);
         if (maybePoppet.isEmpty()) {
             return;
         }
 
-        ItemStack poppet = maybePoppet.get();
+        PoppetHandle poppet = maybePoppet.get();
         int remainingDurability = poppet.getMaxDamage() - poppet.getDamageValue();
         int redirected = Math.min(toolDamage, remainingDurability);
         if (redirected <= 0) {
             return;
         }
 
-        poppet.hurtAndBreak(redirected, player.level(), player, item -> {});
+        poppet.hurtAndBreak(redirected, player);
         tool.setDamageValue(Math.max(0, tool.getDamageValue() - redirected));
         if (hand == InteractionHand.MAIN_HAND) {
             player.getInventory().setChanged();
@@ -556,31 +586,31 @@ public class Poppet extends Item {
         return Optional.empty();
     }
 
-    private static Optional<ItemStack> getCarriedBoundDeathProtectionPoppet(ServerPlayer player) {
+    private static Optional<PoppetHandle> getCarriedBoundDeathProtectionPoppet(ServerPlayer player) {
         return getBoundProtectionPoppet(player, ModItems.DEATH_PROTECTION_POPPET.get());
     }
 
-    private static Optional<ItemStack> getCarriedBoundEarthProtectionPoppet(ServerPlayer player) {
+    private static Optional<PoppetHandle> getCarriedBoundEarthProtectionPoppet(ServerPlayer player) {
         return getBoundProtectionPoppet(player, ModItems.EARTH_PROTECTION_POPPET.get());
     }
 
-    private static Optional<ItemStack> getCarriedBoundFireProtectionPoppet(ServerPlayer player) {
+    private static Optional<PoppetHandle> getCarriedBoundFireProtectionPoppet(ServerPlayer player) {
         return getBoundProtectionPoppet(player, ModItems.FIRE_PROTECTION_POPPET.get());
     }
 
-    private static Optional<ItemStack> getCarriedBoundHungerProtectionPoppet(ServerPlayer player) {
+    private static Optional<PoppetHandle> getCarriedBoundHungerProtectionPoppet(ServerPlayer player) {
         return getBoundProtectionPoppet(player, ModItems.HUNGER_PROTECTION_POPPET.get());
     }
 
-    private static Optional<ItemStack> getCarriedBoundToolProtectionPoppet(ServerPlayer player) {
+    private static Optional<PoppetHandle> getCarriedBoundToolProtectionPoppet(ServerPlayer player) {
         return getBoundProtectionPoppet(player, ModItems.TOOL_PROTECTION_POPPET.get());
     }
 
-    private static Optional<ItemStack> getCarriedBoundWaterProtectionPoppet(ServerPlayer player) {
+    private static Optional<PoppetHandle> getCarriedBoundWaterProtectionPoppet(ServerPlayer player) {
         return getBoundProtectionPoppet(player, ModItems.WATER_PROTECTION_POPPET.get());
     }
 
-    private static Optional<ItemStack> getBoundArmorProtectionPoppet(ServerPlayer player) {
+    private static Optional<PoppetHandle> getBoundArmorProtectionPoppet(ServerPlayer player) {
         return getBoundProtectionPoppet(player, ModItems.ARMOR_PROTECTION_POPPET.get());
     }
 
@@ -599,22 +629,30 @@ public class Poppet extends Item {
 
             ServerPlayer targetPlayer = player.level().getServer().getPlayerList().getPlayer(target.get().entityUuid());
             if (targetPlayer != null && targetPlayer.isAlive()) {
-                return Optional.of(new VampiricTransfer(stack, targetPlayer));
+                return Optional.of(new VampiricTransfer(new InventoryPoppetHandle(stack), targetPlayer));
             }
         }
 
-        return Optional.empty();
+        return PoppetShelfSavedData.get((ServerLevel) player.level())
+                .findFirst(player, stack -> stack.is(ModItems.VAMPIRIC_POPPET.get()) && isUsableVampiricPoppet(stack, player))
+                .map(shelfPoppet -> {
+                    Waystone.BloodTarget target = getVampiricTarget(shelfPoppet.stack()).orElseThrow();
+                    ServerPlayer targetPlayer = player.level().getServer().getPlayerList().getPlayer(target.entityUuid());
+                    return new VampiricTransfer(new ShelfPoppetHandle(shelfPoppet), targetPlayer);
+                });
     }
 
-    private static Optional<ItemStack> getBoundProtectionPoppet(ServerPlayer player, Item poppetItem) {
+    private static Optional<PoppetHandle> getBoundProtectionPoppet(ServerPlayer player, Item poppetItem) {
         for (int slot = 0; slot < player.getInventory().getContainerSize(); slot++) {
             ItemStack stack = player.getInventory().getItem(slot);
             if (isBoundFor(stack, poppetItem, player)) {
-                return Optional.of(stack);
+                return Optional.of(new InventoryPoppetHandle(stack));
             }
         }
 
-        return Optional.empty();
+        return PoppetShelfSavedData.get((ServerLevel) player.level())
+                .findFirst(player, stack -> isBoundFor(stack, poppetItem, player))
+                .map(ShelfPoppetHandle::new);
     }
 
     private static boolean isBindablePoppet(ItemStack stack) {
@@ -627,6 +665,11 @@ public class Poppet extends Item {
                 || stack.is(ModItems.HUNGER_PROTECTION_POPPET.get())
                 || stack.is(ModItems.TOOL_PROTECTION_POPPET.get())
                 || stack.is(ModItems.WATER_PROTECTION_POPPET.get());
+    }
+
+    public static boolean isAnyPoppet(ItemStack stack) {
+        return stack.is(ModItems.POPPET.get())
+                || stack.getItem() instanceof Poppet;
     }
 
     private static String tooltipTargetKey(ItemStack stack) {
@@ -667,15 +710,6 @@ public class Poppet extends Item {
                 });
     }
 
-    private static Optional<ServerPlayer> resolveAttackTarget(ItemStack stack, ServerPlayer controller) {
-        Optional<ServerPlayer> target = resolveTarget(stack, controller);
-        if (target.isPresent() && hasBoundProtectionPoppet(target.get())) {
-            controller.displayClientMessage(Component.translatable(TARGET_PROTECTED_KEY), true);
-            return Optional.empty();
-        }
-        return target;
-    }
-
     private static boolean isValidTarget(ServerPlayer player) {
         return player != null && player.isAlive() && !player.isCreative() && !player.isSpectator();
     }
@@ -684,11 +718,68 @@ public class Poppet extends Item {
         return getBoundProtectionPoppet(player, ModItems.VOODOO_PROTECTION_POPPET.get()).isPresent();
     }
 
+    private static float applyVoodooProtection(ServerPlayer target, ServerPlayer controller, float incomingDamage) {
+        Optional<PoppetHandle> maybeProtection = getBoundProtectionPoppet(target, ModItems.VOODOO_PROTECTION_POPPET.get());
+        if (maybeProtection.isEmpty()) {
+            return incomingDamage;
+        }
+
+        PoppetHandle protection = maybeProtection.get();
+        int remainingDurability = protection.getMaxDamage() - protection.getDamageValue();
+        int stoppedDamage = Math.min((int) Math.ceil(incomingDamage), remainingDurability);
+        if (stoppedDamage <= 0) {
+            return incomingDamage;
+        }
+
+        protection.hurtAndBreak(stoppedDamage, target);
+        controller.displayClientMessage(Component.translatable(TARGET_PROTECTED_KEY), true);
+        return Math.max(0.0F, incomingDamage - stoppedDamage);
+    }
+
+    private static boolean applyVoodooShoveProtection(ServerPlayer target, ServerPlayer controller) {
+        Optional<PoppetHandle> maybeProtection = getBoundProtectionPoppet(target, ModItems.VOODOO_PROTECTION_POPPET.get());
+        if (maybeProtection.isEmpty()) {
+            return false;
+        }
+
+        PoppetHandle protection = maybeProtection.get();
+        if (protection.getMaxDamage() - protection.getDamageValue() <= 0) {
+            return false;
+        }
+
+        protection.hurtAndBreak(1, target);
+        controller.displayClientMessage(Component.translatable(TARGET_PROTECTED_KEY), true);
+        return true;
+    }
+
+    private static void damageVoodooPoppet(ItemStack stack, ServerPlayer controller, float dealtDamage) {
+        if (!stack.isDamageableItem()) {
+            return;
+        }
+
+        int poppetDamage = (int) Math.ceil(dealtDamage);
+        if (poppetDamage > 0) {
+            stack.hurtAndBreak(poppetDamage, (ServerLevel) controller.level(), controller, item -> {});
+            controller.getInventory().setChanged();
+        }
+    }
+
     private static boolean isBoundFor(ItemStack stack, Item item, ServerPlayer player) {
         return stack.is(item)
                 && Waystone.getBloodTarget(stack)
                 .map(target -> target.entityUuid().equals(player.getUUID()))
                 .orElse(false);
+    }
+
+    private static boolean isUsableVampiricPoppet(ItemStack stack, ServerPlayer player) {
+        Optional<Waystone.BloodTarget> source = Waystone.getBloodTarget(stack);
+        Optional<Waystone.BloodTarget> target = getVampiricTarget(stack);
+        if (source.isEmpty() || target.isEmpty() || !source.get().entityUuid().equals(player.getUUID())) {
+            return false;
+        }
+
+        ServerPlayer targetPlayer = player.level().getServer().getPlayerList().getPlayer(target.get().entityUuid());
+        return targetPlayer != null && targetPlayer.isAlive();
     }
 
     public static void bindVampiricPoppet(ItemStack stack, Waystone.BloodTarget source, Waystone.BloodTarget target) {
@@ -699,6 +790,48 @@ public class Poppet extends Item {
         targetTag.putString(ENTITY_NAME_TAG, target.entityName());
         root.put(VAMPIRIC_TARGET_TAG, targetTag);
         CustomData.set(DataComponents.CUSTOM_DATA, stack, root);
+        applyBoundComponents(stack);
+    }
+
+    public static void applyBoundComponents(ItemStack stack) {
+        stack.set(DataComponents.MAX_STACK_SIZE, BOUND_POPPET_STACK_SIZE);
+        boundDurability(stack).ifPresent(maxDamage -> {
+            stack.set(DataComponents.MAX_DAMAGE, maxDamage);
+            if (!stack.has(DataComponents.DAMAGE)) {
+                stack.set(DataComponents.DAMAGE, 0);
+            }
+        });
+    }
+
+    private static Optional<Integer> boundDurability(ItemStack stack) {
+        if (stack.is(ModItems.VOODOO_POPPET.get())) {
+            return Optional.of(VOODOO_POPPET_DURABILITY);
+        }
+        if (stack.is(ModItems.VOODOO_PROTECTION_POPPET.get())) {
+            return Optional.of(VOODOO_PROTECTION_DURABILITY);
+        }
+        if (stack.is(ModItems.ARMOR_PROTECTION_POPPET.get())) {
+            return Optional.of(ARMOR_PROTECTION_DURABILITY);
+        }
+        if (stack.is(ModItems.EARTH_PROTECTION_POPPET.get())) {
+            return Optional.of(EARTH_PROTECTION_DURABILITY);
+        }
+        if (stack.is(ModItems.FIRE_PROTECTION_POPPET.get())) {
+            return Optional.of(FIRE_PROTECTION_DURABILITY);
+        }
+        if (stack.is(ModItems.HUNGER_PROTECTION_POPPET.get())) {
+            return Optional.of(HUNGER_PROTECTION_DURABILITY);
+        }
+        if (stack.is(ModItems.TOOL_PROTECTION_POPPET.get())) {
+            return Optional.of(TOOL_PROTECTION_DURABILITY);
+        }
+        if (stack.is(ModItems.WATER_PROTECTION_POPPET.get())) {
+            return Optional.of(WATER_PROTECTION_DURABILITY);
+        }
+        if (stack.is(ModItems.VAMPIRIC_POPPET.get())) {
+            return Optional.of(VAMPIRIC_POPPET_DURABILITY);
+        }
+        return Optional.empty();
     }
 
     public static Optional<Waystone.BloodTarget> getVampiricTarget(ItemStack stack) {
@@ -742,9 +875,9 @@ public class Poppet extends Item {
         target.hurtMarked = true;
     }
 
-    private static void applyLavaEffect(ServerPlayer target) {
+    private static void applyLavaEffect(ServerPlayer target, float damage) {
         target.igniteForSeconds(LAVA_IGNITE_SECONDS);
-        target.hurt(target.damageSources().lava(), LAVA_DAMAGE);
+        target.hurt(target.damageSources().lava(), damage);
     }
 
     private record ToolDamageSnapshot(ToolStackSnapshot mainHand, ToolStackSnapshot offHand) {
@@ -753,6 +886,53 @@ public class Poppet extends Item {
     private record ToolStackSnapshot(Item item, int damage) {
     }
 
-    private record VampiricTransfer(ItemStack poppet, ServerPlayer target) {
+    private interface PoppetHandle {
+        ItemStack stack();
+
+        default int getMaxDamage() {
+            return stack().getMaxDamage();
+        }
+
+        default int getDamageValue() {
+            return stack().getDamageValue();
+        }
+
+        default void setDamageValue(int damageValue) {
+            stack().setDamageValue(damageValue);
+        }
+
+        default void hurtAndBreak(int amount, ServerPlayer player) {
+            stack().hurtAndBreak(amount, (ServerLevel) player.level(), player, item -> {});
+            setChanged(player);
+        }
+
+        default void shrink(int amount, ServerPlayer player) {
+            stack().shrink(amount);
+            setChanged(player);
+        }
+
+        void setChanged(ServerPlayer player);
+    }
+
+    private record InventoryPoppetHandle(ItemStack stack) implements PoppetHandle {
+        @Override
+        public void setChanged(ServerPlayer player) {
+            player.getInventory().setChanged();
+        }
+    }
+
+    private record ShelfPoppetHandle(PoppetShelfSavedData.ShelfPoppet shelfPoppet) implements PoppetHandle {
+        @Override
+        public ItemStack stack() {
+            return this.shelfPoppet.stack();
+        }
+
+        @Override
+        public void setChanged(ServerPlayer player) {
+            this.shelfPoppet.setChanged(player);
+        }
+    }
+
+    private record VampiricTransfer(PoppetHandle poppet, ServerPlayer target) {
     }
 }

@@ -31,6 +31,10 @@ public final class ModBlockEntities {
             BLOCK_ENTITIES.register("spinning_wheel",
                     () -> new BlockEntityType<>(SpinningWheelBlockEntity::new, java.util.Set.of(ModBlocks.SPINNING_WHEEL.get())));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<PoppetShelfBlockEntity>> POPPET_SHELF =
+            BLOCK_ENTITIES.register("poppet_shelf",
+                    () -> new BlockEntityType<>(PoppetShelfBlockEntity::new, java.util.Set.of(ModBlocks.POPPET_SHELF.get())));
+
     private ModBlockEntities() {
     }
 
