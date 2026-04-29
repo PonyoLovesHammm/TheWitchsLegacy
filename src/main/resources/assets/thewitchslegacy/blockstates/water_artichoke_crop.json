@@ -11,6 +11,9 @@
     },
     "age=3": {
       "model": "thewitchslegacy:block/water_artichoke_stage_3"
+    },
+    "age=4": {
+      "model": "thewitchslegacy:block/water_artichoke_stage_4"
     }
   }
 }

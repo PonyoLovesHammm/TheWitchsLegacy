@@ -65,7 +65,7 @@ public class ModCreativeModeTabs {
                         output.accept(ModItems.WHIFF_OF_MAGIC);
                         //Plant Items
                         output.accept(ModItems.BELLADONA);
-                        output.accept(ModItems.BELLADONA_SEEDS);
+                        output.accept(ModBlocks.BELLADONA_PLANT);
                         output.accept(ModItems.SNOWBELL_SEEDS);
                         output.accept(ModItems.ICY_NEEDLE);
                         output.accept(ModItems.MANDRAKE_SEEDS);

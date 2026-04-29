@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    "thewitchslegacy:belladona_plant"
+  ],
+  "result": {
+    "id": "thewitchslegacy:belladona",
+    "count": 2
+  }
+}

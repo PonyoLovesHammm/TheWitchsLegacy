@@ -1,7 +1,7 @@
 {
-  "parent": "minecraft:block/crop",
+  "parent": "thewitchslegacy:block/cross_sunken",
   "render_type": "cutout",
   "textures": {
-    "crop": "thewitchslegacy:block/plants/snowbell_stage_4"
+    "cross": "thewitchslegacy:block/plants/crops/snowbell_stage_4"
   }
 }

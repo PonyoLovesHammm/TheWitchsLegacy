@@ -2,6 +2,6 @@
   "parent": "thewitchslegacy:block/cross_sunken",
   "render_type": "cutout",
   "textures": {
-    "cross": "thewitchslegacy:block/plants/crops/snowbell_stage_1"
+    "cross": "thewitchslegacy:block/plants/crops/snowbell_stage_5"
   }
 }

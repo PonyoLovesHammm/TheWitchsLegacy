@@ -106,7 +106,7 @@ public final class AltarPowerSources {
                     ModBlocks.ROWAN_SAPLING.get(), ModBlocks.HAWTHORN_SAPLING.get(), ModBlocks.WILLOW_SAPLING.get()
             )),
             category("witchery_crops", 4, 100, blocks(
-                    ModBlocks.BELLADONA_CROP.get(), ModBlocks.WATER_ARTICHOKE_CROP.get(), ModBlocks.MANDRAKE_CROP.get(),
+                    ModBlocks.BELLADONA_PLANT.get(), ModBlocks.WATER_ARTICHOKE_CROP.get(), ModBlocks.MANDRAKE_CROP.get(),
                     ModBlocks.GARLIC_CROP.get(), ModBlocks.SNOWBELL_CROP.get()
             )),
             category("ember_moss", 4, 10, blocks(ModBlocks.EMBER_MOSS.get())),

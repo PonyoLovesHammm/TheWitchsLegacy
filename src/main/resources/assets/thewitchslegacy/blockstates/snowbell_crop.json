@@ -14,6 +14,9 @@
     },
     "age=4": {
       "model": "thewitchslegacy:block/snowbell_stage_4"
+    },
+    "age=5": {
+      "model": "thewitchslegacy:block/snowbell_stage_5"
     }
   }
 }
