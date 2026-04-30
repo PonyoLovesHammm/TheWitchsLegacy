@@ -1,6 +1,7 @@
 package com.ponyo.thewitchslegacy.block.custom;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
+import com.ponyo.thewitchslegacy.item.custom.Chalk;
 import com.ponyo.thewitchslegacy.ritual.RitualManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -68,6 +69,9 @@ public class Glyph extends Block {
     @Override
     protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player,
                                           InteractionHand hand, BlockHitResult hitResult) {
+        if (stack.getItem() instanceof Chalk) {
+            return InteractionResult.PASS;
+        }
         return tryTriggerRitual(state, level, pos, player);
     }
 

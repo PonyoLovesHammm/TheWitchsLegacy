@@ -1,8 +1,8 @@
 package com.ponyo.thewitchslegacy.item.custom;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
-import com.ponyo.thewitchslegacy.item.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -44,7 +44,13 @@ public class Mutandis extends Item {
             new WeightedPlantMutation(ModBlocks.ROWAN_SAPLING::get, 5),
             new WeightedPlantMutation(ModBlocks.HAWTHORN_SAPLING::get, 5),
             new WeightedPlantMutation(ModBlocks.WILLOW_SAPLING::get, 5),
+            new WeightedPlantMutation(ModBlocks.BELLADONA_PLANT::get, 5),
             new WeightedPlantMutation(() -> Blocks.SHORT_GRASS, 1),
+            new WeightedPlantMutation(() -> Blocks.TALL_GRASS, 1),
+            new WeightedPlantMutation(() -> Blocks.FERN, 1),
+            new WeightedPlantMutation(() -> Blocks.LARGE_FERN, 1),
+            new WeightedPlantMutation(() -> Blocks.BUSH, 1),
+            new WeightedPlantMutation(() -> Blocks.FIREFLY_BUSH, 1),
             new WeightedPlantMutation(() -> Blocks.LILY_PAD, 1),
             new WeightedPlantMutation(() -> Blocks.VINE, 1),
             new WeightedPlantMutation(() -> Blocks.BROWN_MUSHROOM, 1),
@@ -103,34 +109,36 @@ public class Mutandis extends Item {
                 //filters the list based on three seperate things:
                 .filter(m -> {
                     Block block = m.block();
+                    BlockState currentState = level.getBlockState(pos);
+                    boolean replacingDoubleHeightPlant = currentState.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF);
                     //is the mutation block a vine? if so, do not allow it to be placed if the clicked block is a two block tall flower
-                    if (block == Blocks.VINE && level.getBlockState(pos).hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
+                    if (block == Blocks.VINE && replacingDoubleHeightPlant) {
                         return false;
                     }
                     //is the mutation block a mushroom? if so, do not allow it to be placed if the clicked block is a two block tall flower
-                    if (block == Blocks.BROWN_MUSHROOM && level.getBlockState(pos).hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)){
-                        return false;
-                    }
-                    //is the mutation block a mushroom? if so, do not allow it to be placed if the clicked block is a two block tall flower
-                    if (block == Blocks.RED_MUSHROOM && level.getBlockState(pos).hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)){
+                    if ((block == Blocks.BROWN_MUSHROOM || block == Blocks.RED_MUSHROOM) && replacingDoubleHeightPlant){
                         return false;
                     }
                     //is the mutation block a lily pad? if so, do not allow it to be placed if the clicked block is a two block tall flower
-                    if (block == Blocks.LILY_PAD && level.getBlockState(pos).hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)){
+                    if (block == Blocks.LILY_PAD && replacingDoubleHeightPlant){
                         return false;
                     }
                     //is the mutation block a Spanish Moss?? if so, do not allow it to be placed if the clicked block is a two block tall flower
-                    if (block == ModBlocks.SPANISH_MOSS.get() && level.getBlockState(pos).hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)){
+                    if (block == ModBlocks.SPANISH_MOSS.get() && replacingDoubleHeightPlant){
                         return false;
                     }
-                    //Make it so the upper portion of a two block tall flower can not be clicked
-                    if (level.getBlockState(pos).hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF) &&
-                            level.getBlockState(pos).getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {
-                        return false;
+                    //Big dripleaf needs room for its leaf block above the stem.
+                    if (block == Blocks.BIG_DRIPLEAF) {
+                        return replacingDoubleHeightPlant
+                                && canReplaceAboveForTallMutation(level, pos)
+                                && hasMossSupport(level, pos);
+                    }
+                    if (block == Blocks.SMALL_DRIPLEAF) {
+                        return hasMossSupport(level, pos);
                     }
                     //don't allow a two block tall flower to be placed if the above block is not air
                     if (block.defaultBlockState().hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)) {
-                        return level.getBlockState(pos.above()).isAir();
+                        return canReplaceAboveForTallMutation(level, pos);
                     }
                     return true;
                 })
@@ -209,9 +217,10 @@ public class Mutandis extends Item {
     public InteractionResult useOn(UseOnContext context) {
         //defines variables
         Level level = context.getLevel();
-        BlockPos pos = context.getClickedPos();
+        BlockPos clickedPos = context.getClickedPos();
+        BlockPos pos = lowerHalfPos(level, clickedPos);
         BlockPos abovePos = pos.above();
-        Block clickedBlock = level.getBlockState(context.getClickedPos()).getBlock();
+        Block clickedBlock = level.getBlockState(pos).getBlock();
         Block mutatedBlock;
 
         //This if statement only proceeds if the clicked block is one we determined as a plant
@@ -245,6 +254,8 @@ public class Mutandis extends Item {
                         level.setBlock(pos, Blocks.VINE.defaultBlockState().setValue(VineBlock.NORTH, true), 3);
                     } else if (mutatedBlock == ModBlocks.SPANISH_MOSS.get()) {
                         level.setBlock(pos, ModBlocks.SPANISH_MOSS.get().defaultBlockState().setValue(VineBlock.NORTH, true), 3);
+                    } else if (mutatedBlock == Blocks.BIG_DRIPLEAF) {
+                        placeBigDripleaf(level, pos, context.getHorizontalDirection().getOpposite());
                         //all other block are placed normally
                     } else {
                         level.setBlock(pos, mutatedBlock.defaultBlockState(), 3);
@@ -286,5 +297,57 @@ public class Mutandis extends Item {
             }
         }
         return InteractionResult.PASS;
+    }
+
+    private static BlockPos lowerHalfPos(Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        if (state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
+                && state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER) {
+            return pos.below();
+        }
+        return pos;
+    }
+
+    private static boolean canReplaceAboveForTallMutation(Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        BlockState aboveState = level.getBlockState(pos.above());
+        if (aboveState.isAir()) {
+            return true;
+        }
+
+        return state.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
+                && state.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.LOWER
+                && aboveState.hasProperty(BlockStateProperties.DOUBLE_BLOCK_HALF)
+                && aboveState.getValue(BlockStateProperties.DOUBLE_BLOCK_HALF) == DoubleBlockHalf.UPPER;
+    }
+
+    private static boolean hasMossSupport(Level level, BlockPos pos) {
+        return level.getBlockState(pos.below()).is(Blocks.MOSS_BLOCK);
+    }
+
+    private static void placeBigDripleaf(Level level, BlockPos pos, Direction facing) {
+        BlockState stemState = Blocks.BIG_DRIPLEAF_STEM.defaultBlockState();
+        BlockState leafState = bigDripleafState(level, pos.above(), facing);
+
+        if (stemState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+            stemState = stemState.setValue(BlockStateProperties.HORIZONTAL_FACING, facing);
+        }
+        if (stemState.hasProperty(BlockStateProperties.WATERLOGGED)) {
+            stemState = stemState.setValue(BlockStateProperties.WATERLOGGED, level.getFluidState(pos).isSourceOfType(net.minecraft.world.level.material.Fluids.WATER));
+        }
+
+        level.setBlock(pos, stemState, 2);
+        level.setBlock(pos.above(), leafState, 3);
+    }
+
+    private static BlockState bigDripleafState(Level level, BlockPos pos, Direction facing) {
+        BlockState leafState = Blocks.BIG_DRIPLEAF.defaultBlockState();
+        if (leafState.hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+            leafState = leafState.setValue(BlockStateProperties.HORIZONTAL_FACING, facing);
+        }
+        if (leafState.hasProperty(BlockStateProperties.WATERLOGGED)) {
+            leafState = leafState.setValue(BlockStateProperties.WATERLOGGED, level.getFluidState(pos).isSourceOfType(net.minecraft.world.level.material.Fluids.WATER));
+        }
+        return leafState;
     }
 }

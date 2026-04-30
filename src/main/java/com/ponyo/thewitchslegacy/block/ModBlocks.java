@@ -499,7 +499,7 @@ public class ModBlocks {
         ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties().setId(key)));
     }
 
-    private static boolean handleMandrakeMatureBreak(Level level, Player player, BlockPos pos, BlockState state,
+    private static boolean handleMandrakeMatureBreak(Level level, @javax.annotation.Nullable Player player, BlockPos pos, BlockState state,
                                                      BlockEntity blockEntity, ItemStack tool, WitchCrop cropBlock) {
         long timeOfDay = level.getDayTime() % 24000L;
         boolean isDaytime = timeOfDay >= 0L && timeOfDay < 12000L;
@@ -508,8 +508,10 @@ public class ModBlocks {
             return false;
         }
 
-        player.awardStat(Stats.BLOCK_MINED.get(cropBlock));
-        player.causeFoodExhaustion(0.005F);
+        if (player != null) {
+            player.awardStat(Stats.BLOCK_MINED.get(cropBlock));
+            player.causeFoodExhaustion(0.005F);
+        }
         MandrakeEntity.spawnFromHarvest(level, pos, player);
         return true;
     }

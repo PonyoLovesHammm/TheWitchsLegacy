@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
@@ -30,12 +31,13 @@ public class Chalk extends Item {
         Level level = context.getLevel();
         //the clicked Position is the position of the block the player clicked on
         BlockPos clickedPos = context.getClickedPos();
-        //This calculates the block position ABOVE the clicked block (where the glyph will be placed)
-        BlockPos placePos = clickedPos.above();
         //The side of the block the player clicked on (top, side, down, etc.)
         Direction face = context.getClickedFace();
         //The chalk items being used (white, red, gold, or purple)
         Item usedItem = context.getItemInHand().getItem();
+        BlockState clickedState = level.getBlockState(clickedPos);
+        boolean replacingGlyph = clickedState.getBlock() instanceof Glyph;
+        BlockPos placePos = replacingGlyph ? clickedPos : clickedPos.above();
 
 
         //This if statement only allows the chalk to work if the player clicked ontop of a block
@@ -44,31 +46,54 @@ public class Chalk extends Item {
         }
 
         //if the block above is not replaceable,(like water, tall grass) fail & don't continue
-        if (!level.getBlockState(placePos).canBeReplaced()) {
+        if (!replacingGlyph && !level.getBlockState(placePos).canBeReplaced()) {
             return InteractionResult.FAIL;
         }
 
         //Makes sure the block clicked has a solid top face (glyphs cant be placed on leaves, etc.)
-        if (!level.getBlockState(clickedPos).isFaceSturdy(level, clickedPos, Direction.UP)) {
+        BlockPos supportPos = replacingGlyph ? clickedPos.below() : clickedPos;
+        if (!level.getBlockState(supportPos).isFaceSturdy(level, supportPos, Direction.UP)) {
             return InteractionResult.FAIL;
         }
 
         //Ensure the following block-placement logic only runs on the server side
         if (!level.isClientSide()) {
             //picks a random glyph variant between 0-11
-            int variant = level.getRandom().nextInt(12);
+            int variant = nextVariant(level, clickedState, replacingGlyph, usedItem);
             BlockState glyphState = glyphStateForItem(usedItem, variant);
             if (glyphState != null) {
                 level.setBlock(placePos, glyphState, 3);
             }
             //damage the chalk durability by 1, and if the items breaks, triggers the items breaking
+            Player player = context.getPlayer();
+            EquipmentSlot slot = context.getHand() == net.minecraft.world.InteractionHand.OFF_HAND
+                    ? EquipmentSlot.OFFHAND
+                    : EquipmentSlot.MAINHAND;
             context.getItemInHand().hurtAndBreak(1, ((ServerLevel) level), context.getPlayer(),
-                    item -> context.getPlayer().onEquippedItemBroken(item, EquipmentSlot.MAINHAND));
+                    item -> {
+                        if (player != null) {
+                            player.onEquippedItemBroken(item, slot);
+                        }
+                    });
 
             // we pass it null to play for all nearby players, but you can pass specific players (hallucination curse?)
             level.playSound(null, placePos, ModSounds.CHALK_DRAW.get(), SoundSource.BLOCKS);
         }
         return InteractionResult.SUCCESS;
+    }
+
+    private static int nextVariant(Level level, BlockState clickedState, boolean replacingGlyph, Item usedItem) {
+        Block glyphBlock = glyphBlockForItem(usedItem);
+        if (glyphBlock == ModBlocks.GOLDEN_GLYPH.get()) {
+            return 0;
+        }
+
+        int variant = level.getRandom().nextInt(12);
+        if (replacingGlyph && clickedState.is(glyphBlock) && clickedState.hasProperty(Glyph.VARIANT)) {
+            int previousVariant = clickedState.getValue(Glyph.VARIANT);
+            variant = (previousVariant + 1 + level.getRandom().nextInt(11)) % 12;
+        }
+        return variant;
     }
 
     public static boolean isTransformChalk(ItemStack stack) {

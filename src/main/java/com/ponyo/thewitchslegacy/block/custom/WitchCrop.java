@@ -18,6 +18,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import javax.annotation.Nullable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class WitchCrop extends CropBlock {
@@ -28,8 +30,10 @@ public class WitchCrop extends CropBlock {
 
     @FunctionalInterface
     public interface MatureDestroyHandler {
-        boolean onDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool, WitchCrop cropBlock);
+        boolean onDestroy(Level level, @Nullable Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool, WitchCrop cropBlock);
     }
+
+    private static final Set<BlockPos> PLAYER_HANDLED_MATURE_BREAKS = new HashSet<>();
 
     private final Supplier<? extends ItemLike> seedItem;
     private final VoxelShape[] shapes;
@@ -107,12 +111,33 @@ public class WitchCrop extends CropBlock {
 
     @Override
     public void playerDestroy(Level level, Player player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack tool) {
-        if (matureDestroyHandler != null && isMaxAge(state)
-                && matureDestroyHandler.onDestroy(level, player, pos, state, blockEntity, tool, this)) {
+        if (PLAYER_HANDLED_MATURE_BREAKS.remove(pos)) {
             return;
         }
 
         super.playerDestroy(level, player, pos, state, blockEntity, tool);
+    }
+
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (matureDestroyHandler != null
+                && isMaxAge(state)
+                && matureDestroyHandler.onDestroy(level, player, pos, state, level.getBlockEntity(pos), player.getMainHandItem(), this)) {
+            PLAYER_HANDLED_MATURE_BREAKS.add(pos.immutable());
+        }
+
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        if (!PLAYER_HANDLED_MATURE_BREAKS.contains(pos)
+                && matureDestroyHandler != null
+                && isMaxAge(state)) {
+            matureDestroyHandler.onDestroy(level, null, pos, state, null, ItemStack.EMPTY, this);
+        }
+
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
     }
 
     public static VoxelShape[] createShapes(double... heights) {
