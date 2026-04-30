@@ -13,6 +13,8 @@ import com.ponyo.thewitchslegacy.menu.ModMenuTypes;
 import com.ponyo.thewitchslegacy.particle.ModParticles;
 import com.ponyo.thewitchslegacy.recipe.ModRecipeSerializers;
 import com.ponyo.thewitchslegacy.ritual.RitualManager;
+import com.ponyo.thewitchslegacy.ritual.SustainingRitualManager;
+import com.ponyo.thewitchslegacy.ritual.definitions.barrier.RiteOfProtection;
 import com.ponyo.thewitchslegacy.sound.ModSounds;
 import com.ponyo.thewitchslegacy.worldgen.tree.ModTreeGrowers;
 import org.slf4j.Logger;
@@ -48,6 +50,10 @@ public class TheWitchsLegacy {
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.addListener(RitualManager::onServerTick);
+        NeoForge.EVENT_BUS.addListener(SustainingRitualManager::onServerTick);
+        NeoForge.EVENT_BUS.addListener(RiteOfProtection::onServerTick);
+        NeoForge.EVENT_BUS.addListener(RiteOfProtection::onLivingIncomingDamage);
+        NeoForge.EVENT_BUS.addListener(RiteOfProtection::onProjectileImpact);
         NeoForge.EVENT_BUS.addListener(FamiliarManager::onLivingDeath);
         NeoForge.EVENT_BUS.addListener(WitchsClaimSavedData::onPlayerSetSpawn);
         NeoForge.EVENT_BUS.addListener(Poppet::onItemCrafted);

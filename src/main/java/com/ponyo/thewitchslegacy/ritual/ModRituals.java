@@ -4,7 +4,11 @@ import com.ponyo.thewitchslegacy.ritual.definitions.general.FamiliarBinding;
 import com.ponyo.thewitchslegacy.ritual.definitions.general.GlyphicTransformation;
 import com.ponyo.thewitchslegacy.ritual.definitions.general.RiteOfCharging;
 import com.ponyo.thewitchslegacy.ritual.definitions.general.RitesOfBinding;
+import com.ponyo.thewitchslegacy.ritual.definitions.barrier.RiteOfImprisonment;
+import com.ponyo.thewitchslegacy.ritual.definitions.barrier.RiteOfProtection;
+import com.ponyo.thewitchslegacy.ritual.definitions.barrier.RiteOfSanctity;
 import com.ponyo.thewitchslegacy.ritual.definitions.transposition.IronTransposition;
+import com.ponyo.thewitchslegacy.ritual.definitions.transposition.RiteOfBeastialCall;
 import com.ponyo.thewitchslegacy.ritual.definitions.transposition.WaystoneTransposition;
 
 import java.util.ArrayList;
@@ -19,10 +23,14 @@ public final class ModRituals {
     public static final RitualDefinition WAYSTONE_BINDING_4 = RitesOfBinding.createWaystoneBinding4();
     public static final RitualDefinition WAYSTONE_TRANSPOSITION = WaystoneTransposition.create();
     public static final RitualDefinition IRON_TRANSPOSITION = IronTransposition.create();
+    public static final RitualDefinition RITE_OF_BEASTIAL_CALL = RiteOfBeastialCall.create();
     public static final RitualDefinition BLOODED_WAYSTONE_1 = RitesOfBinding.createBloodedWaystone1();
     public static final RitualDefinition BLOODED_WAYSTONE_2 = RitesOfBinding.createBloodedWaystone2();
     public static final RitualDefinition FAMILIAR_BINDING = FamiliarBinding.create();
     public static final RitualDefinition RITE_OF_CHARGING = RiteOfCharging.create();
+    private static final List<RitualDefinition> RITE_OF_IMPRISONMENT = RiteOfImprisonment.createAll();
+    private static final List<RitualDefinition> RITE_OF_PROTECTION = RiteOfProtection.createAll();
+    private static final List<RitualDefinition> RITE_OF_SANCTITY = RiteOfSanctity.createAll();
     private static final List<RitualDefinition> GLYPHIC_TRANSFORMATIONS = GlyphicTransformation.createAll();
 
     public static final List<RitualDefinition> ALL = createAll();
@@ -40,11 +48,15 @@ public final class ModRituals {
         rituals.add(WAYSTONE_BINDING_4);
         rituals.add(WAYSTONE_TRANSPOSITION);
         rituals.add(IRON_TRANSPOSITION);
+        rituals.add(RITE_OF_BEASTIAL_CALL);
         rituals.addAll(GLYPHIC_TRANSFORMATIONS);
         rituals.add(BLOODED_WAYSTONE_1);
         rituals.add(BLOODED_WAYSTONE_2);
         rituals.add(FAMILIAR_BINDING);
         rituals.add(RITE_OF_CHARGING);
+        rituals.addAll(RITE_OF_IMPRISONMENT);
+        rituals.addAll(RITE_OF_PROTECTION);
+        rituals.addAll(RITE_OF_SANCTITY);
         return List.copyOf(rituals);
     }
 }

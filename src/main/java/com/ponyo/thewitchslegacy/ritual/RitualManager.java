@@ -67,9 +67,24 @@ public final class RitualManager {
             iterator.remove();
             player.displayClientMessage(Component.translatable("message.thewitchslegacy.ritual_cancelled"), true);
             RitualVisuals.playFailureSmoke(level, centerPos);
-            for (ItemStack stack : activeRitual.consumedItems()) {
-                RitualEffects.spawnItem(level, centerPos.above(1), stack);
+            returnConsumedItems(level, activeRitual);
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean cancelActiveRitualFromBrokenGlyph(ServerLevel level, BlockPos centerPos) {
+        Iterator<ActiveRitual> iterator = ACTIVE_RITUALS.iterator();
+        while (iterator.hasNext()) {
+            ActiveRitual activeRitual = iterator.next();
+            if (!activeRitual.dimension().equals(level.dimension()) || !activeRitual.centerPos().equals(centerPos)) {
+                continue;
             }
+
+            iterator.remove();
+            RitualVisuals.playFailureSmoke(level, centerPos);
+            returnConsumedItems(level, activeRitual);
             return true;
         }
 
@@ -177,6 +192,10 @@ public final class RitualManager {
             player.displayClientMessage(Component.translatable("message.thewitchslegacy.ritual_failed_items_picked_up"), true);
         }
         RitualVisuals.playFailureSmoke(level, activeRitual.centerPos());
+        returnConsumedItems(level, activeRitual);
+    }
+
+    private static void returnConsumedItems(ServerLevel level, ActiveRitual activeRitual) {
         for (ItemStack stack : activeRitual.consumedItems()) {
             RitualEffects.spawnItem(level, activeRitual.centerPos().above(1), stack);
         }

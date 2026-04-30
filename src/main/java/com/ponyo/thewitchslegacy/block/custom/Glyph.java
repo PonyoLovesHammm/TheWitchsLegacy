@@ -3,6 +3,7 @@ package com.ponyo.thewitchslegacy.block.custom;
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.item.custom.Chalk;
 import com.ponyo.thewitchslegacy.ritual.RitualManager;
+import com.ponyo.thewitchslegacy.ritual.SustainingRitualManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -55,6 +56,16 @@ public class Glyph extends Block {
     }
 
     @Override
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel level, BlockPos pos, boolean movedByPiston) {
+        if (state.is(ModBlocks.GOLDEN_GLYPH.get())) {
+            if (!RitualManager.cancelActiveRitualFromBrokenGlyph(level, pos)) {
+                SustainingRitualManager.cancelActiveFromBrokenGlyph(level, pos);
+            }
+        }
+        super.affectNeighborsAfterRemoval(state, level, pos, movedByPiston);
+    }
+
+    @Override
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, Orientation orientation, boolean isMoving) {
         super.neighborChanged(state, level, pos, block, orientation, isMoving);
 
@@ -86,6 +97,8 @@ public class Glyph extends Block {
             if (!level.isClientSide() && level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
                 if (RitualManager.isRitualActive(serverLevel, pos)) {
                     RitualManager.cancelActiveRitual(serverLevel, pos, serverPlayer);
+                } else if (SustainingRitualManager.isActive(serverLevel, pos)) {
+                    SustainingRitualManager.cancelActive(serverLevel, pos, serverPlayer);
                 } else {
                     RitualManager.tryTrigger(serverLevel, pos, serverPlayer);
                 }
