@@ -10,6 +10,7 @@ import com.ponyo.thewitchslegacy.item.ModItems;
 import com.ponyo.thewitchslegacy.item.custom.Poppet;
 import com.ponyo.thewitchslegacy.item.custom.WitchsClaimSavedData;
 import com.ponyo.thewitchslegacy.menu.ModMenuTypes;
+import com.ponyo.thewitchslegacy.network.ModNetwork;
 import com.ponyo.thewitchslegacy.particle.ModParticles;
 import com.ponyo.thewitchslegacy.recipe.ModRecipeSerializers;
 import com.ponyo.thewitchslegacy.ritual.RitualManager;
@@ -44,6 +45,7 @@ public class TheWitchsLegacy {
     public TheWitchsLegacy(IEventBus modEventBus, ModContainer modContainer) {
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
+        modEventBus.addListener(ModNetwork::register);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (TheWitchsLegacy) to respond directly to events.

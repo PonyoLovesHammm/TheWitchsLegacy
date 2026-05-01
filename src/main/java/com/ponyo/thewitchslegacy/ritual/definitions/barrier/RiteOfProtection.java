@@ -3,6 +3,7 @@ package com.ponyo.thewitchslegacy.ritual.definitions.barrier;
 import com.ponyo.thewitchslegacy.block.ModBlocks;
 import com.ponyo.thewitchslegacy.item.ModItems;
 import com.ponyo.thewitchslegacy.item.custom.Waystone;
+import com.ponyo.thewitchslegacy.network.BarrierSyncPayload;
 import com.ponyo.thewitchslegacy.ritual.RitualDefinition;
 import com.ponyo.thewitchslegacy.ritual.RitualEffects;
 import com.ponyo.thewitchslegacy.ritual.RitualItemRequirement;
@@ -36,6 +37,7 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,6 +69,7 @@ public final class RiteOfProtection {
     private static final int BARRIER_ROOF_Y_OFFSET = 7;
     private static final List<ActiveProtectionSphere> ACTIVE_SPHERES = new ArrayList<>();
     private static final Map<BarrierBlockKey, ActiveProtectionSphere> BARRIER_BLOCKS = new HashMap<>();
+    private static final List<ClientSyncedBarrier> CLIENT_SYNCED_BARRIERS = new ArrayList<>();
 
     private RiteOfProtection() {
     }
@@ -102,6 +105,10 @@ public final class RiteOfProtection {
             return true;
         }
 
+        if (actualLevel.isClientSide()) {
+            return shouldClientSyncedBarrierCollide(actualLevel, pos, entity);
+        }
+
         ActiveProtectionSphere sphere = BARRIER_BLOCKS.get(new BarrierBlockKey(actualLevel.dimension(), pos.immutable()));
         if (sphere == null) {
             return false;
@@ -110,9 +117,31 @@ public final class RiteOfProtection {
         return sphere.blocksBarrierBlockFor(entity);
     }
 
+    public static void replaceClientSyncedBarriers(List<SyncedBarrier> barriers) {
+        CLIENT_SYNCED_BARRIERS.clear();
+        for (SyncedBarrier barrier : barriers) {
+            CLIENT_SYNCED_BARRIERS.add(new ClientSyncedBarrier(barrier));
+        }
+    }
+
+    private static boolean shouldClientSyncedBarrierCollide(Level level, BlockPos pos, Entity entity) {
+        Identifier dimensionId = level.dimension().identifier();
+        for (ClientSyncedBarrier barrier : CLIENT_SYNCED_BARRIERS) {
+            if (barrier.dimensionId().equals(dimensionId)
+                    && barrier.isIntendedBarrierPos(pos)
+                    && blocksMovementForRule(barrier.movementRuleId(), entity, barrier.casterId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity().level() instanceof ServerLevel level) {
             cleanupOrphanBarrierBlocksNear(level, event.getEntity().blockPosition(), 12);
+            if (event.getEntity() instanceof ServerPlayer player) {
+                syncBarriersToPlayer(player);
+            }
         }
     }
 
@@ -230,6 +259,7 @@ public final class RiteOfProtection {
                     );
                     ACTIVE_SPHERES.add(sphere);
                     sphere.placeBarrierBlocks(target.level());
+                    syncBarriersToAllPlayers();
                     SustainingRitualManager.start(
                             level,
                             centerPos,
@@ -271,6 +301,7 @@ public final class RiteOfProtection {
                     );
                     ACTIVE_SPHERES.add(sphere);
                     sphere.placeBarrierBlocks(level);
+                    syncBarriersToAllPlayers();
                     SustainingRitualManager.start(
                             level,
                             centerPos,
@@ -293,6 +324,23 @@ public final class RiteOfProtection {
             sphere.removeBarrierBlocks(level);
         }
         ACTIVE_SPHERES.remove(sphere);
+        syncBarriersToAllPlayers();
+    }
+
+    private static void syncBarriersToAllPlayers() {
+        PacketDistributor.sendToAllPlayers(new BarrierSyncPayload(createSyncSnapshot()));
+    }
+
+    private static void syncBarriersToPlayer(ServerPlayer player) {
+        PacketDistributor.sendToPlayer(player, new BarrierSyncPayload(createSyncSnapshot()));
+    }
+
+    private static List<SyncedBarrier> createSyncSnapshot() {
+        List<SyncedBarrier> snapshot = new ArrayList<>();
+        for (ActiveProtectionSphere sphere : ACTIVE_SPHERES) {
+            snapshot.add(sphere.toSyncedBarrier());
+        }
+        return List.copyOf(snapshot);
     }
 
     private static RitualRingRequirement ringRequirement(RitualRingSize ringSize) {
@@ -421,12 +469,24 @@ public final class RiteOfProtection {
         }
 
         boolean blocksMovementFor(Entity entity, UUID casterId) {
-            return switch (this.movementRule) {
-                case HOSTILE_ONLY -> entity instanceof Mob && entity instanceof Enemy;
-                case ALL_EXCEPT_CASTER -> entity instanceof LivingEntity && !entity.getUUID().equals(casterId);
-                case ALL -> true;
-            };
+            return blocksMovementForRule(this.movementRule.ordinal(), entity, casterId);
         }
+
+        int movementRuleId() {
+            return this.movementRule.ordinal();
+        }
+    }
+
+    private static boolean blocksMovementForRule(int movementRuleId, Entity entity, UUID casterId) {
+        MovementRule[] rules = MovementRule.values();
+        if (movementRuleId < 0 || movementRuleId >= rules.length) {
+            return false;
+        }
+        return switch (rules[movementRuleId]) {
+            case HOSTILE_ONLY -> entity instanceof Mob && entity instanceof Enemy;
+            case ALL_EXCEPT_CASTER -> entity instanceof LivingEntity && !entity.getUUID().equals(casterId);
+            case ALL -> true;
+        };
     }
 
     private enum MovementRule {
@@ -461,6 +521,31 @@ public final class RiteOfProtection {
     }
 
     private record BarrierBlockKey(ResourceKey<Level> dimension, BlockPos pos) {
+    }
+
+    public record SyncedBarrier(Identifier dimensionId, BlockPos centerPos, double radius, int movementRuleId, UUID casterId) {
+    }
+
+    private record ClientSyncedBarrier(SyncedBarrier barrier, Set<BlockPos> intendedBarrierPositions) {
+        private ClientSyncedBarrier(SyncedBarrier barrier) {
+            this(barrier, ActiveProtectionSphere.createBarrierShellPositions(barrier.centerPos(), barrier.radius()));
+        }
+
+        private Identifier dimensionId() {
+            return this.barrier.dimensionId();
+        }
+
+        private int movementRuleId() {
+            return this.barrier.movementRuleId();
+        }
+
+        private UUID casterId() {
+            return this.barrier.casterId();
+        }
+
+        private boolean isIntendedBarrierPos(BlockPos pos) {
+            return this.intendedBarrierPositions.contains(pos);
+        }
     }
 
     private static final class ActiveProtectionSphere {
@@ -543,6 +628,16 @@ public final class RiteOfProtection {
 
         private boolean blocksBarrierBlockFor(Entity entity) {
             return this.kind.blocksMovementFor(entity, this.casterId);
+        }
+
+        private SyncedBarrier toSyncedBarrier() {
+            return new SyncedBarrier(
+                    this.dimension.identifier(),
+                    this.centerPos,
+                    this.radius,
+                    this.kind.movementRuleId(),
+                    this.casterId
+            );
         }
 
         private boolean blocksInteractionBetween(ServerLevel level, Vec3 firstPosition, Vec3 secondPosition) {
