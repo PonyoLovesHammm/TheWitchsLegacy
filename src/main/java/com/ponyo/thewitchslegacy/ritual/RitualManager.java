@@ -3,27 +3,33 @@ package com.ponyo.thewitchslegacy.ritual;
 import com.ponyo.thewitchslegacy.block.entity.AltarBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.UUID;
 
 public final class RitualManager {
     private static final int ITEM_CONSUME_INTERVAL_TICKS = 20;
     private static final List<ActiveRitual> ACTIVE_RITUALS = new ArrayList<>();
+    private static final Map<RitualKey, List<RitualDefinition>> QUEUED_RITUALS = new HashMap<>();
 
     private RitualManager() {
     }
 
     public static boolean tryTrigger(ServerLevel level, BlockPos centerPos, ServerPlayer player) {
         List<ItemEntity> nearbyItems = RitualMatcher.getNearbyItems(level, centerPos);
-        RitualDefinition ritual = RitualMatcher.findMatchingRitual(level, centerPos, nearbyItems);
-        if (ritual == null) {
+        List<RitualDefinition> rituals = RitualMatcher.findMatchingRitualsInCastOrder(level, centerPos, nearbyItems);
+        if (rituals.isEmpty()) {
             player.displayClientMessage(Component.translatable("message.thewitchslegacy.unknown_ritual"), true);
             RitualVisuals.playFailureSmoke(level, centerPos);
             return true;
@@ -32,6 +38,7 @@ public final class RitualManager {
             return true;
         }
 
+        RitualDefinition ritual = rituals.get(0);
         Component startFailure = ritual.startValidator().validate(level, centerPos, player);
         if (startFailure != null) {
             player.displayClientMessage(startFailure, true);
@@ -52,6 +59,7 @@ public final class RitualManager {
             return true;
         }
 
+        queueRituals(level, centerPos, rituals.subList(1, rituals.size()));
         startRitual(level, centerPos, ritual, player);
         return true;
     }
@@ -65,6 +73,7 @@ public final class RitualManager {
             }
 
             iterator.remove();
+            clearQueuedRituals(level, centerPos);
             player.displayClientMessage(Component.translatable("message.thewitchslegacy.ritual_cancelled"), true);
             RitualVisuals.playFailureSmoke(level, centerPos);
             returnConsumedItems(level, activeRitual);
@@ -83,6 +92,7 @@ public final class RitualManager {
             }
 
             iterator.remove();
+            clearQueuedRituals(level, centerPos);
             RitualVisuals.playFailureSmoke(level, centerPos);
             returnConsumedItems(level, activeRitual);
             return true;
@@ -107,11 +117,13 @@ public final class RitualManager {
 
         long gameTime = event.getServer().overworld().getGameTime();
         Iterator<ActiveRitual> iterator = ACTIVE_RITUALS.iterator();
+        List<QueuedStart> ritualsToStart = new ArrayList<>();
         while (iterator.hasNext()) {
             ActiveRitual activeRitual = iterator.next();
             ServerLevel level = event.getServer().getLevel(activeRitual.dimension());
             if (level == null) {
                 iterator.remove();
+                clearQueuedRituals(activeRitual);
                 continue;
             }
 
@@ -122,6 +134,7 @@ public final class RitualManager {
             if (!activeRitual.ritual().ringMatcher().matches(level, activeRitual.centerPos())) {
                 failRitual(event, level, activeRitual);
                 iterator.remove();
+                clearQueuedRituals(activeRitual);
                 continue;
             }
 
@@ -137,6 +150,7 @@ public final class RitualManager {
                     if (completionFailure != null) {
                         failRitual(event, level, activeRitual, completionFailure);
                         iterator.remove();
+                        clearQueuedRituals(activeRitual);
                         continue;
                     }
                     Component effectMessage = activeRitual.ritual().effect().execute(
@@ -148,6 +162,9 @@ public final class RitualManager {
                     if (effectMessage != null) {
                         player.displayClientMessage(effectMessage, true);
                     }
+                    ritualsToStart.add(new QueuedStart(activeRitual.dimension(), activeRitual.centerPos(), activeRitual.playerId()));
+                } else {
+                    clearQueuedRituals(activeRitual);
                 }
                 iterator.remove();
                 continue;
@@ -157,11 +174,20 @@ public final class RitualManager {
             if (result == null) {
                 failRitual(event, level, activeRitual);
                 iterator.remove();
+                clearQueuedRituals(activeRitual);
                 continue;
             }
 
             RitualVisuals.playItemConsumedEffects(level, result.x(), result.y(), result.z());
             activeRitual.advance(result.consumedStack(), gameTime + ITEM_CONSUME_INTERVAL_TICKS);
+        }
+
+        for (QueuedStart queuedStart : ritualsToStart) {
+            ServerLevel level = event.getServer().getLevel(queuedStart.dimension());
+            ServerPlayer player = event.getServer().getPlayerList().getPlayer(queuedStart.playerId());
+            if (level != null && player != null) {
+                startNextQueuedRitual(level, queuedStart.centerPos(), player);
+            }
         }
     }
 
@@ -174,6 +200,61 @@ public final class RitualManager {
                 RitualItemCollector.itemsToConsume(ritual.itemRequirements()),
                 level.getGameTime()
         ));
+    }
+
+    private static void queueRituals(ServerLevel level, BlockPos centerPos, List<RitualDefinition> rituals) {
+        RitualKey key = new RitualKey(level.dimension(), centerPos.immutable());
+        if (rituals.isEmpty()) {
+            QUEUED_RITUALS.remove(key);
+        } else {
+            QUEUED_RITUALS.put(key, new ArrayList<>(rituals));
+        }
+    }
+
+    private static void startNextQueuedRitual(ServerLevel level, BlockPos centerPos, ServerPlayer player) {
+        RitualKey key = new RitualKey(level.dimension(), centerPos.immutable());
+        List<RitualDefinition> queuedRituals = QUEUED_RITUALS.get(key);
+        if (queuedRituals == null || queuedRituals.isEmpty() || isRitualActive(level, centerPos)) {
+            return;
+        }
+
+        RitualDefinition ritual = queuedRituals.remove(0);
+        if (queuedRituals.isEmpty()) {
+            QUEUED_RITUALS.remove(key);
+        }
+
+        Component startFailure = ritual.startValidator().validate(level, centerPos, player);
+        if (startFailure != null) {
+            player.displayClientMessage(startFailure, true);
+            RitualVisuals.playFailureSmoke(level, centerPos);
+            clearQueuedRituals(level, centerPos);
+            return;
+        }
+
+        AltarBlockEntity altar = RitualAltarSupport.findBestSupportingAltar(level, centerPos, ritual.altarPowerCost());
+        if (ritual.altarPowerCost() > 0 && altar == null) {
+            player.displayClientMessage(Component.translatable("message.thewitchslegacy.altar_power_insufficient"), true);
+            RitualVisuals.playFailureSmoke(level, centerPos);
+            clearQueuedRituals(level, centerPos);
+            return;
+        }
+
+        if (altar != null && !altar.consumePower(ritual.altarPowerCost())) {
+            player.displayClientMessage(Component.translatable("message.thewitchslegacy.altar_power_insufficient"), true);
+            RitualVisuals.playFailureSmoke(level, centerPos);
+            clearQueuedRituals(level, centerPos);
+            return;
+        }
+
+        startRitual(level, centerPos, ritual, player);
+    }
+
+    private static void clearQueuedRituals(ActiveRitual activeRitual) {
+        QUEUED_RITUALS.remove(new RitualKey(activeRitual.dimension(), activeRitual.centerPos()));
+    }
+
+    private static void clearQueuedRituals(ServerLevel level, BlockPos centerPos) {
+        QUEUED_RITUALS.remove(new RitualKey(level.dimension(), centerPos.immutable()));
     }
 
     private static void failRitual(ServerTickEvent.Post event, ServerLevel level, ActiveRitual activeRitual) {
@@ -199,5 +280,11 @@ public final class RitualManager {
         for (ItemStack stack : activeRitual.consumedItems()) {
             RitualEffects.spawnItem(level, activeRitual.centerPos().above(1), stack);
         }
+    }
+
+    private record RitualKey(ResourceKey<Level> dimension, BlockPos centerPos) {
+    }
+
+    private record QueuedStart(ResourceKey<Level> dimension, BlockPos centerPos, UUID playerId) {
     }
 }

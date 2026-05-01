@@ -6,7 +6,9 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -69,6 +71,27 @@ public class Waystone extends Item {
         CustomData.set(DataComponents.CUSTOM_DATA, stack, root);
     }
 
+    public static void bindToEntity(ItemStack stack, LivingEntity entity) {
+        CompoundTag root = getRootTag(stack);
+        root.remove(LOCATION_TAG);
+
+        CompoundTag bloodTargetTag = new CompoundTag();
+        bloodTargetTag.putString(ENTITY_UUID_TAG, entity.getUUID().toString());
+        bloodTargetTag.putString(ENTITY_NAME_TAG, entity.getName().getString());
+        if (entity.level() instanceof ServerLevel serverLevel) {
+            writeLocation(
+                    bloodTargetTag,
+                    serverLevel.dimension().identifier().toString(),
+                    entity.getX(),
+                    entity.getY(),
+                    entity.getZ()
+            );
+        }
+        root.put(BLOOD_TARGET_TAG, bloodTargetTag);
+
+        CustomData.set(DataComponents.CUSTOM_DATA, stack, root);
+    }
+
     public static Optional<StoredLocation> getStoredLocation(ItemStack stack) {
         CompoundTag root = getRootTag(stack);
         if (!root.contains(LOCATION_TAG)) {
@@ -100,7 +123,8 @@ public class Waystone extends Item {
 
         return Optional.of(new BloodTarget(
                 parsedUuid,
-                targetTag.getString(ENTITY_NAME_TAG).orElse("")
+                targetTag.getString(ENTITY_NAME_TAG).orElse(""),
+                parseLocation(targetTag).orElse(null)
         ));
     }
 
@@ -184,6 +208,9 @@ public class Waystone extends Item {
         }
     }
 
-    public record BloodTarget(UUID entityUuid, String entityName) {
+    public record BloodTarget(UUID entityUuid, String entityName, StoredLocation lastKnownLocation) {
+        public BloodTarget(UUID entityUuid, String entityName) {
+            this(entityUuid, entityName, null);
+        }
     }
 }

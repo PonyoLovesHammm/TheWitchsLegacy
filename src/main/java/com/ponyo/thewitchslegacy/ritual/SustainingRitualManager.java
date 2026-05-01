@@ -26,7 +26,6 @@ public final class SustainingRitualManager {
 
     public static void start(ServerLevel level, BlockPos centerPos, String ritualId, int durationTicks,
                              int altarPowerPerSecond, SustainingTick tick, SustainingStop stop) {
-        removeActiveAt(level, centerPos);
         long endTick = durationTicks <= 0 ? Long.MAX_VALUE : level.getGameTime() + durationTicks;
         ACTIVE_RITUALS.add(new ActiveSustainingRitual(
                 ritualId,
@@ -49,6 +48,7 @@ public final class SustainingRitualManager {
     }
 
     public static boolean cancelActive(ServerLevel level, BlockPos centerPos, ServerPlayer player) {
+        boolean cancelled = false;
         Iterator<ActiveSustainingRitual> iterator = ACTIVE_RITUALS.iterator();
         while (iterator.hasNext()) {
             ActiveSustainingRitual activeRitual = iterator.next();
@@ -58,15 +58,18 @@ public final class SustainingRitualManager {
 
             stopRitual(activeRitual, level);
             iterator.remove();
-            player.displayClientMessage(Component.translatable("message.thewitchslegacy.ritual_cancelled"), true);
-            RitualVisuals.playFailureSmoke(level, centerPos);
-            return true;
+            cancelled = true;
         }
 
-        return false;
+        if (cancelled) {
+            player.displayClientMessage(Component.translatable("message.thewitchslegacy.ritual_cancelled"), true);
+            RitualVisuals.playFailureSmoke(level, centerPos);
+        }
+        return cancelled;
     }
 
     public static boolean cancelActiveFromBrokenGlyph(ServerLevel level, BlockPos centerPos) {
+        boolean cancelled = false;
         Iterator<ActiveSustainingRitual> iterator = ACTIVE_RITUALS.iterator();
         while (iterator.hasNext()) {
             ActiveSustainingRitual activeRitual = iterator.next();
@@ -76,11 +79,13 @@ public final class SustainingRitualManager {
 
             stopRitual(activeRitual, level);
             iterator.remove();
-            RitualVisuals.playFailureSmoke(level, centerPos);
-            return true;
+            cancelled = true;
         }
 
-        return false;
+        if (cancelled) {
+            RitualVisuals.playFailureSmoke(level, centerPos);
+        }
+        return cancelled;
     }
 
     public static void onServerTick(ServerTickEvent.Post event) {
@@ -114,19 +119,6 @@ public final class SustainingRitualManager {
                 spawnSustainingParticles(level, activeRitual.centerPos());
             }
             activeRitual.tick().tick(level, activeRitual.centerPos(), gameTime);
-        }
-    }
-
-    private static void removeActiveAt(ServerLevel level, BlockPos centerPos) {
-        Iterator<ActiveSustainingRitual> iterator = ACTIVE_RITUALS.iterator();
-        while (iterator.hasNext()) {
-            ActiveSustainingRitual activeRitual = iterator.next();
-            if (!activeRitual.dimension().equals(level.dimension()) || !activeRitual.centerPos().equals(centerPos)) {
-                continue;
-            }
-
-            stopRitual(activeRitual, level);
-            iterator.remove();
         }
     }
 

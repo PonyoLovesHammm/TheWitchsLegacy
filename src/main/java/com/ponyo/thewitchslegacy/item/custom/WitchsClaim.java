@@ -7,7 +7,9 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -18,11 +20,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.server.level.ServerLevel;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class WitchsClaim extends Item {
     private static final double BACK_STEAL_DOT_THRESHOLD = -0.35D;
     private static final int CLAIM_COOLDOWN_TICKS = 100;
+    private static final Set<EntityType<?>> UNCLAIMABLE_ENTITY_TYPES = Set.of(
+            EntityType.WITHER,
+            EntityType.ENDER_DRAGON,
+            EntityType.WARDEN
+    );
 
     public WitchsClaim(Properties properties) {
         super(properties);
@@ -92,7 +100,7 @@ public class WitchsClaim extends Item {
 
     @Override
     public InteractionResult interactLivingEntity(ItemStack stack, Player player, LivingEntity target, InteractionHand usedHand) {
-        if (!stack.is(ModItems.WITCHS_CLAIM.get()) || !(target instanceof ServerPlayer targetPlayer) || player == target) {
+        if (!stack.is(ModItems.WITCHS_CLAIM.get()) || player == target || !isClaimableTarget(target)) {
             return InteractionResult.PASS;
         }
         if (player.getCooldowns().isOnCooldown(stack)) {
@@ -103,7 +111,7 @@ public class WitchsClaim extends Item {
             return InteractionResult.SUCCESS;
         }
 
-        if (!isBehindTarget(player, targetPlayer)) {
+        if (target instanceof ServerPlayer targetPlayer && !isBehindTarget(player, targetPlayer)) {
             applyClaimCooldown(player, stack);
             player.displayClientMessage(Component.translatable("message.thewitchslegacy.witchs_claim_caught"), true);
             targetPlayer.displayClientMessage(Component.translatable("message.thewitchslegacy.witchs_claim_attempted"), true);
@@ -112,7 +120,10 @@ public class WitchsClaim extends Item {
         }
 
         applyClaimCooldown(player, stack);
-        fillClaim(player, usedHand, targetPlayer.getUUID().toString(), targetPlayer.getName().getString());
+        if (target instanceof Mob mob) {
+            mob.setPersistenceRequired();
+        }
+        fillClaim(player, usedHand, target);
         return InteractionResult.SUCCESS;
     }
 
@@ -147,6 +158,18 @@ public class WitchsClaim extends Item {
         }
     }
 
+    private static void fillClaim(Player player, InteractionHand hand, LivingEntity target) {
+        ItemStack heldStack = player.getItemInHand(hand);
+        ItemStack filledClaim = new ItemStack(ModItems.WITCHS_CLAIM_FILLED.get());
+        Waystone.bindToEntity(filledClaim, target);
+
+        heldStack.shrink(1);
+
+        if (!player.getInventory().add(filledClaim)) {
+            player.drop(filledClaim, false);
+        }
+    }
+
     private static ItemStack bindClaim(ItemStack stack, String ownerId, String ownerName) {
         Waystone.bindToPlayer(stack, java.util.UUID.fromString(ownerId), ownerName);
         return stack;
@@ -154,6 +177,12 @@ public class WitchsClaim extends Item {
 
     private static void applyClaimCooldown(Player player, ItemStack stack) {
         player.getCooldowns().addCooldown(stack, CLAIM_COOLDOWN_TICKS);
+    }
+
+    private static boolean isClaimableTarget(LivingEntity target) {
+        return target.isAlive()
+                && !UNCLAIMABLE_ENTITY_TYPES.contains(target.getType())
+                && (target instanceof Player || target.getMaxHealth() <= 40.0F);
     }
 
     private static boolean isBehindTarget(Player thief, Player target) {
