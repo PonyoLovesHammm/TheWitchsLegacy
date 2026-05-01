@@ -54,6 +54,8 @@ public class TheWitchsLegacy {
         NeoForge.EVENT_BUS.addListener(RiteOfProtection::onServerTick);
         NeoForge.EVENT_BUS.addListener(RiteOfProtection::onLivingIncomingDamage);
         NeoForge.EVENT_BUS.addListener(RiteOfProtection::onProjectileImpact);
+        NeoForge.EVENT_BUS.addListener(RiteOfProtection::onBlockBreak);
+        NeoForge.EVENT_BUS.addListener(RiteOfProtection::onPlayerLoggedIn);
         NeoForge.EVENT_BUS.addListener(FamiliarManager::onLivingDeath);
         NeoForge.EVENT_BUS.addListener(WitchsClaimSavedData::onPlayerSetSpawn);
         NeoForge.EVENT_BUS.addListener(Poppet::onItemCrafted);

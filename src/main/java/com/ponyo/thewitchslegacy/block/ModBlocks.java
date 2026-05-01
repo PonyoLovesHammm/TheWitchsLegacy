@@ -11,6 +11,7 @@ import com.ponyo.thewitchslegacy.block.custom.Distillery;
 import com.ponyo.thewitchslegacy.block.custom.Kettle;
 import com.ponyo.thewitchslegacy.block.custom.MagicMirror;
 import com.ponyo.thewitchslegacy.block.custom.PoppetShelf;
+import com.ponyo.thewitchslegacy.block.custom.RitualBarrier;
 import com.ponyo.thewitchslegacy.block.custom.WitchCrop;
 import com.ponyo.thewitchslegacy.block.custom.SpanishMoss;
 import com.ponyo.thewitchslegacy.block.custom.SpinningWheel;
@@ -396,6 +397,16 @@ public class ModBlocks {
             () -> new Glyph(
                     blockProperties("otherwhere_glyph", BlockBehaviour.Properties.of())
                             .strength(.1F)));
+
+    public static final DeferredBlock<Block> RITUAL_BARRIER = registerBlockWithoutItem(
+            "ritual_barrier",
+            () -> new RitualBarrier(
+                    blockProperties("ritual_barrier", BlockBehaviour.Properties.of())
+                            .strength(-1.0F, 3600000.0F)
+                            .noOcclusion()
+                            .isRedstoneConductor((state, level, pos) -> false)
+                            .isSuffocating((state, level, pos) -> false)
+                            .isViewBlocking((state, level, pos) -> false)));
 
     public static final DeferredBlock<Block> CANDELABRA = registerBlock(
             "candelabra",

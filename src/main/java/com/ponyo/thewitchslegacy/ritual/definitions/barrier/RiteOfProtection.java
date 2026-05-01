@@ -25,15 +25,21 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +59,14 @@ public final class RiteOfProtection {
     private static final double MEDIUM_RADIUS = 5.0D;
     private static final double LARGE_RADIUS = 7.0D;
     private static final double BOUNDARY_PARTICLE_MAX_FALL_DISTANCE = 1.0D;
+    private static final double BARRIER_BLOCK_SHELL_THICKNESS = 0.75D;
+    private static final int BARRIER_BLOCK_REPAIR_INTERVAL_TICKS = 10;
+    private static final int BARRIER_BLOCK_REPAIR_COUNT = 24;
+    private static final int BARRIER_CYLINDER_HEIGHT_BLOCKS = 7;
+    private static final int BARRIER_FLOOR_Y_OFFSET = -1;
+    private static final int BARRIER_ROOF_Y_OFFSET = 7;
     private static final List<ActiveProtectionSphere> ACTIVE_SPHERES = new ArrayList<>();
+    private static final Map<BarrierBlockKey, ActiveProtectionSphere> BARRIER_BLOCKS = new HashMap<>();
 
     private RiteOfProtection() {
     }
@@ -81,6 +94,50 @@ public final class RiteOfProtection {
             }
 
             sphere.tickProjectiles(level);
+        }
+    }
+
+    public static boolean shouldBarrierCollide(BlockGetter level, BlockPos pos, Entity entity) {
+        if (!(level instanceof Level actualLevel)) {
+            return true;
+        }
+
+        ActiveProtectionSphere sphere = BARRIER_BLOCKS.get(new BarrierBlockKey(actualLevel.dimension(), pos.immutable()));
+        if (sphere == null) {
+            return false;
+        }
+
+        return sphere.blocksBarrierBlockFor(entity);
+    }
+
+    public static void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
+        if (event.getEntity().level() instanceof ServerLevel level) {
+            cleanupOrphanBarrierBlocksNear(level, event.getEntity().blockPosition(), 12);
+        }
+    }
+
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        if (ACTIVE_SPHERES.isEmpty() || !(event.getLevel() instanceof ServerLevel level)) {
+            return;
+        }
+
+        BlockPos brokenPos = event.getPos().immutable();
+        for (ActiveProtectionSphere sphere : ACTIVE_SPHERES) {
+            if (sphere.dimension().equals(level.dimension()) && sphere.isIntendedBarrierPos(brokenPos)) {
+                sphere.markForRepair(brokenPos);
+            }
+        }
+    }
+
+    private static void cleanupOrphanBarrierBlocksNear(ServerLevel level, BlockPos centerPos, int radius) {
+        for (BlockPos pos : BlockPos.betweenClosed(centerPos.offset(-radius, -radius, -radius), centerPos.offset(radius, radius, radius))) {
+            if (!level.getBlockState(pos).is(ModBlocks.RITUAL_BARRIER.get())) {
+                continue;
+            }
+            if (BARRIER_BLOCKS.containsKey(new BarrierBlockKey(level.dimension(), pos.immutable()))) {
+                continue;
+            }
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
         }
     }
 
@@ -172,6 +229,7 @@ public final class RiteOfProtection {
                             player.getUUID()
                     );
                     ACTIVE_SPHERES.add(sphere);
+                    sphere.placeBarrierBlocks(target.level());
                     SustainingRitualManager.start(
                             level,
                             centerPos,
@@ -179,7 +237,7 @@ public final class RiteOfProtection {
                             kind.durationTicks(),
                             kind.altarPowerPerSecond(powerItemCount),
                             (activeLevel, activeCenterPos, gameTime) -> sphere.tickMovement(activeLevel.getServer(), gameTime),
-                            (activeLevel, activeCenterPos) -> ACTIVE_SPHERES.remove(sphere)
+                            (activeLevel, activeCenterPos) -> stopSphere(activeLevel, sphere)
                     );
                     RitualEffects.playCompletionEffects(level, centerPos.above(1));
                     if (target.level() != level || !target.centerPos().equals(centerPos)) {
@@ -212,6 +270,7 @@ public final class RiteOfProtection {
                             player.getUUID()
                     );
                     ACTIVE_SPHERES.add(sphere);
+                    sphere.placeBarrierBlocks(level);
                     SustainingRitualManager.start(
                             level,
                             centerPos,
@@ -219,13 +278,21 @@ public final class RiteOfProtection {
                             kind.durationTicks(),
                             kind.altarPowerPerSecond(1),
                             (activeLevel, activeCenterPos, gameTime) -> sphere.tickMovement(activeLevel.getServer(), gameTime),
-                            (activeLevel, activeCenterPos) -> ACTIVE_SPHERES.remove(sphere)
+                            (activeLevel, activeCenterPos) -> stopSphere(activeLevel, sphere)
                     );
                     RitualEffects.playCompletionEffects(level, centerPos.above(1));
                     RitualEffects.spawnChargedStoneRemainderIfNeeded(level, centerPos.above(1), itemRequirements);
                     return null;
                 }
         );
+    }
+
+    private static void stopSphere(ServerLevel activeLevel, ActiveProtectionSphere sphere) {
+        ServerLevel level = activeLevel.getServer().getLevel(sphere.dimension());
+        if (level != null) {
+            sphere.removeBarrierBlocks(level);
+        }
+        ACTIVE_SPHERES.remove(sphere);
     }
 
     private static RitualRingRequirement ringRequirement(RitualRingSize ringSize) {
@@ -393,14 +460,21 @@ public final class RiteOfProtection {
         PLAYER_OFFLINE
     }
 
+    private record BarrierBlockKey(ResourceKey<Level> dimension, BlockPos pos) {
+    }
+
     private static final class ActiveProtectionSphere {
         private final ProtectionKind kind;
         private final ResourceKey<Level> dimension;
         private final BlockPos centerPos;
         private final double radius;
         private final UUID casterId;
+        private final Set<BlockPos> intendedBarrierPositions;
+        private final Set<BlockPos> placedBarrierPositions = new HashSet<>();
+        private final Set<BlockPos> pendingBarrierRepairs = new HashSet<>();
         private final Map<UUID, Side> entitySides = new HashMap<>();
         private final Map<UUID, Side> projectileSides = new HashMap<>();
+        private int nextRepairIndex;
 
         private ActiveProtectionSphere(ProtectionKind kind, ResourceKey<Level> dimension, BlockPos centerPos,
                                        double radius, UUID casterId) {
@@ -409,6 +483,7 @@ public final class RiteOfProtection {
             this.centerPos = centerPos;
             this.radius = radius;
             this.casterId = casterId;
+            this.intendedBarrierPositions = createBarrierShellPositions(centerPos, radius);
         }
 
         private ResourceKey<Level> dimension() {
@@ -434,6 +509,9 @@ public final class RiteOfProtection {
 
             if (gameTime % BOUNDARY_PARTICLE_INTERVAL_TICKS == 0L) {
                 spawnBoundaryParticles(level);
+            }
+            if (gameTime % BARRIER_BLOCK_REPAIR_INTERVAL_TICKS == 0L) {
+                repairBarrierBlocks(level);
             }
         }
 
@@ -461,6 +539,10 @@ public final class RiteOfProtection {
 
         private boolean isMovementCandidate(Entity entity) {
             return !(entity instanceof Projectile) && this.kind.blocksMovementFor(entity, this.casterId) && !entity.isRemoved();
+        }
+
+        private boolean blocksBarrierBlockFor(Entity entity) {
+            return this.kind.blocksMovementFor(entity, this.casterId);
         }
 
         private boolean blocksInteractionBetween(ServerLevel level, Vec3 firstPosition, Vec3 secondPosition) {
@@ -499,25 +581,40 @@ public final class RiteOfProtection {
             double watchRadius = this.radius + WATCH_PADDING;
             return new AABB(
                     center.x() - watchRadius,
-                    center.y() - watchRadius,
+                    this.centerPos.getY() + BARRIER_FLOOR_Y_OFFSET,
                     center.z() - watchRadius,
                     center.x() + watchRadius,
-                    center.y() + watchRadius,
+                    this.centerPos.getY() + BARRIER_ROOF_Y_OFFSET + 1.0D,
                     center.z() + watchRadius
             );
         }
 
         private boolean isInsideWatch(Vec3 position) {
-            return position.distanceToSqr(center()) <= (this.radius + WATCH_PADDING) * (this.radius + WATCH_PADDING);
+            double centerX = this.centerPos.getX() + 0.5D;
+            double centerZ = this.centerPos.getZ() + 0.5D;
+            double dx = position.x() - centerX;
+            double dz = position.z() - centerZ;
+            return isInsideCylinderHeight(position)
+                    && dx * dx + dz * dz <= (this.radius + WATCH_PADDING) * (this.radius + WATCH_PADDING);
         }
 
         private Side sideOf(Vec3 position) {
-            return position.distanceToSqr(center()) <= this.radius * this.radius ? Side.INSIDE : Side.OUTSIDE;
+            double centerX = this.centerPos.getX() + 0.5D;
+            double centerZ = this.centerPos.getZ() + 0.5D;
+            double dx = position.x() - centerX;
+            double dz = position.z() - centerZ;
+            boolean insideHorizontalRadius = dx * dx + dz * dz <= this.radius * this.radius;
+            return insideHorizontalRadius && isInsideCylinderHeight(position) ? Side.INSIDE : Side.OUTSIDE;
         }
 
         private boolean crossesBoundary(Vec3 previousPosition, Vec3 currentPosition) {
             return (isInsideWatch(previousPosition) || isInsideWatch(currentPosition))
                     && sideOf(previousPosition) != sideOf(currentPosition);
+        }
+
+        private boolean isInsideCylinderHeight(Vec3 position) {
+            return position.y() >= this.centerPos.getY() + BARRIER_FLOOR_Y_OFFSET
+                    && position.y() <= this.centerPos.getY() + BARRIER_ROOF_Y_OFFSET + 1.0D;
         }
 
         private void moveToSide(Entity entity, Side side) {
@@ -531,11 +628,9 @@ public final class RiteOfProtection {
                 horizontalDistance = 1.0D;
             }
 
-            double dy = entity.getY() - center.y();
-            double crossSectionRadius = Math.sqrt(Math.max(0.0D, this.radius * this.radius - dy * dy));
             double targetHorizontalDistance = side == Side.INSIDE
-                    ? Math.max(0.0D, crossSectionRadius - BARRIER_PADDING)
-                    : crossSectionRadius + BARRIER_PADDING;
+                    ? Math.max(0.0D, this.radius - BARRIER_PADDING)
+                    : this.radius + BARRIER_PADDING;
             double targetX = center.x() + dx / horizontalDistance * targetHorizontalDistance;
             double targetZ = center.z() + dz / horizontalDistance * targetHorizontalDistance;
             if (entity instanceof Mob mob) {
@@ -549,16 +644,14 @@ public final class RiteOfProtection {
             Vec3 center = center();
             int particleCount = boundaryParticleCount();
             for (int i = 0; i < particleCount; i++) {
-                double y = level.random.nextDouble() * 2.0D - 1.0D;
                 double angle = level.random.nextDouble() * Math.PI * 2.0D;
-                double horizontal = Math.sqrt(Math.max(0.0D, 1.0D - y * y));
-                double x = Math.cos(angle) * horizontal;
-                double z = Math.sin(angle) * horizontal;
+                double x = Math.cos(angle);
+                double z = Math.sin(angle);
                 double particleX = center.x() + x * this.radius;
                 double particleZ = center.z() + z * this.radius;
-                double sphereY = center.y() + y * this.radius;
-                double blockTopY = Math.floor(sphereY) + 1.02D;
-                double particleY = Math.min(blockTopY, sphereY + BOUNDARY_PARTICLE_MAX_FALL_DISTANCE);
+                double cylinderY = this.centerPos.getY() + level.random.nextInt(BARRIER_CYLINDER_HEIGHT_BLOCKS);
+                double blockTopY = cylinderY + 1.02D;
+                double particleY = Math.min(blockTopY, cylinderY + BOUNDARY_PARTICLE_MAX_FALL_DISTANCE);
                 level.sendParticles(
                         ParticleTypes.PORTAL,
                         particleX,
@@ -585,6 +678,87 @@ public final class RiteOfProtection {
 
         private Vec3 center() {
             return Vec3.atCenterOf(this.centerPos);
+        }
+
+        private void placeBarrierBlocks(ServerLevel level) {
+            for (BlockPos barrierPos : this.intendedBarrierPositions) {
+                placeBarrierBlockIfAir(level, barrierPos);
+            }
+        }
+
+        private void removeBarrierBlocks(ServerLevel level) {
+            for (BlockPos barrierPos : List.copyOf(this.placedBarrierPositions)) {
+                BarrierBlockKey key = new BarrierBlockKey(level.dimension(), barrierPos);
+                if (BARRIER_BLOCKS.get(key) != this) {
+                    continue;
+                }
+                BARRIER_BLOCKS.remove(key);
+                if (level.getBlockState(barrierPos).is(ModBlocks.RITUAL_BARRIER.get())) {
+                    level.setBlock(barrierPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_CLIENTS);
+                }
+            }
+            this.placedBarrierPositions.clear();
+            this.pendingBarrierRepairs.clear();
+        }
+
+        private boolean isIntendedBarrierPos(BlockPos pos) {
+            return this.intendedBarrierPositions.contains(pos);
+        }
+
+        private void markForRepair(BlockPos pos) {
+            this.pendingBarrierRepairs.add(pos.immutable());
+        }
+
+        private void repairBarrierBlocks(ServerLevel level) {
+            for (BlockPos pendingPos : List.copyOf(this.pendingBarrierRepairs)) {
+                if (placeBarrierBlockIfAir(level, pendingPos)) {
+                    this.pendingBarrierRepairs.remove(pendingPos);
+                } else if (!level.getBlockState(pendingPos).isAir()) {
+                    this.pendingBarrierRepairs.remove(pendingPos);
+                }
+            }
+
+            if (this.intendedBarrierPositions.isEmpty()) {
+                return;
+            }
+            List<BlockPos> positions = List.copyOf(this.intendedBarrierPositions);
+            for (int i = 0; i < BARRIER_BLOCK_REPAIR_COUNT; i++) {
+                BlockPos pos = positions.get(this.nextRepairIndex);
+                this.nextRepairIndex = (this.nextRepairIndex + 1) % positions.size();
+                placeBarrierBlockIfAir(level, pos);
+            }
+        }
+
+        private boolean placeBarrierBlockIfAir(ServerLevel level, BlockPos pos) {
+            if (!level.getBlockState(pos).isAir()) {
+                return false;
+            }
+            level.setBlock(pos, ModBlocks.RITUAL_BARRIER.get().defaultBlockState(), Block.UPDATE_CLIENTS);
+            BlockPos immutablePos = pos.immutable();
+            this.placedBarrierPositions.add(immutablePos);
+            BARRIER_BLOCKS.put(new BarrierBlockKey(level.dimension(), immutablePos), this);
+            return true;
+        }
+
+        private static Set<BlockPos> createBarrierShellPositions(BlockPos centerPos, double radius) {
+            Set<BlockPos> positions = new HashSet<>();
+            int range = (int) Math.ceil(radius + BARRIER_BLOCK_SHELL_THICKNESS);
+            Vec3 center = Vec3.atCenterOf(centerPos);
+            for (BlockPos pos : BlockPos.betweenClosed(centerPos.offset(-range, BARRIER_FLOOR_Y_OFFSET, -range), centerPos.offset(range, BARRIER_ROOF_Y_OFFSET, range))) {
+                Vec3 blockCenter = Vec3.atCenterOf(pos);
+                double dx = blockCenter.x() - center.x();
+                double dz = blockCenter.z() - center.z();
+                double distance = Math.sqrt(dx * dx + dz * dz);
+                boolean wall = pos.getY() >= centerPos.getY()
+                        && pos.getY() < centerPos.getY() + BARRIER_CYLINDER_HEIGHT_BLOCKS
+                        && Math.abs(distance - radius) <= BARRIER_BLOCK_SHELL_THICKNESS;
+                boolean cap = (pos.getY() == centerPos.getY() + BARRIER_FLOOR_Y_OFFSET || pos.getY() == centerPos.getY() + BARRIER_ROOF_Y_OFFSET)
+                        && distance <= radius + BARRIER_BLOCK_SHELL_THICKNESS;
+                if (wall || cap) {
+                    positions.add(pos.immutable());
+                }
+            }
+            return Set.copyOf(positions);
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.ponyo.thewitchslegacy.block.custom;
 
 import com.ponyo.thewitchslegacy.block.ModBlocks;
+import com.ponyo.thewitchslegacy.item.ModItems;
 import com.ponyo.thewitchslegacy.item.custom.Chalk;
 import com.ponyo.thewitchslegacy.ritual.RitualManager;
 import com.ponyo.thewitchslegacy.ritual.SustainingRitualManager;
@@ -15,6 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -53,6 +55,23 @@ public class Glyph extends Block {
     @Override
     public boolean isCollisionShapeFullBlock(BlockState state, BlockGetter world, BlockPos pos) {
         return false;
+    }
+
+    @Override
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state, boolean includeData, Player player) {
+        if (state.is(ModBlocks.WHITE_GLYPH.get())) {
+            return new ItemStack(ModItems.WHITE_CHALK.get());
+        }
+        if (state.is(ModBlocks.GOLDEN_GLYPH.get())) {
+            return new ItemStack(ModItems.GOLDEN_CHALK.get());
+        }
+        if (state.is(ModBlocks.FIERY_GLYPH.get())) {
+            return new ItemStack(ModItems.FIERY_CHALK.get());
+        }
+        if (state.is(ModBlocks.OTHERWHERE_GLYPH.get())) {
+            return new ItemStack(ModItems.OTHERWHERE_CHALK.get());
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
